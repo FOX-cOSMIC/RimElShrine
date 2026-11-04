@@ -17,6 +17,7 @@
     <RootNamespace>RimElShrine.Compatibility</RootNamespace>
     <OutputPath>..\..\RimElShrine.Shields\$(RimWorldVersion)\Compatible\CombatExtended\Assemblies\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
     <DebugType>none</DebugType>
   </PropertyGroup>
 
@@ -43,9 +44,20 @@
     <PackageReference Include="Krafs.Rimworld.Ref" Version="1.7.4995-unstable" />
   </ItemGroup>
 
-  <ItemGroup>
+  <PropertyGroup>
+    <CombatExtendedRef17 Condition="'$(CombatExtendedRef17)' == ''">$(USERPROFILE)\.rimworld-refs\CombatExtended-1.7-Test\CombatExtended.dll</CombatExtendedRef17>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(RimWorldVersion)' != '1.7'">
     <Reference Include="CombatExtended">
       <HintPath>..\references\CombatExtended.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(RimWorldVersion)' == '1.7'">
+    <Reference Include="CombatExtended">
+      <HintPath>$(CombatExtendedRef17)</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

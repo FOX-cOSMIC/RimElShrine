@@ -1,0 +1,3 @@
+# Compile the 1.7 Combat Extended counterpart against a CE 1.7-Test build kept outside the repo
+
+The committed 1.6 CombatExtended.dll needs UnityEngine.CoreModule, which the 1.7 references do not provide. The 1.7 counterpart compiles against CombatExtended.dll built from the 1.7-Test branch (commit bcdd75dc95) with Krafs.Rimworld.Ref 1.7.4995-unstable. That DLL lives at %USERPROFILE%\.rimworld-refs\CombatExtended-1.7-Test\ and is not committed, because it is a third-party test build. Its behavior in RimWorld 1.7 is unproven.

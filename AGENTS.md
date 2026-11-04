@@ -25,7 +25,7 @@ The repo's other mods, `RimElShrine.ShuttleFuel` and `RimElShrine.MoveMonolith`,
 
 - 1.7 build (works, 0 errors): `dotnet build Source/RimElShrine.Shields/RimElShrine.Shields.csproj -c Release -p:RimWorldVersion=1.7`. It targets net10.0 with Krafs.Rimworld.Ref 1.7.4995-unstable and Lib.Harmony.Ref 2.4.2 (ADRs 0006, 0007). Output goes to `RimElShrine.Shields/1.7/Assemblies/`.
 - 1.6 build: the same projects with the default `RimWorldVersion` (1.6). It targets net472 and writes to `RimElShrine.Shields/1.6/`. Do not run it while the port is in progress, because it overwrites the 1.6 assemblies.
-- The Combat Extended counterpart does not compile for 1.7 yet. The committed 1.6 `CombatExtended.dll` needs `UnityEngine.CoreModule`, which the 1.7 references do not provide.
+- Combat Extended counterpart (1.7): `dotnet build Source/RimElShrine.Shields.Compatibility/RimElShrine.Shields.CE.csproj -c Release -p:RimWorldVersion=1.7` (0 errors). It compiles against `%USERPROFILE%\.rimworld-refs\CombatExtended-1.7-Test\CombatExtended.dll`, a CE 1.7-Test build kept outside the repo (ADR 0008). The committed 1.6 `CombatExtended.dll` cannot be used, because it needs `UnityEngine.CoreModule`, which 1.7 does not provide. The CE path's runtime behavior is unproven.
 - Write decompiles and run logs to `.artifacts/`, and list `.artifacts/` in `.gitignore`.
 - Record the build command here once it works.
 
