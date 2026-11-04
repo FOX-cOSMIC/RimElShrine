@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <!-- ZH-->
+    <ShieldBuilding>护盾建筑</ShieldBuilding>
+    <ShieldSetting_ShieldBuildingTitle_Tooltip>护盾建筑参数配置</ShieldSetting_ShieldBuildingTitle_Tooltip>
+    <ShieldNet>护盾网络</ShieldNet>
+    <ShieldSetting_ShieldNetTitle_Tooltip>护盾网络参数配置</ShieldSetting_ShieldNetTitle_Tooltip>
+    <!-- Common Catalog - ShieldBuilding Group -->
+    <ShieldSetting_UseShieldBuilding>启用护盾建筑</ShieldSetting_UseShieldBuilding>
+    <ShieldSetting_UseShieldBuilding_Tooltip>配置是否加载本Mod护盾建筑内容\n\n修改该项设置需要重新启动游戏</ShieldSetting_UseShieldBuilding_Tooltip>
+    <ShieldSetting_UseShieldNetwork>启用护盾网络</ShieldSetting_UseShieldNetwork>
+    <ShieldSetting_UseShieldNetwork_Tooltip>配置是否加载本Mod护盾网络内容\n\n修改该项设置需要重新启动游戏</ShieldSetting_UseShieldNetwork_Tooltip>
+
+    <!-- Balance Catalog - ShieldBuilding Group -->
+    <ShieldSetting_BuildingDmgGlobalFactor>能量损失倍率</ShieldSetting_BuildingDmgGlobalFactor>
+    <ShieldSetting_BuildingDmgGlobalFactor_Tooltip>护盾发生器能量损失倍率，该设置只影响本Mod的护盾建筑携带的护盾</ShieldSetting_BuildingDmgGlobalFactor_Tooltip>
+    <ShieldSetting_MinRadiusOffset>最小半径偏移量</ShieldSetting_MinRadiusOffset>
+    <ShieldSetting_MinRadiusOffset_Tooltip>相对于基础最小半径的调整值，正数表示增加，负数表示减少</ShieldSetting_MinRadiusOffset_Tooltip>
+    <ShieldSetting_MaxRadiusOffset>最大半径偏移量</ShieldSetting_MaxRadiusOffset>
+    <ShieldSetting_MaxRadiusOffset_Tooltip>相对于基础最大半径的调整值，用于扩展或收缩护盾覆盖范围</ShieldSetting_MaxRadiusOffset_Tooltip>
+    <ShieldSetting_RechargeTimeFactor>再充能时间系数</ShieldSetting_RechargeTimeFactor>
+    <ShieldSetting_RechargeTimeFactor_Tooltip>护盾破碎后开始再充能的等待时间乘数，数值越大等待时间越长</ShieldSetting_RechargeTimeFactor_Tooltip>
+    <ShieldSetting_RechargeRateFactor>再充能比例倍率</ShieldSetting_RechargeRateFactor>
+    <ShieldSetting_RechargeRateFactor_Tooltip>护盾完成再充能时瞬间回复能量比例的倍率，影响单次充能恢复的能量百分比</ShieldSetting_RechargeRateFactor_Tooltip>
+    <ShieldSetting_MaxEnergyFactor>最大能量系数</ShieldSetting_MaxEnergyFactor>
+    <ShieldSetting_MaxEnergyFactor_Tooltip>护盾总能量容量的缩放系数，数值越大护盾越坚固</ShieldSetting_MaxEnergyFactor_Tooltip>
+    <ShieldSetting_ChargeSpeed>充能速度倍率</ShieldSetting_ChargeSpeed>
+    <ShieldSetting_ChargeSpeed_Tooltip>护盾每秒恢复能量值的乘算倍率，数值越大充能速度越快</ShieldSetting_ChargeSpeed_Tooltip>
+    <ShieldSetting_DisarmedByEmpTimeFactor>EMP瘫痪时间系数</ShieldSetting_DisarmedByEmpTimeFactor>
+    <ShieldSetting_DisarmedByEmpTimeFactor_Tooltip>受到EMP攻击后护盾系统瘫痪时长的调整系数</ShieldSetting_DisarmedByEmpTimeFactor_Tooltip>
+
+    <!-- Balance Catalog - ShieldNet Group -->
+    <ShieldSetting_SlowChargeFactor>缓慢充能倍率</ShieldSetting_SlowChargeFactor>
+    <ShieldSetting_SlowChargeFactor_Tooltip>护盾未接入网络时的充能速度倍率</ShieldSetting_SlowChargeFactor_Tooltip>
+    <ShieldSetting_ResourceToMinRadius>最小半径加成</ShieldSetting_ResourceToMinRadius>
+    <ShieldSetting_ResourceToMinRadius_Tooltip>每点护盾网络资源提供的护盾最小半径偏移</ShieldSetting_ResourceToMinRadius_Tooltip>
+    <ShieldSetting_ResourceToMaxRadius>最大半径加成</ShieldSetting_ResourceToMaxRadius>
+    <ShieldSetting_ResourceToMaxRadius_Tooltip>每点护盾网络资源提供的护盾最大半径偏移</ShieldSetting_ResourceToMaxRadius_Tooltip>
+    <ShieldSetting_ResourceToRechargeSeconds>再充能时间加成</ShieldSetting_ResourceToRechargeSeconds>
+    <ShieldSetting_ResourceToRechargeSeconds_Tooltip>每点护盾网络资源减少的再充能等待时间</ShieldSetting_ResourceToRechargeSeconds_Tooltip>
+    <ShieldSetting_ResourceToRechargeRate>再充能比例加成</ShieldSetting_ResourceToRechargeRate>
+    <ShieldSetting_ResourceToRechargeRate_Tooltip>每点护盾网络资源提供的再充能完成时恢复能量比例</ShieldSetting_ResourceToRechargeRate_Tooltip>
+    <ShieldSetting_ResourceToMaxEnergy>最大能量加成</ShieldSetting_ResourceToMaxEnergy>
+    <ShieldSetting_ResourceToMaxEnergy_Tooltip>每点护盾网络资源提供的护盾最大能量偏移</ShieldSetting_ResourceToMaxEnergy_Tooltip>
+    <ShieldSetting_ResourceToChargeSpeed>充能速度加成</ShieldSetting_ResourceToChargeSpeed>
+    <ShieldSetting_ResourceToChargeSpeed_Tooltip>每点护盾网络资源提供的护盾充能速度倍率</ShieldSetting_ResourceToChargeSpeed_Tooltip>
+    <ShieldSetting_UseKineticEnergy>动能计算模式</ShieldSetting_UseKineticEnergy>
+    <ShieldSetting_UseKineticEnergy_Tooltip>启用后基于射弹动能而非伤害计算能量损失</ShieldSetting_UseKineticEnergy_Tooltip>
+    <ShieldSetting_NormalKineticEnergyFactor>普通射弹动能系数</ShieldSetting_NormalKineticEnergyFactor>
+    <ShieldSetting_NormalKineticEnergyFactor_Tooltip>普通射弹动能计算的比例系数</ShieldSetting_NormalKineticEnergyFactor_Tooltip>
+    <ShieldSetting_MortarKineticEnergyFactor>曲射炮弹动能系数</ShieldSetting_MortarKineticEnergyFactor>
+    <ShieldSetting_MortarKineticEnergyFactor_Tooltip>曲射射弹动能计算的比例系数</ShieldSetting_MortarKineticEnergyFactor_Tooltip>
+
+    <!-- Render Catalog - ShieldBuilding Group -->
+    <ShieldSetting_RenderAlphaFactor>不透明度系数</ShieldSetting_RenderAlphaFactor>
+    <ShieldSetting_RenderAlphaFactor_Tooltip>调整护盾视觉效果的透明程度，数值越小护盾越透明</ShieldSetting_RenderAlphaFactor_Tooltip>
+    <ShieldSetting_HitEffectLastFactor>受击效果持续时长系数</ShieldSetting_HitEffectLastFactor>
+    <ShieldSetting_HitEffectLastFactor_Tooltip>调整护盾受到攻击时视觉效果的持续时间，数值越大效果显示时间越长</ShieldSetting_HitEffectLastFactor_Tooltip>
+</LanguageData>

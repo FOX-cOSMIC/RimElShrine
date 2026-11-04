@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <!-- EN-->
+    <ShieldBuilding>Shield Buildings</ShieldBuilding>
+    <ShieldSetting_ShieldBuildingTitle_Tooltip>Shield building parameter configuration</ShieldSetting_ShieldBuildingTitle_Tooltip>
+    <ShieldNet>Shield Network</ShieldNet>
+    <ShieldSetting_ShieldNetTitle_Tooltip>Shield network parameter configuration</ShieldSetting_ShieldNetTitle_Tooltip>
+    <!-- Common Catalog - ShieldBuilding Group -->
+    <ShieldSetting_UseShieldBuilding>Enable Shield Buildings</ShieldSetting_UseShieldBuilding>
+    <ShieldSetting_UseShieldBuilding_Tooltip>Configure whether to load this mod's shield building content\n\nChanging this setting requires restarting the game</ShieldSetting_UseShieldBuilding_Tooltip>
+    <ShieldSetting_UseShieldNetwork>Enable Shield Network</ShieldSetting_UseShieldNetwork>
+    <ShieldSetting_UseShieldNetwork_Tooltip>Configure whether to load this mod's shield network content\n\nChanging this setting requires restarting the game</ShieldSetting_UseShieldNetwork_Tooltip>
+
+    <!-- Balance Catalog - ShieldBuilding Group -->
+    <ShieldSetting_BuildingDmgGlobalFactor>Energy Loss Factor</ShieldSetting_BuildingDmgGlobalFactor>
+    <ShieldSetting_BuildingDmgGlobalFactor_Tooltip>Shield generator energy loss multiplier, this setting only affects shields carried by this mod's shield buildings</ShieldSetting_BuildingDmgGlobalFactor_Tooltip>
+    <ShieldSetting_MinRadiusOffset>Minimum Radius Offset</ShieldSetting_MinRadiusOffset>
+    <ShieldSetting_MinRadiusOffset_Tooltip>Adjustment value relative to base minimum radius, positive values increase, negative values decrease</ShieldSetting_MinRadiusOffset_Tooltip>
+    <ShieldSetting_MaxRadiusOffset>Maximum Radius Offset</ShieldSetting_MaxRadiusOffset>
+    <ShieldSetting_MaxRadiusOffset_Tooltip>Adjustment value relative to base maximum radius, used to expand or contract shield coverage area</ShieldSetting_MaxRadiusOffset_Tooltip>
+    <ShieldSetting_RechargeTimeFactor>Recharge Time Factor</ShieldSetting_RechargeTimeFactor>
+    <ShieldSetting_RechargeTimeFactor_Tooltip>Multiplier for wait time before recharge begins after shield breaks, higher values mean longer wait times</ShieldSetting_RechargeTimeFactor_Tooltip>
+    <ShieldSetting_RechargeRateFactor>Recharge Rate Multiplier</ShieldSetting_RechargeRateFactor>
+    <ShieldSetting_RechargeRateFactor_Tooltip>Multiplier for energy percentage instantly restored when recharge completes, affects energy percentage recovered per recharge cycle</ShieldSetting_RechargeRateFactor_Tooltip>
+    <ShieldSetting_MaxEnergyFactor>Maximum Energy Factor</ShieldSetting_MaxEnergyFactor>
+    <ShieldSetting_MaxEnergyFactor_Tooltip>Scaling factor for total shield energy capacity, higher values make shields more durable</ShieldSetting_MaxEnergyFactor_Tooltip>
+    <ShieldSetting_ChargeSpeed>Charge Speed Multiplier</ShieldSetting_ChargeSpeed>
+    <ShieldSetting_ChargeSpeed_Tooltip>Multiplier for energy recovered per second, higher values mean faster charging</ShieldSetting_ChargeSpeed_Tooltip>
+    <ShieldSetting_DisarmedByEmpTimeFactor>EMP Disable Time Factor</ShieldSetting_DisarmedByEmpTimeFactor>
+    <ShieldSetting_DisarmedByEmpTimeFactor_Tooltip>Adjustment factor for shield system disable duration after EMP attack</ShieldSetting_DisarmedByEmpTimeFactor_Tooltip>
+
+    <!-- Balance Catalog - ShieldNet Group -->
+    <ShieldSetting_SlowChargeFactor>Slow Charge Multiplier</ShieldSetting_SlowChargeFactor>
+    <ShieldSetting_SlowChargeFactor_Tooltip>Charge speed multiplier when shield is not connected to network</ShieldSetting_SlowChargeFactor_Tooltip>
+    <ShieldSetting_ResourceToMinRadius>Minimum Radius Bonus</ShieldSetting_ResourceToMinRadius>
+    <ShieldSetting_ResourceToMinRadius_Tooltip>Shield minimum radius offset provided per shield network resource point</ShieldSetting_ResourceToMinRadius_Tooltip>
+    <ShieldSetting_ResourceToMaxRadius>Maximum Radius Bonus</ShieldSetting_ResourceToMaxRadius>
+    <ShieldSetting_ResourceToMaxRadius_Tooltip>Shield maximum radius offset provided per shield network resource point</ShieldSetting_ResourceToMaxRadius_Tooltip>
+    <ShieldSetting_ResourceToRechargeSeconds>Recharge Time Bonus</ShieldSetting_ResourceToRechargeSeconds>
+    <ShieldSetting_ResourceToRechargeSeconds_Tooltip>Reduced recharge wait time per shield network resource point</ShieldSetting_ResourceToRechargeSeconds_Tooltip>
+    <ShieldSetting_ResourceToRechargeRate>Recharge Rate Bonus</ShieldSetting_ResourceToRechargeRate>
+    <ShieldSetting_ResourceToRechargeRate_Tooltip>Energy percentage restored upon recharge completion provided per shield network resource point</ShieldSetting_ResourceToRechargeRate_Tooltip>
+    <ShieldSetting_ResourceToMaxEnergy>Maximum Energy Bonus</ShieldSetting_ResourceToMaxEnergy>
+    <ShieldSetting_ResourceToMaxEnergy_Tooltip>Shield maximum energy offset provided per shield network resource point</ShieldSetting_ResourceToMaxEnergy_Tooltip>
+    <ShieldSetting_ResourceToChargeSpeed>Charge Speed Bonus</ShieldSetting_ResourceToChargeSpeed>
+    <ShieldSetting_ResourceToChargeSpeed_Tooltip>Shield charge speed multiplier provided per shield network resource point</ShieldSetting_ResourceToChargeSpeed_Tooltip>
+    <ShieldSetting_UseKineticEnergy>Kinetic Calculation Mode</ShieldSetting_UseKineticEnergy>
+    <ShieldSetting_UseKineticEnergy_Tooltip>When enabled, energy loss is calculated based on projectile kinetic energy rather than damage</ShieldSetting_UseKineticEnergy_Tooltip>
+    <ShieldSetting_NormalKineticEnergyFactor>Normal Projectile Kinetic Factor</ShieldSetting_NormalKineticEnergyFactor>
+    <ShieldSetting_NormalKineticEnergyFactor_Tooltip>Scaling factor for normal projectile kinetic energy calculation</ShieldSetting_NormalKineticEnergyFactor_Tooltip>
+    <ShieldSetting_MortarKineticEnergyFactor>Arcing Projectile Kinetic Factor</ShieldSetting_MortarKineticEnergyFactor>
+    <ShieldSetting_MortarKineticEnergyFactor_Tooltip>Scaling factor for arcing projectile kinetic energy calculation</ShieldSetting_MortarKineticEnergyFactor_Tooltip>
+
+    <!-- Render Catalog - ShieldBuilding Group -->
+    <ShieldSetting_RenderAlphaFactor>Opacity Factor</ShieldSetting_RenderAlphaFactor>
+    <ShieldSetting_RenderAlphaFactor_Tooltip>Adjusts transparency level of shield visual effects, lower values make shields more transparent</ShieldSetting_RenderAlphaFactor_Tooltip>
+    <ShieldSetting_HitEffectLastFactor>Hit Effect Duration Factor</ShieldSetting_HitEffectLastFactor>
+    <ShieldSetting_HitEffectLastFactor_Tooltip>Adjusts duration of visual effects when shield is hit, higher values mean effects display longer</ShieldSetting_HitEffectLastFactor_Tooltip>
+</LanguageData>

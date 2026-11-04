@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <ELS_Recipe_Make_MechSerumHealer.label>编写治愈机械液</ELS_Recipe_Make_MechSerumHealer.label>
+    <ELS_Recipe_Make_MechSerumHealer.description>使用空白机械液注射器编写治愈机械液</ELS_Recipe_Make_MechSerumHealer.description>
+    <ELS_Recipe_Make_MechSerumHealer.jobString>正在编写治愈机械液</ELS_Recipe_Make_MechSerumHealer.jobString>
+    <ELS_Recipe_Make_MechSerumResurrector.label>编写复活机械液</ELS_Recipe_Make_MechSerumResurrector.label>
+    <ELS_Recipe_Make_MechSerumResurrector.description>使用空白机械液注射器编写复活机械液</ELS_Recipe_Make_MechSerumResurrector.description>
+    <ELS_Recipe_Make_MechSerumResurrector.jobString>正在编写复活机械液</ELS_Recipe_Make_MechSerumResurrector.jobString>
+</LanguageData>

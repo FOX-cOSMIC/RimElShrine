@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <!-- ELS_ResearchProject_BasicMechSerumProduction-->
+    <ResearchProjectDef ELSClass="mechserum">
+        <defName>ELS_ResearchProject_BasicMechSerumProduction</defName>
+        <label>els_researchproject_basicmechserumproduction_label</label>
+        <description>els_researchproject_basicmechserumproduction_description</description>
+        <baseCost>2000</baseCost>
+        <techLevel>Ultra</techLevel>
+        <prerequisites>
+            <li>MedicineProduction</li>
+            <li>AdvancedFabrication</li>
+        </prerequisites>
+        <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+        <requiredResearchFacilities>
+            <li>MultiAnalyzer</li>
+        </requiredResearchFacilities>
+        <researchViewX>19.00</researchViewX>
+        <researchViewY>0.00</researchViewY>
+    </ResearchProjectDef>
+    <!--ELS_ResearchProject_AdvancedMechSerumProduction-->
+    <ResearchProjectDef ELSClass="mechserum">
+        <defName>ELS_ResearchProject_AdvancedMechSerumProduction</defName>
+        <label>els_researchproject_advancedmechserumproduction_label</label>
+        <description>els_researchproject_advancedmechserumproduction_label</description>
+        <baseCost>5000</baseCost>
+        <techLevel>Ultra</techLevel>
+        <prerequisites>
+            <li>ELS_ResearchProject_BasicMechSerumProduction</li>
+        </prerequisites>
+        <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+        <requiredResearchFacilities>
+            <li>MultiAnalyzer</li>
+        </requiredResearchFacilities>
+        <researchViewX>20.00</researchViewX>
+        <researchViewY>0.00</researchViewY>
+    </ResearchProjectDef>
+</Defs>

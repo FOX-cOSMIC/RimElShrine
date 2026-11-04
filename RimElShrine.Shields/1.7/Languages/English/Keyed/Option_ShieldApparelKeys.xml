@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <!-- EN-->
+    <ShieldApparel>Shield Apparel</ShieldApparel>
+    <ShieldSetting_ShieldApparelTitle_Tooltip>Wearable shield parameter configuration</ShieldSetting_ShieldApparelTitle_Tooltip>
+    <!-- Common Catalog Settings -->
+    <ShieldSetting_UseShieldApparels>Enable Shield Apparel</ShieldSetting_UseShieldApparels>
+    <ShieldSetting_UseShieldApparels_Tooltip>Configure whether to load this mod's shield apparel content\n\nChanging this setting requires restarting the game</ShieldSetting_UseShieldApparels_Tooltip>
+
+    <!-- Balance Catalog - ShieldApparel Group -->
+    <ShieldSetting_DmgGlobalFactor>Global Damage Factor</ShieldSetting_DmgGlobalFactor>
+    <ShieldSetting_DmgGlobalFactor_Tooltip>Independent damage multiplier applied before all other multiplicative factors</ShieldSetting_DmgGlobalFactor_Tooltip>
+    <ShieldSetting_DmgEmpFactor>EMP Damage Factor</ShieldSetting_DmgEmpFactor>
+    <ShieldSetting_DmgEmpFactor_Tooltip>Damage multiplier for EMP attacks against shields</ShieldSetting_DmgEmpFactor_Tooltip>
+    <ShieldSetting_DmgMeleeFactor>Melee Damage Factor</ShieldSetting_DmgMeleeFactor>
+    <ShieldSetting_DmgMeleeFactor_Tooltip>Damage multiplier for melee attacks against shields</ShieldSetting_DmgMeleeFactor_Tooltip>
+    <ShieldSetting_DmgEnviromentalFactor>Environmental Damage Factor</ShieldSetting_DmgEnviromentalFactor>
+    <ShieldSetting_DmgEnviromentalFactor_Tooltip>Percentage of environmental damage applied to shields</ShieldSetting_DmgEnviromentalFactor_Tooltip>
+    <ShieldSetting_DmgOtherFactor>Other Damage Factor</ShieldSetting_DmgOtherFactor>
+    <ShieldSetting_DmgOtherFactor_Tooltip>Damage multiplier for other types of damage against shields</ShieldSetting_DmgOtherFactor_Tooltip>
+    <ShieldSetting_BloodEnergyTransferFactor>Blood Energy Transfer Efficiency</ShieldSetting_BloodEnergyTransferFactor>
+    <ShieldSetting_BloodEnergyTransferFactor_Tooltip>For shields that can be quickly recharged through blood loss, this value determines the additional multiplicative factor for converting blood loss into shield energy; higher values mean more shield energy can be converted from the same amount of blood loss</ShieldSetting_BloodEnergyTransferFactor_Tooltip>
+</LanguageData>

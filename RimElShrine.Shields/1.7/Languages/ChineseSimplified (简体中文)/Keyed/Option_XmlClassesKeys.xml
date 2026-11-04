@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <!-- ZH-->
+    <RimElShrineShieldMod>护盾Mod</RimElShrineShieldMod>
+    <ReloadWindow_Title>Mod加载设置已修改</ReloadWindow_Title>
+    <ReloadWindow_Notice>Mod加载设置已修改，需要重新启动游戏，请确认是否立即重启。\n具体信息如下所示: </ReloadWindow_Notice>
+    <NewXmlClassesList>新的加载组</NewXmlClassesList>
+    <XmlClassesToLoad>需加载：</XmlClassesToLoad>
+    <XmlClassesToIgnore>需忽略(高优先)：</XmlClassesToIgnore>
+    <shield_apparel>护盾装备</shield_apparel>
+    <shield_building>护盾建筑</shield_building>
+    <shield_network>护盾网络</shield_network>
+    <mechserum>再生机械液</mechserum>
+    <CurrentXmlClassesList>当前加载组</CurrentXmlClassesList>
+</LanguageData>

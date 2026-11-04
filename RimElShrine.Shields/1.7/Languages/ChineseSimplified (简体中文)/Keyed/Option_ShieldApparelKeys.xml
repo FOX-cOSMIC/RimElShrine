@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <!-- ZH-->
+    <ShieldApparel>护盾装备</ShieldApparel>
+    <ShieldSetting_ShieldApparelTitle_Tooltip>可穿戴护盾参数配置</ShieldSetting_ShieldApparelTitle_Tooltip>
+    <!-- Common Catalog Settings -->
+    <ShieldSetting_UseShieldApparels>启用护盾装备</ShieldSetting_UseShieldApparels>
+    <ShieldSetting_UseShieldApparels_Tooltip>配置是否加载本Mod护盾装备内容\n\n修改该项设置需要重新启动游戏</ShieldSetting_UseShieldApparels_Tooltip>
+
+    <!-- Balance Catalog - ShieldApparel Group -->
+    <ShieldSetting_DmgGlobalFactor>全局伤害倍率</ShieldSetting_DmgGlobalFactor>
+    <ShieldSetting_DmgGlobalFactor_Tooltip>在其他乘算系数之前乘算的独立伤害倍率</ShieldSetting_DmgGlobalFactor_Tooltip>
+    <ShieldSetting_DmgEmpFactor>EMP伤害倍率</ShieldSetting_DmgEmpFactor>
+    <ShieldSetting_DmgEmpFactor_Tooltip>EMP攻击对护盾造成的伤害倍数</ShieldSetting_DmgEmpFactor_Tooltip>
+    <ShieldSetting_DmgMeleeFactor>近战伤害倍率</ShieldSetting_DmgMeleeFactor>
+    <ShieldSetting_DmgMeleeFactor_Tooltip>近战攻击对护盾造成的伤害倍数</ShieldSetting_DmgMeleeFactor_Tooltip>
+    <ShieldSetting_DmgEnviromentalFactor>环境伤害倍率</ShieldSetting_DmgEnviromentalFactor>
+    <ShieldSetting_DmgEnviromentalFactor_Tooltip>环境伤害对护盾造成的伤害比例</ShieldSetting_DmgEnviromentalFactor_Tooltip>
+    <ShieldSetting_DmgOtherFactor>其他伤害倍率</ShieldSetting_DmgOtherFactor>
+    <ShieldSetting_DmgOtherFactor_Tooltip>其他类型伤害对护盾造成的伤害倍率</ShieldSetting_DmgOtherFactor_Tooltip>
+    <ShieldSetting_BloodEnergyTransferFactor>血液能量转换效率</ShieldSetting_BloodEnergyTransferFactor>
+    <ShieldSetting_BloodEnergyTransferFactor_Tooltip>对于可通过失血快速再充能的护盾，该数值决定失血量转化护盾能量的额外乘算倍率；该值越大，相同失血量可转化更多的护盾能量值</ShieldSetting_BloodEnergyTransferFactor_Tooltip>
+</LanguageData>

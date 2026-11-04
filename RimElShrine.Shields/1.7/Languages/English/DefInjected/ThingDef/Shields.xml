@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- ZH-->
+  <!-- ES Shields-->
+  <!-- ELS_Thing_ES0Shield-->
+  <ELS_Thing_ES0Shield.label>ES0 Basic Shield</ELS_Thing_ES0Shield.label>
+  <ELS_Thing_ES0Shield.description>A basic shield providing fundamental ranged defense.\n\n\nThis universal shield series has been modified to allow the wearer to perform ranged attacks while the shield is active.</ELS_Thing_ES0Shield.description>
+  <!-- ELS_Thing_ES1Shield-->
+  <ELS_Thing_ES1Shield.label>ES1 Improved Shield</ELS_Thing_ES1Shield.label>
+  <ELS_Thing_ES1Shield.description>An upgraded version of the basic shield with slightly improved strength and recharge rate, while also being lighter. This model provides limited resistance to EMP and thermal damage, though EMP attacks drain significantly more energy.\n\n\nThis universal shield series has been modified to allow the wearer to perform ranged attacks while the shield is active.</ELS_Thing_ES1Shield.description>
+  <!-- ELS_Thing_ES2Shield-->
+  <ELS_Thing_ES2Shield.label>ES2 Advanced Shield</ELS_Thing_ES2Shield.label>
+  <ELS_Thing_ES2Shield.description>Thanks to new technological research, this advanced model integrates defense against all physical damage. It features excellent EMP and thermal resistance, can save you from enemy monoswords, and includes an aiming assist system that improves shooting accuracy and target acquisition speed.\n\n\nWarning! The immense kinetic force of melee weapons may rapidly deplete shield energy!\n\n\nThis universal shield series has been modified to allow the wearer to perform ranged attacks while the shield is active.</ELS_Thing_ES2Shield.description>
+  <!-- ELS_Thing_ES3Shield-->
+  <ELS_Thing_ES3Shield.label>ES3 Experimental Shield</ELS_Thing_ES3Shield.label>
+  <ELS_Thing_ES3Shield.description>This experimental shield utilizes partially tested biotechnology, greatly improving EMP and melee resistance while boasting incredible total capacity and recharge rate.\n\n\nWarning! Frequent energy depletion may cause anemia in the wearer!\n\n\nThis universal shield series has been modified to allow the wearer to perform ranged attacks while the shield is active.</ELS_Thing_ES3Shield.description>
+
+  <!-- ELS_Thing_Building_ShieldGenerator-->
+  <ELS_Thing_Building_ShieldGenerator.label>Kinetic Shield Generator</ELS_Thing_Building_ShieldGenerator.label>
+  <ELS_Thing_Building_ShieldGenerator.description>This shield uses a standard shield core with precise control to create a highly configurable generator capable of intercepting various projectiles.\n\n\nEnergy loss is calculated based on projectile momentum rather than damage.</ELS_Thing_Building_ShieldGenerator.description>
+  <!-- ELS Appended Apparels-->
+  <!-- ELS_Thing_EmptyAppendedApparel-->
+  <ELS_Thing_EmptyAppendedApparel.label>Effect Applier</ELS_Thing_EmptyAppendedApparel.label>
+  <ELS_Thing_EmptyAppendedApparel.description>Cannot be removed! It automatically destroys itself when it spawns.</ELS_Thing_EmptyAppendedApparel.description>
+</LanguageData>

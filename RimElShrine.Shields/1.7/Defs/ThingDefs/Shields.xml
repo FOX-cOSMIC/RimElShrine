@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <!-- Shield Base-->
+  <ThingDef ParentName="ApparelBase" Name="ELS_ShieldBase" Abstract="True" ELSClass="shield_apparel">
+    <tickerType>Normal</tickerType>
+    <techLevel>Spacer</techLevel>
+    <thingClass>Apparel</thingClass>
+    <statBases>
+      <EquipDelay>1.5</EquipDelay>
+      <Flammability>0.3</Flammability>
+      <Insulation_Cold>1</Insulation_Cold>
+      <Insulation_Heat>1</Insulation_Heat>
+    </statBases>
+    <thingSetMakerTags>
+      <li>RewardStandardQualitySuper</li>
+    </thingSetMakerTags>
+    <thingCategories>
+      <li>ApparelUtility</li>
+    </thingCategories>
+    <apparel>
+      <countsAsClothingForNudity>false</countsAsClothingForNudity>
+      <careIfWornByCorpse>false</careIfWornByCorpse>
+      <careIfDamaged>false</careIfDamaged>
+      <wearPerDay>0</wearPerDay>
+      <bodyPartGroups>
+        <li>Waist</li>
+      </bodyPartGroups>
+      <layers>
+        <li>Belt</li>
+      </layers>
+      <tags>
+        <li>BeltDefense</li>
+      </tags>
+      <developmentalStageFilter>Child, Adult</developmentalStageFilter>
+    </apparel>
+    <colorGenerator Class="ColorGenerator_Options">
+      <options>
+        <li>
+          <weight>10</weight>
+          <only>(0.9,0.9,0.9)</only>
+        </li>
+        <li>
+          <weight>10</weight>
+          <only>(0.33,0.33,0.33)</only>
+        </li>
+        <li>
+          <weight>10</weight>
+          <only>(0.65,0.65,0.65)</only>
+        </li>
+        <li>
+          <weight>6</weight>
+          <min>(0.3,0.3,0.3)</min>
+          <max>(0.5,0.5,0.5)</max>
+        </li>
+      </options>
+    </colorGenerator>
+    <recipeMaker>
+      <unfinishedThingDef>UnfinishedBelt</unfinishedThingDef>
+      <researchPrerequisite>ShieldBelt</researchPrerequisite>
+      <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+      <workSkill>Crafting</workSkill>
+      <effectWorking>Smith</effectWorking>
+      <soundWorking>Recipe_Machining</soundWorking>
+      <recipeUsers>
+        <li>TableMachining</li>
+      </recipeUsers>
+      <useIngredientsForColor>false</useIngredientsForColor>
+      <skillRequirements>
+        <Crafting>6</Crafting>
+      </skillRequirements>
+      <displayPriority>300</displayPriority>
+    </recipeMaker>
+    <allowedArchonexusCount>1</allowedArchonexusCount>
+    <tradeTags>
+      <li>Armor</li>
+    </tradeTags>
+  </ThingDef>
+
+  <!-- Shields-->
+  <!-- ES0-->
+  <ThingDef ParentName="ELS_ShieldBase" ELSClass="shield_apparel">
+    <defName>ELS_Thing_ES0Shield</defName>
+    <label>els_thing_es0shield_label</label>
+    <description>els_thing_es0shield_description</description>
+    <graphicData>
+      <texPath>Things/Shield0</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawRotated>false</drawRotated>
+      <onGroundRandomRotateAngle>0</onGroundRandomRotateAngle>
+    </graphicData>
+    <statBases>
+      <Mass>2</Mass>
+      <WorkToMake>2400</WorkToMake>
+      <EnergyShieldRechargeRate>0.17</EnergyShieldRechargeRate>
+      <EnergyShieldEnergyMax>1</EnergyShieldEnergyMax>
+    </statBases>
+    <costList>
+      <ComponentIndustrial>2</ComponentIndustrial>
+      <Steel>50</Steel>
+      <Plasteel>10</Plasteel>
+    </costList>
+    <comps>
+      <li Class="RimElShrine.Apparels.ApparelShield.CompProperties_ApparelShield">
+        <blocksRangedWeapons>false</blocksRangedWeapons>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <!-- ES1-->
+  <ThingDef ParentName="ELS_ShieldBase" ELSClass="shield_apparel">
+    <defName>ELS_Thing_ES1Shield</defName>
+    <label>els_thing_es1shield_label</label>
+    <description>els_thing_es1shield_description</description>
+    <graphicData>
+      <texPath>Things/Shield1</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawRotated>false</drawRotated>
+      <onGroundRandomRotateAngle>0</onGroundRandomRotateAngle>
+    </graphicData>
+    <statBases>
+      <Mass>1</Mass>
+      <WorkToMake>4200</WorkToMake>
+      <EnergyShieldRechargeRate>0.2</EnergyShieldRechargeRate>
+      <EnergyShieldEnergyMax>1.2</EnergyShieldEnergyMax>
+    </statBases>
+    <costList>
+      <ComponentSpacer>1</ComponentSpacer>
+      <ComponentIndustrial>4</ComponentIndustrial>
+      <Steel>20</Steel>
+      <Plasteel>20</Plasteel>
+    </costList>
+    <recipeMaker>
+      <researchPrerequisite>ELS_ResearchProject_ES1Shield</researchPrerequisite>
+      <skillRequirements>
+        <Crafting>7</Crafting>
+      </skillRequirements>
+    </recipeMaker>
+    <comps>
+      <li Class="RimElShrine.Apparels.ApparelShield.CompProperties_ApparelShield">
+        <blocksRangedWeapons>false</blocksRangedWeapons>
+        <currentIndexInfo>
+          <absorbEMP>true</absorbEMP>
+          <absorbEMPFactor>1</absorbEMPFactor>
+          <absorbEnviromental>true</absorbEnviromental>
+          <absorbEnviromentalFactor>1</absorbEnviromentalFactor>
+        </currentIndexInfo>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <!-- ES2-->
+  <ThingDef ParentName="ELS_ShieldBase" ELSClass="shield_apparel">
+    <defName>ELS_Thing_ES2Shield</defName>
+    <label>els_thing_es2shield_label</label>
+    <description>els_thing_es2shield_description</description>
+    <graphicData>
+      <texPath>Things/Shield2</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawRotated>false</drawRotated>
+      <onGroundRandomRotateAngle>0</onGroundRandomRotateAngle>
+    </graphicData>
+    <equippedStatOffsets>
+      <ShootingAccuracyPawn>6</ShootingAccuracyPawn>
+      <AimingDelayFactor>-0.1</AimingDelayFactor>
+      <MortarMissRadiusFactor>-0.5</MortarMissRadiusFactor>
+      <VacuumResistance MayRequire="Ludeon.RimWorld.Odyssey">1</VacuumResistance>
+    </equippedStatOffsets>
+    <statBases>
+      <Mass>2.5</Mass>
+      <WorkToMake>6000</WorkToMake>
+      <EnergyShieldRechargeRate>0.25</EnergyShieldRechargeRate>
+      <EnergyShieldEnergyMax>1.7</EnergyShieldEnergyMax>
+    </statBases>
+    <costList>
+      <ComponentIndustrial>8</ComponentIndustrial>
+      <Steel>60</Steel>
+      <Plasteel>50</Plasteel>
+    </costList>
+    <recipeMaker>
+      <researchPrerequisite>ELS_ResearchProject_ES2Shield</researchPrerequisite>
+      <recipeUsers Inherit="False">
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <skillRequirements>
+        <Crafting>8</Crafting>
+      </skillRequirements>
+    </recipeMaker>
+    <comps>
+      <li Class="RimElShrine.Apparels.ApparelShield.CompProperties_ApparelShield">
+        <blocksRangedWeapons>false</blocksRangedWeapons>
+        <currentIndexInfo>
+          <absorbEMP>true</absorbEMP>
+          <absorbEMPFactor>0.4</absorbEMPFactor>
+          <absorbEnviromental>true</absorbEnviromental>
+          <absorbEnviromentalFactor>0.3</absorbEnviromentalFactor>
+          <absorbMelee>true</absorbMelee>
+        </currentIndexInfo>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <!-- ES3-->
+  <ThingDef ParentName="ELS_ShieldBase" ELSClass="shield_apparel">
+    <defName>ELS_Thing_ES3Shield</defName>
+    <label>els_thing_es3shield_label</label>
+    <description>els_thing_es3shield_description</description>
+    <graphicData>
+      <texPath>Things/Shield3</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawRotated>false</drawRotated>
+      <onGroundRandomRotateAngle>0</onGroundRandomRotateAngle>
+    </graphicData>
+    <equippedStatOffsets>
+      <ShootingAccuracyPawn>10</ShootingAccuracyPawn>
+      <AimingDelayFactor>-0.3</AimingDelayFactor>
+      <MortarMissRadiusFactor>-0.65</MortarMissRadiusFactor>
+      <VacuumResistance MayRequire="Ludeon.RimWorld.Odyssey">1</VacuumResistance>
+    </equippedStatOffsets>
+    <statBases>
+      <Mass>1.5</Mass>
+      <WorkToMake>9000</WorkToMake>
+      <EnergyShieldRechargeRate>0.4</EnergyShieldRechargeRate>
+      <EnergyShieldEnergyMax>3</EnergyShieldEnergyMax>
+    </statBases>
+    <costList>
+      <ComponentSpacer>2</ComponentSpacer>
+      <ComponentIndustrial>10</ComponentIndustrial>
+      <Hyperweave>20</Hyperweave>
+      <Plasteel>80</Plasteel>
+    </costList>
+    <recipeMaker>
+      <researchPrerequisite>ELS_ResearchProject_ES3Shield</researchPrerequisite>
+      <recipeUsers Inherit="False">
+        <li>FabricationBench</li>
+      </recipeUsers>
+      <skillRequirements>
+        <Crafting>10</Crafting>
+      </skillRequirements>
+    </recipeMaker>
+    <comps>
+      <li Class="RimElShrine.Apparels.ApparelShield.CompProperties_ApparelShield">
+        <blocksRangedWeapons>false</blocksRangedWeapons>
+        <currentIndexInfo>
+          <absorbEMP>true</absorbEMP>
+          <absorbEMPFactor>0.1</absorbEMPFactor>
+          <absorbEnviromental>true</absorbEnviromental>
+          <absorbEnviromentalFactor>0.2</absorbEnviromentalFactor>
+          <absorbMelee>true</absorbMelee>
+          <absorbMeleeFactor>0.2</absorbMeleeFactor>
+          <useBloodTransfer>true</useBloodTransfer>
+          <bloodTransferMount>0.1</bloodTransferMount>
+          <energyPerBlood>15</energyPerBlood>
+        </currentIndexInfo>
+      </li>
+    </comps>
+  </ThingDef>
+</Defs>

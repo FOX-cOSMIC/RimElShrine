@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <ELS_Recipe_Make_MechSerumHealer.label>Make Healer Mech Serum</ELS_Recipe_Make_MechSerumHealer.label>
+    <ELS_Recipe_Make_MechSerumHealer.description>Use an empty mechanite serum syringe to make a Healer Mech Serum.</ELS_Recipe_Make_MechSerumHealer.description>
+    <ELS_Recipe_Make_MechSerumHealer.jobString>Making Healer Mech Serum</ELS_Recipe_Make_MechSerumHealer.jobString>
+    <ELS_Recipe_Make_MechSerumResurrector.label>Make Resurrector Mech Serum</ELS_Recipe_Make_MechSerumResurrector.label>
+    <ELS_Recipe_Make_MechSerumResurrector.description>Use an empty mechanite serum syringe to make a Resurrector Mech Serum.</ELS_Recipe_Make_MechSerumResurrector.description>
+    <ELS_Recipe_Make_MechSerumResurrector.jobString>Making Resurrector Mech Serum</ELS_Recipe_Make_MechSerumResurrector.jobString>
+</LanguageData>

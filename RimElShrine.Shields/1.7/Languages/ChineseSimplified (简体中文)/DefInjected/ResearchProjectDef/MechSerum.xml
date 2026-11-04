@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- ZH-->
+  <!-- ELS_ResearchProject_BasicMechSerumProduction -->
+  <ELS_ResearchProject_BasicMechSerumProduction.label>基础机械液生产</ELS_ResearchProject_BasicMechSerumProduction.label>
+  <ELS_ResearchProject_BasicMechSerumProduction.description>解锁空白注射器的制造，并获得通过空白注射器制作治愈机械液和有限再生注射器的配方，该技术是高级机械液生产技术的前置科技。</ELS_ResearchProject_BasicMechSerumProduction.description>
+  <!-- ELS_ResearchProject_AdvancedMechSerumProduction -->
+  <ELS_ResearchProject_AdvancedMechSerumProduction.label>高级机械液生产</ELS_ResearchProject_AdvancedMechSerumProduction.label>
+  <ELS_ResearchProject_AdvancedMechSerumProduction.description>解锁空白注射器的更高级编程技术，从而制造复活机械液和无限再生注射器。</ELS_ResearchProject_AdvancedMechSerumProduction.description>
+</LanguageData>

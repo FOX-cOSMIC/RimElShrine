@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <!-- EN-->
+    <!-- LimbsRegen-->
+    <RegenPartNoticeLabel>Regenerating</RegenPartNoticeLabel>
+    <RegenQuick>Fast Regen</RegenQuick>
+    <CannotRegenQuick>Disable Fast</CannotRegenQuick>
+    <PermanentRegenBuffLabel>Permanent</PermanentRegenBuffLabel>
+    <LastRegenCountLabel>Remaining</LastRegenCountLabel>
+    <RegenQuickTip>Note: Fast regeneration may cause additional blood loss symptoms.</RegenQuickTip>
+    <CannotRegenQuickTip>Fast regeneration is disabled due to current severe blood loss symptoms.</CannotRegenQuickTip>
+    <!-- LimbsRegenInjectors-->
+    <LimbsRegenInjector_DisabledReason_EffectExisted>Regeneration effect already active</LimbsRegenInjector_DisabledReason_EffectExisted>
+    <LimbsRegenInjector_DisabledReason_EffectNotExisted>No regeneration effect active</LimbsRegenInjector_DisabledReason_EffectNotExisted>
+    <LimbsRegenInjector_ApplyRegenEffectMsg>{0_nameDef} gained limb regeneration effect.</LimbsRegenInjector_ApplyRegenEffectMsg>
+    <LimbsRegenInjector_ClearRegenEffectMsg>{0_nameDef} lost limb regeneration effect.</LimbsRegenInjector_ClearRegenEffectMsg>
+    
+    <!-- LimbsRegen -->
+    <!-- Common Catalog Settings -->
+    <MechserumSetting_UseMechserums>Enable Mechserums</MechserumSetting_UseMechserums>
+    <MechserumSetting_UseMechserums_Tooltip>Configure whether to load this mod's mechserum production content\n\nChanging this setting requires restarting the game</MechserumSetting_UseMechserums_Tooltip>
+    <Mechserums>Regeneration Mechserum</Mechserums>
+    <MechserumSetting_MechserumsTitle_Tooltip>Regeneration Mechserum related settings</MechserumSetting_MechserumsTitle_Tooltip>
+    <MechserumSetting_LimbsRegenSecondsPerHealth>Base regen time: {0} sec/health</MechserumSetting_LimbsRegenSecondsPerHealth>
+    <MechserumSetting_LimbsRegenSecondsPerHealth_Tooltip>This value controls the base limb regeneration time (seconds) required per health point</MechserumSetting_LimbsRegenSecondsPerHealth_Tooltip>
+    <MechserumSetting_QuickRegenFactor>Fast regen multiplier: {0}</MechserumSetting_QuickRegenFactor>
+    <MechserumSetting_QuickRegenFactor_Tooltip>This value controls the speed multiplier for fast regeneration mode compared to normal regeneration speed</MechserumSetting_QuickRegenFactor_Tooltip>
+    <MechserumSetting_QuickRegenBloodLossPercentPerHealth>Fast regen blood loss: {0}/health</MechserumSetting_QuickRegenBloodLossPercentPerHealth>
+    <MechserumSetting_QuickRegenBloodLossPercentPerHealth_Tooltip>This value controls the blood loss symptom percentage caused per 1 health point restored in the corresponding body part during fast regeneration</MechserumSetting_QuickRegenBloodLossPercentPerHealth_Tooltip>
+    <MechserumSetting_QuickRegenBloodLossMax>Max blood loss: {0}</MechserumSetting_QuickRegenBloodLossMax>
+    <MechserumSetting_QuickRegenBloodLossMax_Tooltip>This value controls the maximum blood loss symptom severity that can be caused by fast regeneration\n\nWarning: Values close to 1 may cause death from blood loss</MechserumSetting_QuickRegenBloodLossMax_Tooltip>
+</LanguageData>

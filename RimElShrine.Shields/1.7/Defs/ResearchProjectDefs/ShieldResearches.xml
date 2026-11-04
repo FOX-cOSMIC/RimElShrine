@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <ResearchProjectDef ELSClass="shield_apparel">
+        <defName>ELS_ResearchProject_ES1Shield</defName>
+        <label>els_researchproject_es1shield_label</label>
+        <description>els_researchproject_es1shield_description</description>
+        <baseCost>1500</baseCost>
+        <techLevel>Spacer</techLevel>
+        <prerequisites>
+            <li>ShieldBelt</li>
+        </prerequisites>
+        <hiddenPrerequisites>
+            <li>ComplexClothing</li>
+        </hiddenPrerequisites>
+        <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+        <researchViewX>12.00</researchViewX>
+        <researchViewY>6</researchViewY>
+    </ResearchProjectDef>
+
+    <ResearchProjectDef ELSClass="shield_apparel">
+        <defName>ELS_ResearchProject_ES2Shield</defName>
+        <label>els_researchproject_es2shield_label</label>
+        <description>els_researchproject_es2shield_description</description>
+        <baseCost>3000</baseCost>
+        <techLevel>Spacer</techLevel>
+        <prerequisites>
+            <li>ELS_ResearchProject_ES1Shield</li>
+            <li>Fabrication</li>
+        </prerequisites>
+        <hiddenPrerequisites>
+            <li>ComplexClothing</li>
+        </hiddenPrerequisites>
+        <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+        <requiredResearchFacilities>
+            <li>MultiAnalyzer</li>
+        </requiredResearchFacilities>
+        <researchViewX>17.00</researchViewX>
+        <researchViewY>6</researchViewY>
+    </ResearchProjectDef>
+
+    <ResearchProjectDef ELSClass="shield_apparel">
+        <defName>ELS_ResearchProject_ES3Shield</defName>
+        <label>els_researchproject_es3shield_label</label>
+        <description>els_researchproject_es3shield_description</description>
+        <baseCost>5000</baseCost>
+        <techLevel>Spacer</techLevel>
+        <prerequisites>
+            <li>ELS_ResearchProject_ES2Shield</li>
+            <li>AdvancedFabrication</li>
+            <li>Bionics</li>
+        </prerequisites>
+        <hiddenPrerequisites>
+            <li>ComplexClothing</li>
+        </hiddenPrerequisites>
+        <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+        <requiredResearchFacilities>
+            <li>MultiAnalyzer</li>
+        </requiredResearchFacilities>
+        <researchViewX>19.00</researchViewX>
+        <researchViewY>6</researchViewY>
+    </ResearchProjectDef>
+
+    <!-- ELS_ResearchProject_ShieldGenerator-->
+    <ResearchProjectDef ELSClass="shield_building">
+        <defName>ELS_ResearchProject_ShieldGenerator</defName>
+        <label>els_researchproject_shieldgenerator_label</label>
+        <description>els_researchproject_shieldgenerator_description</description>
+        <baseCost>3000</baseCost>
+        <techLevel>Spacer</techLevel>
+        <prerequisites>
+            <li>Fabrication</li>
+        </prerequisites>
+        <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+        <requiredResearchFacilities>
+            <li>MultiAnalyzer</li>
+        </requiredResearchFacilities>
+        <researchViewX>17.00</researchViewX>
+        <researchViewY>7</researchViewY>
+    </ResearchProjectDef>
+    <!--ELS_ResearchProject_ShieldNet-->
+    <ResearchProjectDef ELSClass="shield_building, shield_network">
+        <defName>ELS_ResearchProject_ShieldNet</defName>
+        <label>els_researchproject_shieldnet_label</label>
+        <description>els_researchproject_shieldnet_description</description>
+        <baseCost>4000</baseCost>
+        <techLevel>Spacer</techLevel>
+        <prerequisites>
+            <li>ELS_ResearchProject_ShieldGenerator</li>
+        </prerequisites>
+        <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+        <requiredResearchFacilities>
+            <li>MultiAnalyzer</li>
+        </requiredResearchFacilities>
+        <researchViewX>18.00</researchViewX>
+        <researchViewY>7</researchViewY>
+    </ResearchProjectDef>
+</Defs>

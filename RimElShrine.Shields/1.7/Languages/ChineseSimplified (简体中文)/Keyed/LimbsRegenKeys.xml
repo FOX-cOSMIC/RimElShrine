@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <!-- ZH-->
+    <!-- LimbsRegen-->
+    <RegenPartNoticeLabel>正在再生</RegenPartNoticeLabel>
+    <RegenQuick>快速再生</RegenQuick>
+    <CannotRegenQuick>禁用快速</CannotRegenQuick>
+    <PermanentRegenBuffLabel>永久</PermanentRegenBuffLabel>
+    <LastRegenCountLabel>剩余</LastRegenCountLabel>
+    <RegenQuickTip>提示：快速再生过程中可能导致额外的失血症状。</RegenQuickTip>
+    <CannotRegenQuickTip>快速再生因当前严重的失血症状而禁用。</CannotRegenQuickTip>
+    <!-- LimbsRegenInjectors-->
+    <LimbsRegenInjector_DisabledReason_EffectExisted>已有再生效果</LimbsRegenInjector_DisabledReason_EffectExisted>
+    <LimbsRegenInjector_DisabledReason_EffectNotExisted>不存在再生效果</LimbsRegenInjector_DisabledReason_EffectNotExisted>
+    <LimbsRegenInjector_ApplyRegenEffectMsg>{0_nameDef}获得了肢体再生效果。</LimbsRegenInjector_ApplyRegenEffectMsg>
+    <LimbsRegenInjector_ClearRegenEffectMsg>{0_nameDef}失去了肢体再生效果。</LimbsRegenInjector_ClearRegenEffectMsg>
+    
+    <!-- LimbsRegen -->
+    <!-- Common Catalog Settings -->
+    <MechserumSetting_UseMechserums>启用机械液</MechserumSetting_UseMechserums>
+    <MechserumSetting_UseMechserums_Tooltip>配置是否加载本Mod机械液生产内容\n\n修改该项设置需要重新启动游戏</MechserumSetting_UseMechserums_Tooltip>
+    <Mechserums>再生机械液</Mechserums>
+    <MechserumSetting_MechserumsTitle_Tooltip>再生机械液相关设置</MechserumSetting_MechserumsTitle_Tooltip>
+    <MechserumSetting_LimbsRegenSecondsPerHealth>基础再生时长: {0}秒/生命值</MechserumSetting_LimbsRegenSecondsPerHealth>
+    <MechserumSetting_LimbsRegenSecondsPerHealth_Tooltip>此数值控制每点生命值所需的基础肢体再生时间（秒）</MechserumSetting_LimbsRegenSecondsPerHealth_Tooltip>
+    <MechserumSetting_QuickRegenFactor>快速再生倍率: {0}</MechserumSetting_QuickRegenFactor>
+    <MechserumSetting_QuickRegenFactor_Tooltip>此数值控制快速再生模式相对于正常再生速度的加速倍数</MechserumSetting_QuickRegenFactor_Tooltip>
+    <MechserumSetting_QuickRegenBloodLossPercentPerHealth>快速再生失血率: {0}/生命值</MechserumSetting_QuickRegenBloodLossPercentPerHealth>
+    <MechserumSetting_QuickRegenBloodLossPercentPerHealth_Tooltip>此数值控制快速再生时，每恢复对应身体部位1点生命值所导致的失血症状百分比</MechserumSetting_QuickRegenBloodLossPercentPerHealth_Tooltip>
+    <MechserumSetting_QuickRegenBloodLossMax>最大失血程度: {0}</MechserumSetting_QuickRegenBloodLossMax>
+    <MechserumSetting_QuickRegenBloodLossMax_Tooltip>此数值控制快速再生时可造成的最大失血症状严重程度\n\n警告: 设为接近1的值可能导致角色因失血而死亡</MechserumSetting_QuickRegenBloodLossMax_Tooltip>
+</LanguageData>

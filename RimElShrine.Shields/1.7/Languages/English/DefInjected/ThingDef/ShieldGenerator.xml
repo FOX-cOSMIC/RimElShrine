@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <!-- ZH-->
+    <!-- ELS_Thing_Building_ShieldGenerator-->
+    <ELS_Thing_Building_ShieldNet_Shield.label>Kinetic Shield Generator</ELS_Thing_Building_ShieldNet_Shield.label>
+    <ELS_Thing_Building_ShieldNet_Shield.description>This shield utilizes a standard shield core, precisely controlled to create a highly configurable generator capable of intercepting various projectiles.\n\n\nAs a kinetic shield, energy loss is calculated based on projectile momentum rather than damage. The shield field does not shut down when hit by EMP attacks.</ELS_Thing_Building_ShieldNet_Shield.description>
+    <!-- ELS_Thing_Building_ShieldGeneratorControl-->
+    <ELS_Thing_Building_ShieldNet_Terminal.label>Shield Control Terminal</ELS_Thing_Building_ShieldNet_Terminal.label>
+    <ELS_Thing_Building_ShieldNet_Terminal.description>This terminal scans the connected power grid and uniformly regulates the status of all shield network components.\n\n\nNote: Any terminal in the network can perform this control function; multiple terminals within a single network provide no additional benefit.</ELS_Thing_Building_ShieldNet_Terminal.description>
+    <!-- ELS_Thing_Building_ShieldGeneratorUpgrader-->
+    <ELS_Thing_Building_ShieldNet_ServerUnit.label>Shield Server Unit</ELS_Thing_Building_ShieldNet_ServerUnit.label>
+    <ELS_Thing_Building_ShieldNet_ServerUnit.description>This module connects to the shield network via the power grid. Its server matrix is distributed by the Control Terminal to all shield generators in the network, allowing for customizable upgrades.\n\n\nNote: This module cannot allocate its resources to shield generators if no Control Terminal exists in the network.</ELS_Thing_Building_ShieldNet_ServerUnit.description>
+</LanguageData>

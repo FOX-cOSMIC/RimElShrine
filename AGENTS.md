@@ -10,7 +10,7 @@ The repo's other mods, `RimElShrine.ShuttleFuel` and `RimElShrine.MoveMonolith`,
 
 ## Constraints
 
-- Target RimWorld 1.7.4990 rev1069, Steam unstable branch.
+- Target RimWorld 1.7.4998 rev1299, Steam unstable branch (ADR 0002).
 - Leave `RimElShrine.Shields/1.6/` and its assemblies unchanged. Build 1.7 into `RimElShrine.Shields/1.7/`, and add a `<v1.7>` block to `RimElShrine.Shields/LoadFolders.xml`.
 - Give the port a new `packageId` in `About.xml`. Lucas has the original (`FoxMo.RimElShrine.Shields`) subscribed, and a shared id collides with it.
 - Keep Def names, XML class names, and settings keys from 1.6. Saves and translations key on them. Record each change 1.7 forces.
@@ -23,15 +23,16 @@ The repo's other mods, `RimElShrine.ShuttleFuel` and `RimElShrine.MoveMonolith`,
 
 ## Build
 
-- Not set up for 1.7 yet. `Source/RimElShrine/RimElShrine.csproj` targets net472 with Krafs.Rimworld.Ref 1.6.4871 and Lib.Harmony.Ref 2.4.2. Update both for 1.7.
-- `Source/RimElShrine.Shields/RimElShrine.Shields.csproj` writes to `RimElShrine.Shields/1.6/Assemblies/`. Point the 1.7 build at `1.7/Assemblies/`.
+- 1.7 build (works, 0 errors): `dotnet build Source/RimElShrine.Shields/RimElShrine.Shields.csproj -c Release -p:RimWorldVersion=1.7`. It targets net10.0 with Krafs.Rimworld.Ref 1.7.4995-unstable and Lib.Harmony.Ref 2.4.2 (ADRs 0006, 0007). Output goes to `RimElShrine.Shields/1.7/Assemblies/`.
+- 1.6 build: the same projects with the default `RimWorldVersion` (1.6). It targets net472 and writes to `RimElShrine.Shields/1.6/`. Do not run it while the port is in progress, because it overwrites the 1.6 assemblies.
+- The Combat Extended counterpart does not compile for 1.7 yet. The committed 1.6 `CombatExtended.dll` needs `UnityEngine.CoreModule`, which the 1.7 references do not provide.
 - Write decompiles and run logs to `.artifacts/`, and list `.artifacts/` in `.gitignore`.
 - Record the build command here once it works.
 
 ## Verification
 
 - Compiling is not playability. A gameplay change is proven only by a run in RimWorld 1.7 that exercises it.
-- No test suite or runtime harness exists yet. The grill decides how a change is proven. Until then, report the change as unproven.
+- Runtime validation runs live in a separate T3 Code project (ADR 0005). No such project is in the T3 Code project list yet. Until one runs, report each change as unproven.
 - Reproduce a bug red in a run before fixing it: the run fails on the bug and passes on the fix.
 - Check every Harmony attribute, patched method, and reflected name against the installed 1.7 code.
 - Fix the cause of each error. A disabled patch or a hidden error is not a fix. Report failures and untested cases as they are.

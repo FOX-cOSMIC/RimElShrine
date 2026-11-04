@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <!-- ZH-->
+    <ELS_Thing_UnfinishedInjector.label>Unfinished Injector</ELS_Thing_UnfinishedInjector.label>
+    <ELS_Thing_UnfinishedInjector.description>An unfinished injector.</ELS_Thing_UnfinishedInjector.description>
+
+    <ELS_Thing_EmptyInjector.label>Empty Injector</ELS_Thing_EmptyInjector.label>
+    <ELS_Thing_EmptyInjector.description>An empty injector containing a cluster of unprogrammed nanomachines. It can be used to produce various mechanite serum injectors.</ELS_Thing_EmptyInjector.description>
+
+    <ELS_Thing_LimbsRegenCleaner.label>Regeneration Cleanser Injector</ELS_Thing_LimbsRegenCleaner.label>
+    <ELS_Thing_LimbsRegenCleaner.description>The nanomachines inside this injector are similar to those in a Regen Injector, but they quickly identify and decompose the nanomachines from Regen Injectors, removing the limb regeneration effect from the host.</ELS_Thing_LimbsRegenCleaner.description>
+    <ELS_Thing_LimbsRegenCleaner.comps.CompUsable.useLabel>Use {0_label}</ELS_Thing_LimbsRegenCleaner.comps.CompUsable.useLabel>
+    <!-- LimbsRegenInjectors-->
+    <ELS_Thing_LimbsRegenInjectorLimited.label>Limited Regenerator Injector</ELS_Thing_LimbsRegenInjectorLimited.label>
+    <ELS_Thing_LimbsRegenInjectorLimited.description>This injector delivers a cluster of nanomachines influenced by a distant world. When the recipient has permanent limb damage, the nanites will attempt to activate cellular repair functions, restoring damaged or abnormal organs.\n\nThis model contains consumable nanomachines, which will be depleted after a certain number of regenerations.</ELS_Thing_LimbsRegenInjectorLimited.description>
+    <ELS_Thing_LimbsRegenInjectorLimited.comps.CompUsable.useLabel>Use {0_label}</ELS_Thing_LimbsRegenInjectorLimited.comps.CompUsable.useLabel>
+
+    <ELS_Thing_LimbsRegenInjectorForever.label>Permanent Regenerator Injector</ELS_Thing_LimbsRegenInjectorForever.label>
+    <ELS_Thing_LimbsRegenInjectorForever.description>This injector delivers a cluster of nanomachines influenced by a distant world. When the recipient has permanent limb damage, the nanites will attempt to activate cellular repair functions, restoring damaged or abnormal organs.\n\nThe nanomachine cluster in this model replenishes itself via additional cellular programming, making the regeneration effect permanent.</ELS_Thing_LimbsRegenInjectorForever.description>
+    <ELS_Thing_LimbsRegenInjectorForever.comps.CompUsable.useLabel>Use {0_label}</ELS_Thing_LimbsRegenInjectorForever.comps.CompUsable.useLabel>
+
+    <ELS_Thing_LimbsRegenInjectorFastLimited.label>Limited Regenerator Injector (Fast)</ELS_Thing_LimbsRegenInjectorFastLimited.label>
+    <ELS_Thing_LimbsRegenInjectorFastLimited.description>This injector delivers a cluster of nanomachines influenced by a distant world. When the recipient has permanent limb damage, the nanites will attempt to activate cellular repair functions, restoring damaged or abnormal organs.\n\nThis model's regeneration is more aggressive, attempting to rapidly decompose and reconstruct the recipient's blood cells for faster organ regrowth, which may cause some blood loss.\n\nThis model contains consumable nanomachines, which will be depleted after a certain number of regenerations.</ELS_Thing_LimbsRegenInjectorFastLimited.description>
+    <ELS_Thing_LimbsRegenInjectorFastLimited.comps.CompUsable.useLabel>Use {0_label}</ELS_Thing_LimbsRegenInjectorFastLimited.comps.CompUsable.useLabel>
+    
+    <ELS_Thing_LimbsRegenInjectorFastForever.label>Permanent Regenerator Injector (Fast)</ELS_Thing_LimbsRegenInjectorFastForever.label>
+    <ELS_Thing_LimbsRegenInjectorFastForever.description>This injector delivers a cluster of nanomachines influenced by a distant world. When the recipient has permanent limb damage, the nanites will attempt to activate cellular repair functions, restoring damaged or abnormal organs.\n\nThis model's regeneration is more aggressive, attempting to rapidly decompose and reconstruct the recipient's blood cells for faster organ regrowth, which may cause some blood loss.\n\nThe nanomachine cluster in this model replenishes itself via additional cellular programming, making the regeneration effect permanent.</ELS_Thing_LimbsRegenInjectorFastForever.description>
+    <ELS_Thing_LimbsRegenInjectorFastForever.comps.CompUsable.useLabel>Use {0_label}</ELS_Thing_LimbsRegenInjectorFastForever.comps.CompUsable.useLabel>
+</LanguageData>

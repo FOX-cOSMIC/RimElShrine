@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <!-- ZH-->
+    <!-- Commands-->
+    <!-- Basic-->
+    <ShieldNet_CompIsShutDown>This component is disabled</ShieldNet_CompIsShutDown>
+    <ShieldNet_NetIsInvalid>Current shield network is invalid</ShieldNet_NetIsInvalid>
+    <ShieldNet_ContainedShieldNetComps>Shield Network: {0} shields, {1} server units, {2} terminals, {3} disabled</ShieldNet_ContainedShieldNetComps>
+    <ShieldNet_ResourcesSummary>Shield Network Resources: {0} allocated, {1} total</ShieldNet_ResourcesSummary>
+    <ShieldNet_ServerUnit_ResourcesSummary>Component Resources: {0} allocated, {1} total</ShieldNet_ServerUnit_ResourcesSummary>
+    <ShieldNet_ResourcesDetails>Resource Allocation Details</ShieldNet_ResourcesDetails>
+    <ShieldDisabled>Shield disabled</ShieldDisabled>
+    <MinRadius>Min radius: {1}{0} tiles</MinRadius>
+    <MaxRadius>Max radius: {1}{0} tiles</MaxRadius>
+    <RechargeSeconds>Recharge time: {1}{0} seconds</RechargeSeconds>
+    <RechargeRate>Recharge rate: {1}{0}%</RechargeRate>
+    <MaxEnergy>Max energy: {1}{0}</MaxEnergy>
+    <ChargeSpeed>Charge speed: {1}{0}%</ChargeSpeed>
+
+    <!-- ProjectileInterceptor-->
+    <ShieldNet_Command_IFFOn_Label>IFF System</ShieldNet_Command_IFFOn_Label>
+    <ShieldNet_Command_IFFOn_Desc>Only intercept hostile projectiles</ShieldNet_Command_IFFOn_Desc>
+    <ShieldNet_Command_InterceptIn_Label>Inbound Interception</ShieldNet_Command_InterceptIn_Label>
+    <ShieldNet_Command_InterceptIn_Desc>Intercept projectiles fired from outside to inside the shield</ShieldNet_Command_InterceptIn_Desc>
+    <ShieldNet_Command_AllowOut_Label>Outbound Recognition</ShieldNet_Command_AllowOut_Label>
+    <ShieldNet_Command_AllowOut_Desc>Do not intercept projectiles fired from inside to outside the shield</ShieldNet_Command_AllowOut_Desc>
+    <ShieldNet_Command_InterceptOverhead_Label>Arcing Interception</ShieldNet_Command_InterceptOverhead_Label>
+    <ShieldNet_Command_InterceptOverhead_Desc>Intercept hostile arcing projectiles, such as mortar shells</ShieldNet_Command_InterceptOverhead_Desc>
+    <ShieldNet_Command_InterceptGround_Label>Direct Interception</ShieldNet_Command_InterceptGround_Label>
+    <ShieldNet_Command_InterceptGround_Desc>Intercept hostile direct-fire projectiles, such as bullets</ShieldNet_Command_InterceptGround_Desc>
+    <ShieldNet_Command_IncreaseRadius_Label>Increase Radius</ShieldNet_Command_IncreaseRadius_Label>
+    <ShieldNet_Command_IncreaseRadius_Desc>Increase shield radius by 1 tile</ShieldNet_Command_IncreaseRadius_Desc>
+    <ShieldNet_Command_IncreaseRadius_DisabledReason>Already at maximum radius</ShieldNet_Command_IncreaseRadius_DisabledReason>
+    <ShieldNet_Command_DecreaseRadius_Label>Decrease Radius</ShieldNet_Command_DecreaseRadius_Label>
+    <ShieldNet_Command_DecreaseRadius_Desc>Decrease shield radius by 1 tile</ShieldNet_Command_DecreaseRadius_Desc>
+    <ShieldNet_Command_DecreaseRadius_DisabledReason>Already at minimum radius</ShieldNet_Command_DecreaseRadius_DisabledReason>
+    <ShieldNet_Command_DestroyProj_Label>Destroy Projectiles</ShieldNet_Command_DestroyProj_Label>
+    <ShieldNet_Command_DestroyProj_Desc>Directly destroy intercepted projectiles, preventing explosive projectiles from creating area effects, but consumes more shield energy</ShieldNet_Command_DestroyProj_Desc>
+    <!-- Terminal & ServerUnit-->
+    <ShieldNet_Command_ResetAllocatedResouces_Label>Reset Resource Allocation</ShieldNet_Command_ResetAllocatedResouces_Label>
+    <ShieldNet_Command_ResetAllocatedResouces_Desc>Release all allocated shield network resources in this server unit</ShieldNet_Command_ResetAllocatedResouces_Desc>
+    <ShieldNet_Command_ResetAllocatedResouces_Desc1>Release all allocated shield network resources in the current network</ShieldNet_Command_ResetAllocatedResouces_Desc1>
+    <ShieldNet_Command_ResetAllocatedResouces_DisabledReason>No shield network resources allocated in this module</ShieldNet_Command_ResetAllocatedResouces_DisabledReason>
+    <ShieldNet_Command_ResetAllocatedResouces_DisabledReason1>No shield network resources allocated in current network</ShieldNet_Command_ResetAllocatedResouces_DisabledReason1>
+    <ShieldNet_Command_AllocateResouces_Label>Allocate Resources</ShieldNet_Command_AllocateResouces_Label>
+    <ShieldNet_Command_AllocateResouces_Desc>Open resource allocation panel for the shield network controlled by this terminal</ShieldNet_Command_AllocateResouces_Desc>
+    <!-- Allocate resources & Upgrades-->
+    <ShieldNet_AllocateWindow_Title>Configuration Panel</ShieldNet_AllocateWindow_Title>
+    <ShieldNet_AllocateWindow_Apply>Apply</ShieldNet_AllocateWindow_Apply>
+    <ShieldNet_AllocateWindow_Reposition>Reset</ShieldNet_AllocateWindow_Reposition>
+    <ShieldNet_AllocateWindow_Cancel>Cancel</ShieldNet_AllocateWindow_Cancel>
+</LanguageData>

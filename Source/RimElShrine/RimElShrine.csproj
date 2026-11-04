@@ -1,15 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <RimWorldVersion Condition="'$(RimWorldVersion)' == ''">1.6</RimWorldVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RimWorldVersion)' == '1.7'">
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RimWorldVersion)' != '1.7'">
     <TargetFramework>net472</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
     <OutputType>Library</OutputType>
     <RootNamespace>RimElShrine</RootNamespace>
     <AssemblyName>RimElShrine</AssemblyName>
     <Deterministic>true</Deterministic>
     <LangVersion>13</LangVersion>
     <Nullable>enable</Nullable>
-	<OutputPath>bin\</OutputPath>
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	<DebugType>none</DebugType>
+    <OutputPath>bin\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <DebugType>none</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Load\**" />
@@ -17,12 +25,13 @@
     <None Remove="Load\**" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(RimWorldVersion)' != '1.7'">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4871" />
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4871" Condition="'$(RimWorldVersion)' == '1.6'" />
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="1.7.4995-unstable" Condition="'$(RimWorldVersion)' == '1.7'" />
     <PackageReference Include="Lib.Harmony.Ref" Version="2.4.2" />
   </ItemGroup>
 </Project>

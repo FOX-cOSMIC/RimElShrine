@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- ZH-->
+  <!-- ELS_ResearchProject_BasicMechSerumProduction -->
+  <ELS_ResearchProject_BasicMechSerumProduction.label>Basic Mech Serum Production</ELS_ResearchProject_BasicMechSerumProduction.label>
+  <ELS_ResearchProject_BasicMechSerumProduction.description>Unlocks the production of empty syringes and recipes to make Healer Mech Serums and Limited Resurrector Mech Serums using them. This technology is a prerequisite for Advanced Mech Serum Production.</ELS_ResearchProject_BasicMechSerumProduction.description>
+  <!-- ELS_ResearchProject_AdvancedMechSerumProduction -->
+  <ELS_ResearchProject_AdvancedMechSerumProduction.label>Advanced Mech Serum Production</ELS_ResearchProject_AdvancedMechSerumProduction.label>
+  <ELS_ResearchProject_AdvancedMechSerumProduction.description>Unlocks advanced programming of empty syringes to produce Resurrector Mech Serums and Unlimited Resurrector Mech Serums.</ELS_ResearchProject_AdvancedMechSerumProduction.description>
+</LanguageData>

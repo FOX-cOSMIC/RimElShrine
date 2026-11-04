@@ -1,15 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <RimWorldVersion Condition="'$(RimWorldVersion)' == ''">1.6</RimWorldVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RimWorldVersion)' == '1.7'">
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(RimWorldVersion)' != '1.7'">
     <TargetFramework>net472</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
     <OutputType>Library</OutputType>
     <RootNamespace>RimElShrine</RootNamespace>
     <AssemblyName>RimElShrine.Shields</AssemblyName>
     <Deterministic>true</Deterministic>
     <LangVersion>13</LangVersion>
     <Nullable>enable</Nullable>
-	<OutputPath>..\..\RimElShrine.Shields\1.6\Assemblies\</OutputPath>
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	<DebugType>none</DebugType>
+    <OutputPath>..\..\RimElShrine.Shields\$(RimWorldVersion)\Assemblies\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <DebugType>none</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>embedded</DebugType>
@@ -18,7 +27,7 @@
     <DebugType>embedded</DebugType>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(RimWorldVersion)' != '1.7'">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 

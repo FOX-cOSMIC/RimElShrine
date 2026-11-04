@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- ZH-->
+  <!-- ELS_ResearchProject_ES1Shield -->
+  <ELS_ResearchProject_ES1Shield.label>Improved Universal Shield</ELS_ResearchProject_ES1Shield.label>
+  <ELS_ResearchProject_ES1Shield.description>Research an upgraded model of the universal shield. Reinforced component structure provides limited EMP protection, while optimized kinetic matrix algorithms integrate environmental damage resistance.</ELS_ResearchProject_ES1Shield.description>
+  <!-- ELS_ResearchProject_ES2Shield -->
+  <ELS_ResearchProject_ES2Shield.label>Advanced Shield Analysis</ELS_ResearchProject_ES2Shield.label>
+  <ELS_ResearchProject_ES2Shield.description>This shield technology was reverse-engineered from dreams of a distant world, where it's a popular piece of personal tactical equipment. It features vastly improved EMP resistance, integrated targeting assist, and treats environmental damage (fire, tornadoes) like a mere drizzle outside a window. The only downside is increased weight.</ELS_ResearchProject_ES2Shield.description>
+  <!-- ELS_ResearchProject_ES3Shield -->
+  <ELS_ResearchProject_ES3Shield.label>Experimental Bio-Technical Shield</ELS_ResearchProject_ES3Shield.label>
+  <ELS_ResearchProject_ES3Shield.description>Our researchers found a way to convert blood into temporary energy, boosting shield strength and reducing electronic components for higher EMP resistance. Non-traumatic blood loss is preferable to the trauma of a failed shield.</ELS_ResearchProject_ES3Shield.description>
+  <!-- ELS_ResearchProject_ShieldGenerator-->
+  <ELS_ResearchProject_ShieldGenerator.label>Kinetic Shield Generator</ELS_ResearchProject_ShieldGenerator.label>
+  <ELS_ResearchProject_ShieldGenerator.description>Analyze the universal shield core to achieve precise control and construct a configurable, high-tech kinetic shield generator.</ELS_ResearchProject_ShieldGenerator.description>
+  <!-- ELS_ResearchProject_ShieldNet-->
+  <ELS_ResearchProject_ShieldNet.label>Shield Network</ELS_ResearchProject_ShieldNet.label>
+  <ELS_ResearchProject_ShieldNet.description>Research advanced expansion tech and controllers for kinetic shield generators to create a network, enabling upgrades, cluster control, and rapid recharge.</ELS_ResearchProject_ShieldNet.description>
+</LanguageData>

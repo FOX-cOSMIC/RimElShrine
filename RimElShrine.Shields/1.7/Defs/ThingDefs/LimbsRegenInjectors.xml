@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <ThingDef ParentName="MechSerumBase" Name="ELSInjectorBase" Abstract="True">
+        <stackLimit>10</stackLimit>
+        <statBases>
+            <WorkToMake>1200</WorkToMake>
+        </statBases>
+        <thingCategories>
+            <li>Drugs</li>
+        </thingCategories>
+        <tradeability>Sellable</tradeability>
+        <comps>
+            <li Class="CompProperties_Usable">
+                <useJob>UseItem</useJob>
+                <useLabel>Use This</useLabel>
+                <useDuration>600</useDuration>
+                <showUseGizmo>true</showUseGizmo>
+            </li>
+            <li Class="CompProperties_UseEffectPlaySound">
+                <soundOnUsed>MechSerumUsed</soundOnUsed>
+            </li>
+            <li Class="CompProperties_UseEffectDestroySelf" />
+        </comps>
+        <thingSetMakerTags>
+            <li>RewardStandardCore</li>
+        </thingSetMakerTags>
+        <recipeMaker>
+            <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+            <workSkill>Crafting</workSkill>
+            <skillRequirements>
+                <Crafting>10</Crafting>
+                <Medicine>6</Medicine>
+            </skillRequirements>
+            <recipeUsers>
+                <li>DrugLab</li>
+            </recipeUsers>
+            <unfinishedThingDef>ELS_Thing_UnfinishedInjector</unfinishedThingDef>
+            <researchPrerequisite>ELS_ResearchProject_BasicMechSerumProduction</researchPrerequisite>
+        </recipeMaker>
+        <costList>
+            <ELS_Thing_EmptyInjector>1</ELS_Thing_EmptyInjector>
+        </costList>
+    </ThingDef>
+    <!-- UnfinishedInjector-->
+    <ThingDef ParentName="UnfinishedBase" ELSClass="mechserum">
+        <defName>ELS_Thing_UnfinishedInjector</defName>
+        <label>els_thing_unfinishedinjector_label</label>
+        <description>els_thing_unfinishedinjector_desc</description>
+        <statBases>
+            <Flammability>0</Flammability>
+        </statBases>
+        <graphicData>
+            <texPath>Things/UnfinishedInjector</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <stuffCategories Inherit="false" />
+    </ThingDef>
+    <!-- EmptyInjector-->
+    <ThingDef ParentName="ResourceBase" ELSClass="mechserum">
+        <defName>ELS_Thing_EmptyInjector</defName>
+        <label>els_thing_emptyinjector_label</label>
+        <description>els_thing_emptyinjector_desc</description>
+        <statBases>
+            <MaxHitPoints>80</MaxHitPoints>
+            <Mass>0.2</Mass>
+            <DeteriorationRate>2.0</DeteriorationRate>
+            <Flammability>0.5</Flammability>
+            <WorkToMake>6000</WorkToMake>
+        </statBases>
+        <thingCategories>
+            <li>Drugs</li>
+        </thingCategories>
+        <graphicData>
+            <texPath>Things/EmptyInjector</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <techLevel>Ultra</techLevel>
+        <tradeTags>
+            <li>ExoticMisc</li>
+        </tradeTags>
+        <recipeMaker>
+            <workSpeedStat>GeneralLaborSpeed</workSpeedStat>
+            <workSkill>Crafting</workSkill>
+            <effectWorking>Smith</effectWorking>
+            <soundWorking>Recipe_Smith</soundWorking>
+            <skillRequirements>
+                <Crafting>8</Crafting>
+            </skillRequirements>
+            <recipeUsers>
+                <li>FabricationBench</li>
+            </recipeUsers>
+            <unfinishedThingDef>ELS_Thing_UnfinishedInjector</unfinishedThingDef>
+            <researchPrerequisite>ELS_ResearchProject_BasicMechSerumProduction</researchPrerequisite>
+        </recipeMaker>
+        <costList>
+            <Plasteel>30</Plasteel>
+            <ComponentSpacer>2</ComponentSpacer>
+            <ComponentIndustrial>2</ComponentIndustrial>
+        </costList>
+    </ThingDef>
+
+    <RecipeDef ELSClass="mechserum">
+        <defName>ELS_Recipe_Make_MechSerumHealer</defName> 
+        <label>els_recipe_make_mechserumhealer_label</label>
+        <description>els_recipe_make_mechserumhealer_desc</description>
+        <jobString>els_recipe_make_mechserumhealer_job</jobString>
+        <recipeUsers>
+            <li>DrugLab</li>
+        </recipeUsers>
+        <ingredients>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>ELS_Thing_EmptyInjector</li>
+                    </thingDefs>
+                </filter>
+                <count>1</count> 
+            </li>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>ComponentIndustrial</li>
+                    </thingDefs>
+                </filter>
+                <count>5</count> 
+            </li>
+        </ingredients>
+        <products>
+            <MechSerumHealer>1</MechSerumHealer>
+        </products>
+        <workAmount>1200</workAmount>
+        <workSkill>Crafting</workSkill>
+        <skillRequirements>
+            <Crafting>8</Crafting> 
+            <Medicine>6</Medicine>
+        </skillRequirements>
+    </RecipeDef>
+    <RecipeDef ELSClass="mechserum">
+        <defName>ELS_Recipe_Make_MechSerumResurrector</defName> 
+        <label>els_recipe_make_mechserumresurrector_label</label>
+        <description>els_recipe_make_mechserumresurrector_desc</description>
+        <jobString>els_recipe_make_mechserumresurrector_job</jobString>
+        <recipeUsers>
+            <li>DrugLab</li>
+        </recipeUsers>
+        <ingredients>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>ELS_Thing_EmptyInjector</li>
+                    </thingDefs>
+                </filter>
+                <count>1</count> 
+            </li>
+             <li>
+                <filter>
+                    <thingDefs>
+                        <li>MedicineUltratech</li>
+                    </thingDefs>
+                </filter>
+                <count>5</count> 
+            </li>
+            <li>
+                <filter>
+                    <thingDefs>
+                        <li>ComponentSpacer</li>
+                    </thingDefs>
+                </filter>
+                <count>5</count> 
+            </li>
+        </ingredients>
+        <products>
+            <MechSerumResurrector>1</MechSerumResurrector>
+        </products>
+        <workAmount>1200</workAmount>
+        <workSkill>Crafting</workSkill>
+        <skillRequirements>
+            <Crafting>12</Crafting> 
+            <Medicine>8</Medicine>
+        </skillRequirements>
+    </RecipeDef>
+
+    <ThingDef ParentName="ELSInjectorBase" ELSClass="mechserum">
+        <defName>ELS_Thing_LimbsRegenCleaner</defName>
+        <label>els_thing_limbsregencleaner</label>
+        <description/>
+        <graphicData>
+            <texPath>Things/LimbsRegenCleaner</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <comps>
+            <li Class="RimElShrine.Items.LimbsRegenInjector.CompProperties_LimbsRegenInjector">
+                <isCleaner>true</isCleaner>
+            </li>
+        </comps>
+    </ThingDef>
+
+    <ThingDef ParentName="ELSInjectorBase" ELSClass="mechserum">
+        <defName>ELS_Thing_LimbsRegenInjectorLimited</defName>
+        <label>els_thing_limbsregeninjectorlimited</label>
+        <description/>
+        <graphicData>
+            <texPath>Things/InjectorLimited</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <comps>
+            <li Class="RimElShrine.Items.LimbsRegenInjector.CompProperties_LimbsRegenInjector">
+                <lastRegenCount>3</lastRegenCount>
+            </li>
+        </comps>
+        <costList>
+            <MedicineIndustrial>3</MedicineIndustrial>
+        </costList>
+    </ThingDef>
+    <ThingDef ParentName="ELSInjectorBase" ELSClass="mechserum">
+        <defName>ELS_Thing_LimbsRegenInjectorFastLimited</defName>
+        <label>els_thing_limbsregeninjectorfastlimited</label>
+        <description/>
+        <graphicData>
+            <texPath>Things/InjectorFastLimited</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <comps>
+            <li Class="RimElShrine.Items.LimbsRegenInjector.CompProperties_LimbsRegenInjector">
+                <isFastRegen>true</isFastRegen>
+                <lastRegenCount>3</lastRegenCount>
+            </li>
+        </comps>
+        <costList>
+            <MedicineIndustrial>10</MedicineIndustrial>
+        </costList>
+    </ThingDef>
+    <ThingDef ParentName="ELSInjectorBase" ELSClass="mechserum">
+        <defName>ELS_Thing_LimbsRegenInjectorForever</defName>
+        <label>els_thing_limbsregeninjectorforever</label>
+        <description/>
+        <graphicData>
+            <texPath>Things/InjectorForever</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <comps>
+            <li Class="RimElShrine.Items.LimbsRegenInjector.CompProperties_LimbsRegenInjector"/>
+        </comps>
+        <costList>
+            <MedicineUltratech>3</MedicineUltratech>
+        </costList>
+        <recipeMaker>
+            <researchPrerequisite>ELS_ResearchProject_AdvancedMechSerumProduction</researchPrerequisite>
+        </recipeMaker>
+    </ThingDef>
+    <ThingDef ParentName="ELSInjectorBase" ELSClass="mechserum">
+        <defName>ELS_Thing_LimbsRegenInjectorFastForever</defName>
+        <label>els_thing_limbsregeninjectorfastforever</label>
+        <description/>
+        <graphicData>
+            <texPath>Things/InjectorFastForever</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+        </graphicData>
+        <comps>
+            <li Class="RimElShrine.Items.LimbsRegenInjector.CompProperties_LimbsRegenInjector">
+                <isFastRegen>true</isFastRegen>
+            </li>
+        </comps>
+        <costList>
+            <MedicineUltratech>10</MedicineUltratech>
+        </costList>
+        <recipeMaker>
+            <researchPrerequisite>ELS_ResearchProject_AdvancedMechSerumProduction</researchPrerequisite>
+        </recipeMaker>
+    </ThingDef>
+</Defs>

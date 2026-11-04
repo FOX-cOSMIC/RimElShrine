@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <!-- ZH-->
+    <RimElShrineShieldMod>Shield Mod</RimElShrineShieldMod>
+    <ReloadWindow_Title>Mod Loading Settings Modified</ReloadWindow_Title>
+    <ReloadWindow_Notice>Mod loading settings have been modified and require restarting the game. Please confirm if you want to restart immediately.\nDetails are shown below: </ReloadWindow_Notice>
+    <NewXmlClassesList>New Load Groups</NewXmlClassesList>
+    <XmlClassesToLoad>To Load:</XmlClassesToLoad>
+    <XmlClassesToIgnore>To Ignore (High Priority):</XmlClassesToIgnore>
+    <shield_apparel>Shield Apparel</shield_apparel>
+    <shield_building>Shield Buildings</shield_building>
+    <shield_network>Shield Network</shield_network>
+    <mechserum>Regeneration Mechserum</mechserum>
+    <CurrentXmlClassesList>Current Load Groups</CurrentXmlClassesList>
+</LanguageData>

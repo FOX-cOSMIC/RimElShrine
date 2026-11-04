@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- ZH-->
+  <!-- ES Shields-->
+  <!-- ELS_Thing_ES0Shield-->
+  <ELS_Thing_ES0Shield.label>ES0基础护盾</ELS_Thing_ES0Shield.label>
+  <ELS_Thing_ES0Shield.description>一个基础的护盾，提供最基础的远程防御。\n\n\n这一系列通用护盾型号改进了通用护盾，使得穿戴者在此护盾激活时仍然可以进行远程攻击。</ELS_Thing_ES0Shield.description>
+  <!-- ELS_Thing_ES1Shield-->
+  <ELS_Thing_ES1Shield.label>ES1改进护盾</ELS_Thing_ES1Shield.label>
+  <ELS_Thing_ES1Shield.description>基础护盾的改进型号，略微提升了护盾强度和充能速率，同时重量也有所降低，这个改进型号的护盾可以在一定程度上抵抗EMP伤害与热能伤害，但EMP伤害会对护盾能量造成更高倍率的影响。\n\n\n这一系列通用护盾型号改进了通用护盾，使得穿戴者在此护盾激活时仍然可以进行远程攻击。</ELS_Thing_ES1Shield.description>
+  <!-- ELS_Thing_ES2Shield-->
+  <ELS_Thing_ES2Shield.label>ES2高级护盾</ELS_Thing_ES2Shield.label>
+  <ELS_Thing_ES2Shield.description>得益于新技术的研究，最新型号的高级护盾集成了所有物理伤害的防御效果。它有着优秀的EMP和热能抗性，并可以在敌人的光剑落下时救你一命，不仅如此，它还集成了辅助瞄准系统，能有效改善穿戴者的射击精度和瞄准速度。\n\n\n请注意！近战武器的巨大动能可能会导致护盾能量过快耗尽！\n\n\n这一系列通用护盾型号改进了通用护盾，使得穿戴者在此护盾激活时仍然可以进行远程攻击。</ELS_Thing_ES2Shield.description>
+  <!-- ELS_Thing_ES3Shield-->
+  <ELS_Thing_ES3Shield.label>ES3实验性护盾</ELS_Thing_ES3Shield.label>
+  <ELS_Thing_ES3Shield.description>实验性护盾采用了部分仍处于测试阶段的生物技术，极大地提升了护盾的EMP抗性与近战武器抗性，同时有着不可思议的护盾总量与恢复速度。\n\n\n请注意！能量频繁耗尽可能会导致穿戴者出现贫血现象！\n\n\n这一系列通用护盾型号改进了通用护盾，使得穿戴者在此护盾激活时仍然可以进行远程攻击。</ELS_Thing_ES3Shield.description>
+
+  <!-- ELS Appended Apparels-->
+  <!-- ELS_Thing_EmptyAppendedApparel-->
+  <ELS_Thing_EmptyAppendedApparel.label>效果附加器</ELS_Thing_EmptyAppendedApparel.label>
+  <ELS_Thing_EmptyAppendedApparel.description>无法脱下！出现在世界中是会自动销毁！</ELS_Thing_EmptyAppendedApparel.description>
+</LanguageData>

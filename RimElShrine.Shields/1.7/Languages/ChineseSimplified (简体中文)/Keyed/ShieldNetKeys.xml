@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <!-- ZH-->
+    <!-- Commands-->
+    <!-- Basic-->
+    <ShieldNet_CompIsShutDown>该组件已禁用</ShieldNet_CompIsShutDown>
+    <ShieldNet_NetIsInvalid>当前护盾网络无效</ShieldNet_NetIsInvalid>
+    <ShieldNet_ContainedShieldNetComps>护盾网络: {0}护盾, {1}服务器单元, {2}终端, {3}已禁用</ShieldNet_ContainedShieldNetComps>
+    <ShieldNet_ResourcesSummary>护盾网络资源: {0}单位已分配, 共{1}单位</ShieldNet_ResourcesSummary>
+    <ShieldNet_ServerUnit_ResourcesSummary>当前组件资源: {0}单位已分配, 共{1}单位</ShieldNet_ServerUnit_ResourcesSummary>
+    <ShieldNet_ResourcesDetails>资源分配详情</ShieldNet_ResourcesDetails>
+    <ShieldDisabled>护盾已禁用</ShieldDisabled>
+    <MinRadius>最小半径: {1}{0}格</MinRadius>
+    <MaxRadius>最大半径: {1}{0}格</MaxRadius>
+    <RechargeSeconds>再充能时间: {1}{0}秒</RechargeSeconds>
+    <RechargeRate>再充能能量比例: {1}{0}%</RechargeRate>
+    <MaxEnergy>最大能量: {1}{0}</MaxEnergy>
+    <ChargeSpeed>充能速度: {1}{0}%</ChargeSpeed>
+
+
+    <!-- ProjectileInterceptor-->
+    <ShieldNet_Command_IFFOn_Label>敌我识别</ShieldNet_Command_IFFOn_Label>
+    <ShieldNet_Command_IFFOn_Desc>仅拦截敌对的射弹</ShieldNet_Command_IFFOn_Desc>
+    <ShieldNet_Command_InterceptIn_Label>入射拦截</ShieldNet_Command_InterceptIn_Label>
+    <ShieldNet_Command_InterceptIn_Desc>拦截从护盾外侧向内射入的射弹</ShieldNet_Command_InterceptIn_Desc>
+    <ShieldNet_Command_AllowOut_Label>出射识别</ShieldNet_Command_AllowOut_Label>
+    <ShieldNet_Command_AllowOut_Desc>不拦截从护盾内侧向外射出的射弹</ShieldNet_Command_AllowOut_Desc>
+    <ShieldNet_Command_InterceptOverhead_Label>曲射拦截</ShieldNet_Command_InterceptOverhead_Label>
+    <ShieldNet_Command_InterceptOverhead_Desc>拦截曲射方式来袭的敌对射弹，例如迫击炮弹</ShieldNet_Command_InterceptOverhead_Desc>
+    <ShieldNet_Command_InterceptGround_Label>平射拦截</ShieldNet_Command_InterceptGround_Label>
+    <ShieldNet_Command_InterceptGround_Desc>拦截平射方式来袭的敌对射弹，例如枪械子弹</ShieldNet_Command_InterceptGround_Desc>
+    <ShieldNet_Command_IncreaseRadius_Label>增加半径</ShieldNet_Command_IncreaseRadius_Label>
+    <ShieldNet_Command_IncreaseRadius_Desc>增加护盾的展开半径1格</ShieldNet_Command_IncreaseRadius_Desc>
+    <ShieldNet_Command_IncreaseRadius_DisabledReason>已到达最大展开半径</ShieldNet_Command_IncreaseRadius_DisabledReason>
+    <ShieldNet_Command_DecreaseRadius_Label>减少半径</ShieldNet_Command_DecreaseRadius_Label>
+    <ShieldNet_Command_DecreaseRadius_Desc>增加护盾的展开半径1格</ShieldNet_Command_DecreaseRadius_Desc>
+    <ShieldNet_Command_DecreaseRadius_DisabledReason>已到达最大展开半径</ShieldNet_Command_DecreaseRadius_DisabledReason>
+    <ShieldNet_Command_DestroyProj_Label>直接摧毁射弹</ShieldNet_Command_DestroyProj_Label>
+    <ShieldNet_Command_DestroyProj_Desc>拦截射弹时直接摧毁射弹，进而可防止爆炸类射弹产生范围效果，但会消耗更多护盾能量</ShieldNet_Command_DestroyProj_Desc>
+    <!-- Terminal & ServerUnit-->
+    <ShieldNet_Command_ResetAllocatedResouces_Label>重置资源分配</ShieldNet_Command_ResetAllocatedResouces_Label>
+    <ShieldNet_Command_ResetAllocatedResouces_Desc>释放当前服务器单元中已分配的所有护盾网络资源</ShieldNet_Command_ResetAllocatedResouces_Desc>
+    <ShieldNet_Command_ResetAllocatedResouces_Desc1>释放当前网络中已分配的所有护盾网络资源</ShieldNet_Command_ResetAllocatedResouces_Desc1>
+    <ShieldNet_Command_ResetAllocatedResouces_DisabledReason>当前模块中所有护盾网络资源均未被分配</ShieldNet_Command_ResetAllocatedResouces_DisabledReason>
+    <ShieldNet_Command_ResetAllocatedResouces_DisabledReason1>当前网络中所有护盾网络资源均未被分配</ShieldNet_Command_ResetAllocatedResouces_DisabledReason1>
+    <ShieldNet_Command_AllocateResouces_Label>分配资源</ShieldNet_Command_AllocateResouces_Label>
+    <ShieldNet_Command_AllocateResouces_Desc>打开当前控制终端所处护盾网络的资源分配面板</ShieldNet_Command_AllocateResouces_Desc>
+    <!-- Allocate resources & Upgrades-->
+    <ShieldNet_AllocateWindow_Title>配置面板</ShieldNet_AllocateWindow_Title>
+    <ShieldNet_AllocateWindow_Apply>应用</ShieldNet_AllocateWindow_Apply>
+    <ShieldNet_AllocateWindow_Reposition>复位</ShieldNet_AllocateWindow_Reposition>
+    <ShieldNet_AllocateWindow_Cancel>取消</ShieldNet_AllocateWindow_Cancel>
+
+</LanguageData>

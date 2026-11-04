@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <!-- ShieldNetBuildingBase-->
+  <ThingDef Name="ELS_ShieldNetBuildingBase" ParentName="BuildingBase" Abstract="True" ELSClass="shield_building">
+    <altitudeLayer>Building</altitudeLayer>
+    <socialPropernessMatters>true</socialPropernessMatters>
+    <rotatable>false</rotatable>
+    <minifiedDef>MinifiedThing</minifiedDef>
+    <receivesSignals>true</receivesSignals>
+    <thingCategories>
+      <li>BuildingsSecurity</li>
+    </thingCategories>
+    <isMechClusterThreat>false</isMechClusterThreat>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <resourcesFractionWhenDeconstructed>0.4</resourcesFractionWhenDeconstructed>
+    <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
+    <designationCategory>Security</designationCategory>
+    <constructEffect>ConstructMetal</constructEffect>
+    <constructionSkillPrerequisite>8</constructionSkillPrerequisite>
+    <uiIconScale>0.9</uiIconScale>
+  </ThingDef>
+  <!-- ShieldNet_Shield-->
+  <ThingDef ParentName="ELS_ShieldNetBuildingBase" ELSClass="shield_building">
+    <defName>ELS_Thing_Building_ShieldNet_Shield</defName>
+    <label>els_thing_building_shieldnet_shield_label</label>
+    <description>els_thing_building_shieldnet_shield_description</description>
+    <size>(2,2)</size>
+    <graphicData>
+      <texPath>Things/ShieldGenerator</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(2,2)</drawSize>
+      <damageData>
+        <rect>(0.2, 0.2, 0.6, 0.6)</rect>
+      </damageData>
+    </graphicData>
+    <staticSunShadowHeight>0.2</staticSunShadowHeight>
+    <!-- ticker-->
+    <tickerType>Normal</tickerType>
+    <statBases>
+      <Mass>40</Mass>
+      <MaxHitPoints>400</MaxHitPoints>
+      <Flammability>0</Flammability>
+      <MarketValue>30000</MarketValue>
+      <WorkToBuild>30000</WorkToBuild>
+    </statBases>
+    <building>
+      <destroySound>BuildingDestroyed_Metal_Big</destroySound>
+      <deconstructible>true</deconstructible>
+      <claimable>true</claimable>
+    </building>
+    <placeWorkers>
+      <li>RimElShrine.Buildings.ProjInterceptorNet.PlaceWorker_ShowShieldRadius</li>
+    </placeWorkers>
+    <comps>
+      <li Class="RimElShrine.Buildings.ProjInterceptorNet.CompProperties_ShieldNet_ProjInterceptorELS">
+        <isInfiniteEnergy>false</isInfiniteEnergy>
+        <baseMaxRadius>12</baseMaxRadius>
+        <baseMinRadius>10</baseMinRadius>
+      </li>
+      <li Class="CompProperties_Battery">
+        <storedEnergyMax>6000</storedEnergyMax>
+        <efficiency>0.9</efficiency>
+        <shortCircuitInRain>false</shortCircuitInRain>
+        <transmitsPower>true</transmitsPower>
+        <basePowerConsumption>100</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Breakdownable"/>
+      <li Class="CompProperties_Flickable"/>
+    </comps>
+    <costList>
+      <Plasteel>80</Plasteel>
+      <ComponentSpacer>4</ComponentSpacer>
+      <ComponentIndustrial>12</ComponentIndustrial>
+      <Steel>210</Steel>
+      <Gold>120</Gold>
+      <Silver>240</Silver>
+      <BroadshieldCore MayRequire="Ludeon.RimWorld.Royalty">1</BroadshieldCore>
+    </costList>
+    <killedLeavings>
+      <ChunkSlagSteel>3</ChunkSlagSteel>
+      <Plasteel>13</Plasteel>
+      <ComponentSpacer>1</ComponentSpacer>
+      <ComponentIndustrial>3</ComponentIndustrial>
+      <Steel>27</Steel>
+      <Gold>31</Gold>
+      <Silver>76</Silver>
+      <BroadshieldCore MayRequire="Ludeon.RimWorld.Royalty">1</BroadshieldCore>
+    </killedLeavings>
+    <researchPrerequisites>
+      <li>ELS_ResearchProject_ShieldGenerator</li>
+    </researchPrerequisites>
+  </ThingDef>
+
+
+  <!-- ShieldNet_Terminal-->
+  <ThingDef ParentName="ELS_ShieldNetBuildingBase" ELSClass="shield_building, shield_network">
+    <defName>ELS_Thing_Building_ShieldNet_Terminal</defName>
+    <label>els_thing_building_shieldnet_terminal_label</label>
+    <description>els_thing_building_shieldnet_terminal_description</description>
+    <size>(1,1)</size>
+    <graphicData>
+      <texPath>Things/ShieldGeneratorControl</texPath>
+      <graphicClass>Graphic_Multi</graphicClass>
+      <drawSize>(1,1)</drawSize>
+      <damageData>
+        <rect>(0.2, 0.2, 0.6, 0.6)</rect>
+      </damageData>
+    </graphicData>
+    <staticSunShadowHeight>0.15</staticSunShadowHeight>
+    <!-- ticker-->
+    <rotatable>true</rotatable>
+    <tickerType>Rare</tickerType>
+    <statBases>
+      <Mass>15</Mass>
+      <MaxHitPoints>100</MaxHitPoints>
+      <Flammability>0.3</Flammability>
+      <MarketValue>8000</MarketValue>
+      <WorkToBuild>10000</WorkToBuild>
+    </statBases>
+    <building>
+      <destroySound>BuildingDestroyed_Metal_Small</destroySound>
+      <deconstructible>true</deconstructible>
+      <claimable>true</claimable>
+    </building>
+    <comps>
+      <li Class="CompProperties">
+        <compClass>RimElShrine.Buildings.ProjInterceptorNet.Comp_ShieldNet_Terminal</compClass>
+      </li>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <shortCircuitInRain>true</shortCircuitInRain>
+        <basePowerConsumption>200</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Flickable"/>
+    </comps>
+    <costList>
+      <Plasteel>20</Plasteel>
+      <ComponentSpacer>1</ComponentSpacer>
+      <ComponentIndustrial>4</ComponentIndustrial>
+      <Steel>60</Steel>
+      <Silver>10</Silver>
+    </costList>
+    <killedLeavings>
+      <ChunkSlagSteel>1</ChunkSlagSteel>
+      <ComponentIndustrial>1</ComponentIndustrial>
+      <Silver>2</Silver>
+    </killedLeavings>
+    <researchPrerequisites>
+      <li>ELS_ResearchProject_ShieldNet</li>
+    </researchPrerequisites>
+  </ThingDef>
+  <!-- ShieldNet_ServerUnit-->
+  <ThingDef ParentName="ELS_ShieldNetBuildingBase" ELSClass="shield_building, shield_network">
+    <defName>ELS_Thing_Building_ShieldNet_ServerUnit</defName>
+    <label>els_thing_building_shieldnet_serverunit_label</label>
+    <description>els_thing_building_shieldnet_serverunit_description</description>
+    <size>(1,1)</size>
+    <graphicData>
+      <texPath>Things/ShieldGeneratorUpgrader</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,1)</drawSize>
+      <damageData>
+        <rect>(0.2, 0.2, 0.6, 0.6)</rect>
+      </damageData>
+    </graphicData>
+    <staticSunShadowHeight>0.2</staticSunShadowHeight>
+    <tickerType>Never</tickerType>
+    <statBases>
+      <Mass>15</Mass>
+      <MaxHitPoints>100</MaxHitPoints>
+      <Flammability>0.2</Flammability>
+      <MarketValue>10000</MarketValue>
+      <WorkToBuild>16000</WorkToBuild>
+    </statBases>
+    <building>
+      <destroySound>BuildingDestroyed_Metal_Small</destroySound>
+      <deconstructible>true</deconstructible>
+      <claimable>true</claimable>
+    </building>
+    <comps>
+      <li Class="RimElShrine.Buildings.ProjInterceptorNet.CompProperties_ShieldNet_ServerUnit">
+        <upgradeResources>3</upgradeResources>
+      </li>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <shortCircuitInRain>true</shortCircuitInRain>
+        <basePowerConsumption>300</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Flickable"/>
+    </comps>
+    <costList>
+      <Plasteel>80</Plasteel>
+      <ComponentSpacer>1</ComponentSpacer>
+      <ComponentIndustrial>4</ComponentIndustrial>
+      <Steel>120</Steel>
+      <Gold>40</Gold>
+      <Silver>200</Silver>
+    </costList>
+    <killedLeavings>
+      <ChunkSlagSteel>1</ChunkSlagSteel>
+      <Plasteel>11</Plasteel>
+      <ComponentIndustrial>1</ComponentIndustrial>
+      <Gold>9</Gold>
+      <Silver>44</Silver>
+    </killedLeavings>
+    <researchPrerequisites>
+      <li>ELS_ResearchProject_ShieldNet</li>
+    </researchPrerequisites>
+  </ThingDef>
+</Defs>

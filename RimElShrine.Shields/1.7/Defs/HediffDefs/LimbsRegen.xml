@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+    <HediffDef ELSClass="mechserum">
+        <defName>ELS_Hediff_LimbsRegen</defName>
+        <label>els_hediff_limbsregen_label</label>
+        <labelNoun>els_hediff_limbsregen_labelnoun</labelNoun>
+        <description>els_hediff_limbsregen_description</description>
+        <hediffClass>RimElShrine.Hediffs.LimbsRegen.HediffWithComps_LimbsRegen</hediffClass>
+        <initialSeverity>0.1</initialSeverity>
+        <maxSeverity>1</maxSeverity>
+        <isInfection>false</isInfection>
+        <isBad>false</isBad>
+        <defaultLabelColor>(0.5, 0.5, 0.9)</defaultLabelColor>
+    </HediffDef>
+</Defs>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+    <!-- ZH-->
+    <ELS_Thing_UnfinishedInjector.label>未完成的注射器</ELS_Thing_UnfinishedInjector.label>
+    <ELS_Thing_UnfinishedInjector.description>一支未完成的注射器。</ELS_Thing_UnfinishedInjector.description>
+
+    <ELS_Thing_EmptyInjector.label>空白注射器</ELS_Thing_EmptyInjector.label>
+    <ELS_Thing_EmptyInjector.description>一支空白注射器，其内包含一团未编程的纳米机械，它可用于制作各种机械液注射器。</ELS_Thing_EmptyInjector.description>
+
+    <ELS_Thing_LimbsRegenCleaner.label>再生清除注射器</ELS_Thing_LimbsRegenCleaner.label>
+    <ELS_Thing_LimbsRegenCleaner.description>该注射器内的纳米机械与再生注射器内相似，但它会快速识别再生注射器内的纳米机械并与之组合分解，从而清除宿主的肢体再生效果。</ELS_Thing_LimbsRegenCleaner.description>
+    <ELS_Thing_LimbsRegenCleaner.comps.CompUsable.useLabel>使用{0_label}</ELS_Thing_LimbsRegenCleaner.comps.CompUsable.useLabel>
+    <!-- LimbsRegenInjectors-->
+    <ELS_Thing_LimbsRegenInjectorLimited.label>有限再生注射器</ELS_Thing_LimbsRegenInjectorLimited.label>
+    <ELS_Thing_LimbsRegenInjectorLimited.description>该注射器一次性注入了一团受遥远世界干涉的纳米机械，当受体的肢体出现永久性损伤时，纳米机械将尝试激活受体的细胞修复功能，从而使受损或异常器官恢复。\n\n该型号注射器包含的纳米机械是消耗性的，其将在一定次数的再生后消耗殆尽。</ELS_Thing_LimbsRegenInjectorLimited.description>
+    <ELS_Thing_LimbsRegenInjectorLimited.comps.CompUsable.useLabel>使用{0_label}</ELS_Thing_LimbsRegenInjectorLimited.comps.CompUsable.useLabel>
+
+    <ELS_Thing_LimbsRegenInjectorForever.label>永久再生注射器</ELS_Thing_LimbsRegenInjectorForever.label>
+    <ELS_Thing_LimbsRegenInjectorForever.description>该注射器一次性注入了一团受遥远世界干涉的纳米机械，当受体的肢体出现永久性损伤时，纳米机械将尝试激活受体的细胞修复功能，从而使受损或异常器官恢复。\n\n该型号的注射器内置的纳米机械团将通过额外的细胞编程功能补充自身，其带来的再生效果永远生效。</ELS_Thing_LimbsRegenInjectorForever.description>
+    <ELS_Thing_LimbsRegenInjectorForever.comps.CompUsable.useLabel>使用{0_label}</ELS_Thing_LimbsRegenInjectorForever.comps.CompUsable.useLabel>
+
+    <ELS_Thing_LimbsRegenInjectorFastLimited.label>有限再生注射器（快速）</ELS_Thing_LimbsRegenInjectorFastLimited.label>
+    <ELS_Thing_LimbsRegenInjectorFastLimited.description>该注射器一次性注入了一团受遥远世界干涉的纳米机械，当受体的肢体出现永久性损伤时，纳米机械将尝试激活受体的细胞修复功能，从而使受损或异常器官恢复。\n\n该型号的再生功能行为较为激进，其尝试过分解并重构受体血细胞以实现器官的快速再生，该行为可能会导致一定程度是失血症状。\n\n该型号注射器包含的纳米机械是消耗性的，其将在一定次数的再生后消耗殆尽。</ELS_Thing_LimbsRegenInjectorFastLimited.description>
+    <ELS_Thing_LimbsRegenInjectorFastLimited.comps.CompUsable.useLabel>使用{0_label}</ELS_Thing_LimbsRegenInjectorFastLimited.comps.CompUsable.useLabel>
+    
+    <ELS_Thing_LimbsRegenInjectorFastForever.label>永久再生注射器（快速）</ELS_Thing_LimbsRegenInjectorFastForever.label>
+    <ELS_Thing_LimbsRegenInjectorFastForever.description>该注射器一次性注入了一团受遥远世界干涉的纳米机械，当受体的肢体出现永久性损伤时，纳米机械将尝试激活受体的细胞修复功能，从而使受损或异常器官恢复。\n\n该型号的再生功能行为较为激进，其尝试过分解并重构受体血细胞以实现器官的快速再生，该行为可能会导致一定程度是失血症状。\n\n该型号的注射器内置的纳米机械团将通过额外的细胞编程功能补充自身，其带来的再生效果永远生效。</ELS_Thing_LimbsRegenInjectorFastForever.description>
+    <ELS_Thing_LimbsRegenInjectorFastForever.comps.CompUsable.useLabel>使用{0_label}</ELS_Thing_LimbsRegenInjectorFastForever.comps.CompUsable.useLabel>
+</LanguageData>

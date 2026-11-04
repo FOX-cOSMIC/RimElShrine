@@ -35,3 +35,6 @@ Desktop.ini
 *.psess
 *.vsp
 *.pidb
+
+# Local build and run output
+.artifacts/

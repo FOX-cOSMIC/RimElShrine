@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<LanguageData>
+  <!-- ZH-->
+  <!-- ELS_ResearchProject_ES1Shield -->
+  <ELS_ResearchProject_ES1Shield.label>改进通用护盾</ELS_ResearchProject_ES1Shield.label>
+  <ELS_ResearchProject_ES1Shield.description>研究通用护盾的改进型号，通过加强元件构造稳定度使护盾能在一定程度上阻挡EMP伤害，优化动能矩阵算法以集成环境保护效果。</ELS_ResearchProject_ES1Shield.description>
+  <!-- ELS_ResearchProject_ES2Shield -->
+  <ELS_ResearchProject_ES2Shield.label>解析高级护盾</ELS_ResearchProject_ES2Shield.label>
+  <ELS_ResearchProject_ES2Shield.description>事实上，这一护盾技术是通过解析遥远世界的梦境而来的，据称这一技术是在遥远世界广受欢迎的单兵战术装备之一。它极大的优化了抗EMP干扰能力，并集成了辅助瞄准系统，环境伤害（燃烧、龙卷风等）也如同窗外的细雨般不足挂齿。唯一的缺点是，它变得更重了。</ELS_ResearchProject_ES2Shield.description>
+  <!-- ELS_ResearchProject_ES3Shield -->
+  <ELS_ResearchProject_ES3Shield.label>实验性生物技术护盾</ELS_ResearchProject_ES3Shield.label>
+  <ELS_ResearchProject_ES3Shield.description>我们的研究者想办法把生物的血液转换成了临时能源，这在某种程度上使得护盾强度进一步提升了，也减少了一部分不必要的电子成分，从而得以提升其EMP抗性。当然，临时的非创伤性失血总比护盾耗尽后可能带来的创伤要好上许多。</ELS_ResearchProject_ES3Shield.description>
+
+  <!-- ELS_ResearchProject_ShieldGenerator-->
+  <ELS_ResearchProject_ShieldGenerator.label>动能护盾发生器</ELS_ResearchProject_ShieldGenerator.label>
+  <ELS_ResearchProject_ShieldGenerator.description>尝试对通用护盾核心进行分析，从而对其进行精密控制，建造可配置的高科技动能护盾发生器。</ELS_ResearchProject_ShieldGenerator.description>
+  <!-- ELS_ResearchProject_ShieldNet-->
+  <ELS_ResearchProject_ShieldNet.label>护盾网络</ELS_ResearchProject_ShieldNet.label>
+  <ELS_ResearchProject_ShieldNet.description>研究动能护盾发生器的高级扩展技术与控制器，从而构建护盾网络，实现动能护盾发生器的基础属性升级、集群控制与高速充能。</ELS_ResearchProject_ShieldNet.description>
+</LanguageData>
