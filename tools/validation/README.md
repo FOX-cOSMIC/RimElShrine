@@ -18,5 +18,5 @@ Runs the Shield Expanded 1.7 port inside RimWorld and records pass or fail resul
 
 ## Status
 
-- Smoke run: not run yet.
+- Smoke run (`Invoke-Smoke.ps1`): passed on 2026-11-05 (run `20261105-145122`). The 1.7 build loads in a new colony in RimWorld 1.7.4998 rev1299, the mod is listed and loaded, and the port's Harmony patches apply. The one error line in that log is from another mod (duplicate packageId `Aoba.DeadManSwitch.Core`).
 - Scenarios: none yet. One group per content group: Shield Buildings & Shield Network, Shield Equipment, Mech Serums.
