@@ -1,5 +1,7 @@
 # Run gameplay validation from a separate T3 Code project
 
+Status: superseded by ADR 0009 (2026-11-05).
+
 Runtime validation runs live in their own T3 Code project, not in this repo. Each gameplay change runs red before its fix and green after it, in an isolated save folder. No such project appears in the T3 Code project list yet.
 
 Decided 2026-11-04: Lucas asked me to create the project. It is `C:\Users\G4M3R\.t3\projects\rimworld-shield-validation`, registered in T3 Code. Its rules are in its `AGENTS.md`.

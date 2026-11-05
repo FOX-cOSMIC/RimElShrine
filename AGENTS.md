@@ -32,7 +32,7 @@ The repo's other mods, `RimElShrine.ShuttleFuel` and `RimElShrine.MoveMonolith`,
 ## Verification
 
 - Compiling is not playability. A gameplay change is proven only by a run in RimWorld 1.7 that exercises it.
-- Runtime validation runs live in the separate T3 Code project `C:\Users\G4M3R\.t3\projects\rimworld-shield-validation` (ADR 0005). Its runner is not built yet. Until one runs, report each change as unproven.
+- Runtime validation runs live in `tools/validation/` in this repo (ADR 0009). The runner is not built yet. Until one runs, report each change as unproven.
 - Reproduce a bug red in a run before fixing it: the run fails on the bug and passes on the fix.
 - Check every Harmony attribute, patched method, and reflected name against the installed 1.7 code.
 - Fix the cause of each error. A disabled patch or a hidden error is not a fix. Report failures and untested cases as they are.
