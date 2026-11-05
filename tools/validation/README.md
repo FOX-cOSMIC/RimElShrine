@@ -19,4 +19,8 @@ Runs the Shield Expanded 1.7 port inside RimWorld and records pass or fail resul
 ## Status
 
 - Smoke run (`Invoke-Smoke.ps1`): passed on 2026-11-05 (run `20261105-145122`). The 1.7 build loads in a new colony in RimWorld 1.7.4998 rev1299, the mod is listed and loaded, and the port's Harmony patches apply. The one error line in that log is from another mod (duplicate packageId `Aoba.DeadManSwitch.Core`).
-- Scenarios: none yet. One group per content group: Shield Buildings & Shield Network, Shield Equipment, Mech Serums.
+- Scenario run (`Invoke-Scenarios.ps1`):
+  - Shield Buildings & Shield Network: passed on 2026-11-05 (run `20261105-151203`). The control run with an empty battery (`-ExtraGameArgs '-shieldvalidation-nopower'`, run `20261105-151313`) fails the allocation check, as it should.
+  - Shield Equipment: not written yet.
+  - Mech Serums: not written yet.
+  - Combat interception and the Combat Extended path: not covered yet.

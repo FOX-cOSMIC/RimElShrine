@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>Shield Expanded 1.7 validation</name>
+  <author>FOX-cOSMIC</author>
+  <packageId>local.shields17.validation</packageId>
+  <supportedVersions><li>1.7</li></supportedVersions>
+  <modDependencies>
+    <li><packageId>foxcosmic.rimelshrine.shields17</packageId><displayName>Shield Expanded 1.7</displayName></li>
+  </modDependencies>
+  <loadAfter><li>foxcosmic.rimelshrine.shields17</li></loadAfter>
+  <description>Development-only runtime checks for the Shield Expanded 1.7 port. Activate only with isolated savedata and -shieldvalidation.</description>
+</ModMetaData>

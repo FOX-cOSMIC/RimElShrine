@@ -38,3 +38,4 @@ Desktop.ini
 
 # Local build and run output
 .artifacts/
+tools/validation/ShieldValidation/Assemblies/
