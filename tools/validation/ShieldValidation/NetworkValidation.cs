@@ -1,14 +1,11 @@
 using System;
-using System.IO;
-using System.Linq;
 using RimElShrine.Buildings.ProjInterceptorNet;
 using RimWorld;
 using Verse;
 
 namespace ShieldValidation
 {
-    // Runs the shield network checks in a new colony. It runs only when the game starts with -shieldvalidation.
-    // Results go to validation-results.txt in the run's save folder, and each row is also logged as [ShieldValidation].
+    // Shield Buildings & Shield Network checks. Runs only when the game starts with -shieldvalidation.
     public class NetworkValidation : GameComponent
     {
         private const int SettleTicks = 600;
@@ -19,8 +16,9 @@ namespace ShieldValidation
         private const string ScenarioJoin = "network: parts join one shield network";
         private const string ScenarioAllocate = "network: terminal allocation reaches the network";
         private const string ScenarioNoPower = "network: no power, no upgrade value";
+        private const string GroupComplete = "network group complete";
 
-        private static bool started;
+        private static DateTime lastNote = DateTime.MinValue;
         private int stage;
         private int stageStart;
         private bool finished;
@@ -37,8 +35,6 @@ namespace ShieldValidation
         {
         }
 
-        private static DateTime lastNote = DateTime.MinValue;
-
         public override void GameComponentUpdate()
         {
             if (finished || !GenCommandLine.CommandLineArgPassed("shieldvalidation")) return;
@@ -46,7 +42,7 @@ namespace ShieldValidation
             if (DateTime.UtcNow - lastNote > TimeSpan.FromSeconds(10))
             {
                 lastNote = DateTime.UtcNow;
-                Log.Message("[ShieldValidation-diag] waiting: state " + Current.ProgramState + ", map " + (Find.CurrentMap != null) + ", events " + LongEventHandler.AnyEventNowOrWaiting);
+                Log.Message("[ShieldValidation-diag] network waiting: state " + Current.ProgramState + ", map " + (Find.CurrentMap != null) + ", events " + LongEventHandler.AnyEventNowOrWaiting);
             }
             if (Current.ProgramState != ProgramState.Playing || LongEventHandler.AnyEventNowOrWaiting) return;
             var map = Find.CurrentMap;
@@ -57,13 +53,13 @@ namespace ShieldValidation
             }
             catch (Exception e)
             {
-                Record("run complete", "FAIL: exception in stage " + stage + ": " + e.GetType().Name + ": " + e.Message);
+                ValidationSupport.Record(GroupComplete, "FAIL: exception in stage " + stage + ": " + e.GetType().Name + ": " + e.Message);
                 finished = true;
             }
         }
 
-        // Called on every frame of play. Stage 0 places the parts and powers them. Stage 1 checks them, then takes the power away.
-        // Stage 2 checks again. Each stage waits SettleTicks game ticks, so the game's own network updates run first.
+        // Stage 0 places the parts and powers them. Stage 1 checks them, then takes the power away. Stage 2 checks again.
+        // Each stage waits SettleTicks game ticks, so the game's own network updates run first.
         private void Run(Map map)
         {
             int now = Find.TickManager.TicksGame;
@@ -86,22 +82,22 @@ namespace ShieldValidation
                 return;
             }
             CheckNoPower();
-            Record("run complete", "finished");
+            ValidationSupport.Record(GroupComplete, "finished");
             finished = true;
         }
 
         private void Setup(Map map)
         {
-            var origin = FindOrigin(map);
-            if (origin == null) throw new InvalidOperationException("no free row of 9 cells for the test layout");
+            var origin = ValidationSupport.FindFreeBlock(map, 9, 2);
+            if (origin == null) throw new InvalidOperationException("no free 9 x 2 block for the test layout");
             var o = origin.Value;
-            battery = Spawn("Battery", o, map, Rot4.East);
-            Spawn("PowerConduit", o + IntVec3.East * 2, map, Rot4.North);
-            generator = Spawn(GeneratorDef, o + IntVec3.East * 3, map, Rot4.North);
-            Spawn("PowerConduit", o + IntVec3.East * 5, map, Rot4.North);
-            terminal = Spawn(TerminalDef, o + IntVec3.East * 6, map, Rot4.North);
-            Spawn("PowerConduit", o + IntVec3.East * 7, map, Rot4.North);
-            server = Spawn(ServerDef, o + IntVec3.East * 8, map, Rot4.North);
+            battery = ValidationSupport.Spawn("Battery", o, map, Rot4.East);
+            ValidationSupport.Spawn("PowerConduit", o + IntVec3.East * 2, map, Rot4.North);
+            generator = ValidationSupport.Spawn(GeneratorDef, o + IntVec3.East * 3, map, Rot4.North);
+            ValidationSupport.Spawn("PowerConduit", o + IntVec3.East * 5, map, Rot4.North);
+            terminal = ValidationSupport.Spawn(TerminalDef, o + IntVec3.East * 6, map, Rot4.North);
+            ValidationSupport.Spawn("PowerConduit", o + IntVec3.East * 7, map, Rot4.North);
+            server = ValidationSupport.Spawn(ServerDef, o + IntVec3.East * 8, map, Rot4.North);
 
             var batteryComp = battery.GetComp<CompPowerBattery>();
             if (batteryComp == null) throw new InvalidOperationException("the battery has no CompPowerBattery");
@@ -124,7 +120,7 @@ namespace ShieldValidation
             int servers = net == null ? 0 : net.serverUnits.Count;
             bool members = shields == 1 && terminals == 1 && servers == 1;
             string detail = "shields " + shields + ", terminals " + terminals + ", server units " + servers + ", one net for all: " + sameNet;
-            Record(ScenarioJoin, (sameNet && members ? "PASS: " : "FAIL: ") + detail);
+            ValidationSupport.Record(ScenarioJoin, (sameNet && members ? "PASS: " : "FAIL: ") + detail);
         }
 
         private void CheckAllocate()
@@ -136,7 +132,7 @@ namespace ShieldValidation
             float expected = ShieldUpgradeResource.MaxRadius.ToUpgradeValue(AllocateCount);
             bool pass = allocated && remained == 0 && resources == AllocateCount && Math.Abs(value - expected) < 0.0001f;
             string detail = "allocated " + AllocateCount + ", network holds " + resources + ", value " + value.ToString("0.###") + " expected " + expected.ToString("0.###");
-            Record(ScenarioAllocate, (pass ? "PASS: " : "FAIL: ") + detail);
+            ValidationSupport.Record(ScenarioAllocate, (pass ? "PASS: " : "FAIL: ") + detail);
         }
 
         private void CheckNoPower()
@@ -144,39 +140,7 @@ namespace ShieldValidation
             var net = terminalComp.ShieldNet;
             float value = net == null ? -1f : net.GetUpgradeValue(ShieldUpgradeResource.MaxRadius);
             bool pass = value == 0f;
-            Record(ScenarioNoPower, (pass ? "PASS: " : "FAIL: ") + "upgrade value with no power " + value.ToString("0.###"));
-        }
-
-        private static IntVec3? FindOrigin(Map map)
-        {
-            for (int z = 6; z < map.Size.z - 6; z++)
-            {
-                for (int x = 6; x < map.Size.x - 14; x++)
-                {
-                    bool free = true;
-                    for (int dx = 0; dx <= 8 && free; dx++) free = IsFree(map, new IntVec3(x + dx, 0, z));
-                    for (int dx = 3; dx <= 4 && free; dx++) free = IsFree(map, new IntVec3(x + dx, 0, z + 1));
-                    if (free) return new IntVec3(x, 0, z);
-                }
-            }
-            return null;
-        }
-
-        private static bool IsFree(Map map, IntVec3 cell)
-            => cell.InBounds(map) && cell.Walkable(map) && !cell.Filled(map) && !map.thingGrid.ThingsAt(cell).Any();
-
-        private static ThingWithComps Spawn(string defName, IntVec3 cell, Map map, Rot4 rot)
-        {
-            var def = DefDatabase<ThingDef>.GetNamed(defName, true);
-            var thing = ThingMaker.MakeThing(def, def.MadeFromStuff ? GenStuff.DefaultStuffFor(def) : null);
-            return (ThingWithComps)GenSpawn.Spawn(thing, cell, map, rot);
-        }
-
-        private static void Record(string scenario, string result)
-        {
-            var line = DateTime.UtcNow.ToString("O") + " | " + scenario + " | " + result;
-            File.AppendAllText(Path.Combine(GenFilePaths.SaveDataFolderPath, "validation-results.txt"), line + Environment.NewLine);
-            Log.Message("[ShieldValidation] " + line);
+            ValidationSupport.Record(ScenarioNoPower, (pass ? "PASS: " : "FAIL: ") + "upgrade value with no power " + value.ToString("0.###"));
         }
     }
 }

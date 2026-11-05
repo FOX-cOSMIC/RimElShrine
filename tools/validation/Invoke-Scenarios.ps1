@@ -16,8 +16,14 @@ $validationId = 'local.shields17.validation'
 $required = @(
     'network: parts join one shield network',
     'network: terminal allocation reaches the network',
-    'network: no power, no upgrade value'
+    'network: no power, no upgrade value',
+    'equipment: colonist wears the ES belt',
+    'equipment: ES belt absorbs a ranged hit and loses energy',
+    'equipment: ES belt with no energy lets a hit through',
+    'equipment: ES belt recharges while worn'
 )
+# Each group writes one completion row when it ends. The run is complete when every group has written its row.
+$groups = @('network group complete', 'equipment group complete')
 $game = (Resolve-Path -LiteralPath $RimWorldDirectory).Path
 $exe = Join-Path $game 'RimWorld.exe'
 $log = Join-Path $env:USERPROFILE 'AppData\LocalLow\Ludeon Studios\RimWorld by Ludeon Studios\Logs\Player.log'
@@ -84,7 +90,8 @@ try {
     $completeAt = $null
     while (-not $process.HasExited -and (Get-Date) -lt $limit) {
         Start-Sleep -Seconds 2
-        if ((Test-Path -LiteralPath $results) -and (Select-String -LiteralPath $results -Pattern ' \| run complete \| ' -Quiet)) {
+        $finishedGroups = if (Test-Path -LiteralPath $results) { @($groups | Where-Object { Select-String -LiteralPath $results -Pattern " | $_ | " -SimpleMatch -Quiet }).Count } else { 0 }
+        if ($finishedGroups -eq $groups.Count) {
             # Stop only after the game has flushed every result marker to Player.log, or after 20 seconds.
             if (-not $completeAt) { $completeAt = Get-Date }
             $rowCount = @(Get-Content -LiteralPath $results).Count
@@ -107,9 +114,11 @@ $lines = @(Get-Content -LiteralPath $copy)
 $rows = if (Test-Path -LiteralPath $results) { @(Get-Content -LiteralPath $results) } else { @() }
 
 $problems = @()
-$complete = @($rows | Where-Object { $_ -match ' \| run complete \| ' })
-if ($complete.Count -eq 0) { $problems += 'the run did not finish: no run complete row' }
-elseif (-not $complete[0].EndsWith('| finished')) { $problems += 'run complete: ' + ($complete[0] -split ' \| ', 3)[2] }
+foreach ($group in $groups) {
+    $done = @($rows | Where-Object { ($_ -split ' \| ', 3)[1] -eq $group })
+    if ($done.Count -ne 1) { $problems += "group row missing or repeated: $group"; continue }
+    if (-not $done[0].EndsWith('| finished')) { $problems += "$group -> " + ($done[0] -split ' \| ', 3)[2] }
+}
 foreach ($name in $required) {
     $row = @($rows | Where-Object { ($_ -split ' \| ', 3)[1] -eq $name })
     if ($row.Count -ne 1) { $problems += "scenario row missing or repeated: $name"; continue }
