@@ -51,4 +51,4 @@ The `1.6/Compatible/CombatExtended/` folder and the `RimElShrine.Shields.CE.dll`
 _Avoid_: CE mode
 
 **Runtime validation run**:
-A launch of RimWorld that runs test scenarios inside the game and records each result as PASS or FAIL. It uses its own save folder, so existing saves and the live mod list are not touched. The Z-Levels runner in `rimworld-modding/tools/` is one example.
+A launch of RimWorld that runs test scenarios inside the game and records each result as PASS or FAIL. It uses its own save folder, so existing saves and the live mod list are not touched. Only one RimWorld session runs at a time, because every session writes the same game log. See ADR 0010. The Z-Levels runner in `rimworld-modding/tools/` is one example.

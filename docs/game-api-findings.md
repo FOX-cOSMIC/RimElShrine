@@ -37,6 +37,44 @@ Checked with `ilspycmd` against the installed `Assembly-CSharp.dll`, the game's 
 | `DamageDef` `Bullet` | In the Core file `Data\Core\Defs\DamageDefs\Damages_RangedWeapon.xml`, `isRanged` is true and `externalViolence` is true. |
 | `ELS_Thing_ES0Shield` | In `Shields.xml`, `EnergyShieldRechargeRate` is 0.17 and `EnergyShieldEnergyMax` is 1. `CompTick` adds the rate divided by 60 on each tick. Run `20261105-152607` measured 0.34 after 120 ticks, which matches `120 × 0.17 / 60`. |
 
+## Scenario calls for mech serums (2026-11-05)
+
+Checked with `ilspycmd` against the installed `Assembly-CSharp.dll` at `C:\SteamLibrary\steamapps\common\RimWorld\Assembly-CSharp.dll`. That DLL is RimWorld 1.7.5000 rev1275, the build installed on 2026-11-05 (see `tools/validation/README.md`).
+
+| Name | Finding |
+|---|---|
+| `Verse.Hediff.ShouldRemove` | `Severity <= 0f`. `HediffWithComps` overrides it: true when a comp's `CompShouldRemove` is true, otherwise the base result. |
+| `Verse.Hediff.Severity` (setter) | Clamps to `[def.minSeverity, def.maxSeverity]`. On a stage change it calls `OnStageIndexChanged` and `Notify_HediffChanged`. |
+| `Verse.Pawn_HealthTracker.HealthTick` | Called from `Pawn.Tick` every game tick. It calls `Hediff.Tick()` on each hediff, then removes each hediff whose `ShouldRemove` is true. A regen hediff at severity 0 is removed on the next tick. |
+| `Verse.Pawn_HealthTracker.AddHediff(HediffDef, BodyPartRecord part = null, ...)` | Returns the new `Hediff`. |
+| `Verse.HediffSet.TryGetHediff(HediffDef, out Hediff)` | Public instance method. The checks use it, not the port's `CommonUtility.TryGetHediff` extension, so a check does not depend on the code it tests. |
+| `Verse.HediffSet.PartIsMissing(BodyPartRecord)` | Public instance method, returns bool. |
+| `Verse.HediffSet.GetMissingPartsCommonAncestors()` | Returns `List<Hediff_MissingPart>`. |
+| `RimWorld.HediffDefOf.MissingBodyPart` | Static field. Its def in `Data/Core/Defs/HediffDefs/Hediffs_Local_Injuries.xml` names `Hediff_MissingPart` as the class. |
+| `Verse.BodyPartDef.GetMaxHealth(Pawn)` | `Mathf.CeilToInt(hitPoints * pawn.HealthScale)`. Finger has `hitPoints` 8 in `Data/Core/Defs/Bodies/BodyParts_Humanoid.xml`. |
+| `Verse.TicksToSeconds(this int)` | `ticks / 60f`. |
+| `Verse.CompUseEffect.DoEffect(Pawn)` and `CanBeUsedBy(Pawn)` | Both public virtual. `CanBeUsedBy` returns `AcceptanceReport`, and its `Accepted` property is public. |
+| `Verse.TimeSpeed` | Enum: `Paused`, `Normal`, `Fast`, `Superfast`, `Ultrafast`. |
+| `Verse.TickManager.TickRateMultiplier` | Fast 3. Superfast 18 with no map, 12 when nothing is happening, otherwise 6. Ultrafast 15 with a map, 150 with no map. |
+| `Verse.TickManager.TickManagerUpdate` | Runs ticks while real time allows, up to `2 * TickRateMultiplier` per frame and at most 45 ms per frame. |
+| `Verse.TickManager.CurTimeSpeed` (setter) | Ignored unless `PlayerCanControl`. That is false while `Game.PlayerHasControl` is false (a fade or a gravship cutscene), or while `Find.GravshipController.LandingAreaConfirmationInProgress` is true. In run `20261105-233422` the speed read `Normal` for the whole run. In run `20261105-233814` it read `Paused` from about tick 20,000. The landing flag was false in both runs, so the cause of the pause is not confirmed. |
+| `Verse.TickManager.DoSingleTick()` | The game's own per-tick function. The frame loop calls it once per tick. The mech group calls it directly while it waits, because the speed setter is ignored. |
+
+Regen behavior, from `HediffWithComps_LimbsRegen.Tick` and confirmed by run `20261105-233814`:
+
+- The regen clock starts on the first tick and gains 0.5 s every 30 ticks. A part heals when the clock is above `maxHealth * LimbsRegenSecondsPerHealth`.
+- Finger at the default 60 s per health: 8 * 60 = 480 s, which is 28,833 ticks. The run measured the finger back at tick 28,833, inside the window 23,040 to 31,680.
+- Each heal lowers `lastRegenCount` by one. At 0 the code sets `Severity` to 0, and the next tick removes the hediff. The run showed the effect removed with the count at 0.
+- The cleaner sets `Severity` to 0. The run showed the effect removed and the finger still missing.
+
+Fast regeneration, not covered by the required rows (an open design decision; see `tools/validation/README.md`):
+
+- The Fast injectors set `isFastRegen` in the XML, and `CompProperties_LimbsRegenInjector.isFastRegen` is declared. No code reads it. The Fast injectors add the hediff at its default severity, 0.1.
+- `HediffWithComps_LimbsRegen.IsQuickRegen` is `Severity > 0.5f`. No code raises the regen hediff above 0.1, so quick regen never starts.
+- The quick branch takes blood loss only from an existing `BloodLoss` hediff. With none, it sets `reachedMaxBloodLoss`, which disables quick regen. A healthy pawn therefore never gets quick regen.
+- The run's diagnostic lines agree: `fast regen applied: severity 0.1, quick False, blood loss hediff False`, and at the end the same, with the finger back at tick 28,833.
+- The keyed text in `LimbsRegenKeys.xml` describes quick regen that costs blood loss: "Fast regeneration may cause additional blood loss symptoms."
+
 ## Not covered
 
 - The ShuttleFuel and MoveMonolith patches. They are out of scope.

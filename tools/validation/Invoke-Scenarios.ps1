@@ -8,6 +8,27 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
+# Returns the RimWorld process ids that are not this run's game or one of its child processes. The game log is shared,
+# so another RimWorld process writes into it, and a run with one is not valid.
+function Get-ForeignRimWorld([int]$OwnId) {
+    $all = @(Get-CimInstance Win32_Process -ErrorAction SilentlyContinue)
+    $parent = @{}
+    foreach ($p in $all) { $parent[[int]$p.ProcessId] = [int]$p.ParentProcessId }
+    $foreign = @()
+    foreach ($p in $all) {
+        if ($p.Name -notmatch '^RimWorld') { continue }
+        $cur = [int]$p.ProcessId
+        $owned = $false
+        for ($hop = 0; $hop -lt 50 -and $cur; $hop++) {
+            if ($cur -eq $OwnId) { $owned = $true; break }
+            if (-not $parent.ContainsKey($cur)) { break }
+            $cur = $parent[$cur]
+        }
+        if (-not $owned) { $foreign += [int]$p.ProcessId }
+    }
+    return $foreign
+}
+
 $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $portFolder = Join-Path $repo 'RimElShrine.Shields'
 $validationFolder = Join-Path $PSScriptRoot 'ShieldValidation'
@@ -20,13 +41,17 @@ $required = @(
     'equipment: colonist wears the ES belt',
     'equipment: ES belt absorbs a ranged hit and loses energy',
     'equipment: ES belt with no energy lets a hit through',
-    'equipment: ES belt recharges while worn'
+    'equipment: ES belt recharges while worn',
+    'mech serum: recipes, injectors and research resolve',
+    'mech serum: regenerator injector adds the regen effect',
+    'mech serum: a missing finger regrows under the regen effect',
+    'mech serum: regen effect ends when its count runs out',
+    'mech serum: cleaner stops a running regen effect'
 )
 # Each group writes one completion row when it ends. The run is complete when every group has written its row.
-$groups = @('network group complete', 'equipment group complete')
+$groups = @('network group complete', 'equipment group complete', 'mech serum group complete')
 $game = (Resolve-Path -LiteralPath $RimWorldDirectory).Path
 $exe = Join-Path $game 'RimWorld.exe'
-$log = Join-Path $env:USERPROFILE 'AppData\LocalLow\Ludeon Studios\RimWorld by Ludeon Studios\Logs\Player.log'
 
 if (Get-Process -Name RimWorld -ErrorAction SilentlyContinue) { throw 'Close the running RimWorld process before a scenario run.' }
 
@@ -39,6 +64,8 @@ foreach ($file in @((Join-Path $portFolder '1.7\Assemblies\RimElShrine.Shields.d
 
 $version = (Get-Content -LiteralPath (Join-Path $game 'Version.txt') -TotalCount 1).Trim()
 $run = Join-Path $repo ('.artifacts\runs\' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
+# The game writes its log to this shared path, and the run copies it after the game exits (see the finally block).
+$log = Join-Path $env:USERPROFILE 'AppData\LocalLow\Ludeon Studios\RimWorld by Ludeon Studios\Logs\Player.log'
 $config = Join-Path $run 'Config'
 New-Item -ItemType Directory -Path $config -Force | Out-Null
 
@@ -88,8 +115,11 @@ try {
     $process = Start-Process -FilePath $exe -WorkingDirectory $game -ArgumentList $gameArgs -WindowStyle Hidden -PassThru
     $limit = (Get-Date).AddSeconds($TimeoutSeconds)
     $completeAt = $null
+    $concurrent = @()
     while (-not $process.HasExited -and (Get-Date) -lt $limit) {
         Start-Sleep -Seconds 2
+        $concurrent = @(Get-ForeignRimWorld -OwnId $process.Id)
+        if ($concurrent.Count -gt 0) { break }
         $finishedGroups = if (Test-Path -LiteralPath $results) { @($groups | Where-Object { Select-String -LiteralPath $results -Pattern " | $_ | " -SimpleMatch -Quiet }).Count } else { 0 }
         if ($finishedGroups -eq $groups.Count) {
             # Stop only after the game has flushed every result marker to Player.log, or after 20 seconds.
@@ -127,6 +157,7 @@ foreach ($name in $required) {
 }
 $marks = @($lines | Where-Object { $_ -match '\[ShieldValidation\] ' })
 if ($marks.Count -ne $rows.Count) { $problems += "results file has $($rows.Count) rows but the log has $($marks.Count) markers" }
+if ($concurrent.Count -gt 0) { $problems += "another RimWorld process ran during this run (process ids $($concurrent -join ', ')), so the shared game log is not this run's alone" }
 
 $header = -1
 for ($i = 0; $i -lt $lines.Count; $i++) { if ($lines[$i] -match 'Initializing new game with mods:') { $header = $i; break } }
