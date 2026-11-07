@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shield Expanded 1.7 guide</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f6f5f1;
+  --panel: #ebe9e3;
+  --ink: #1c1e21;
+  --ink-soft: #4b5059;
+  --rule: #c9c6bd;
+  --link: #1d5b8c;
+  --code-bg: #e8e6df;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #15171a;
+    --panel: #20242a;
+    --ink: #e8e6e1;
+    --ink-soft: #b4b9c0;
+    --rule: #3b4048;
+    --link: #8cc4ea;
+    --code-bg: #232830;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #15171a;
+  --panel: #20242a;
+  --ink: #e8e6e1;
+  --ink-soft: #b4b9c0;
+  --rule: #3b4048;
+  --link: #8cc4ea;
+  --code-bg: #232830;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 0 16px 56px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+}
+main { max-width: 52rem; margin: 0 auto; }
+h1 { font-size: 1.85rem; line-height: 1.2; margin: 1.1em 0 0.5em; }
+h2 { font-size: 1.4rem; line-height: 1.3; margin: 2.2em 0 0.6em; padding-top: 0.9em; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.15rem; line-height: 1.35; margin: 1.6em 0 0.4em; }
+p, li, dd { max-width: 65ch; }
+ol, ul { padding-left: 1.4em; }
+li + li { margin-top: 0.25em; }
+a { color: var(--link); }
+code {
+  font-family: ui-monospace, Consolas, "Courier New", monospace;
+  font-size: 0.9em;
+  background: var(--code-bg);
+  padding: 0.05em 0.3em;
+  border-radius: 4px;
+  overflow-wrap: anywhere;
+}
+.table-wrap { overflow-x: auto; margin: 1em 0 1.4em; }
+table { border-collapse: collapse; width: 100%; min-width: 17rem; font-size: 0.95rem; line-height: 1.5; }
+th, td { text-align: left; vertical-align: top; padding: 0.5em 0.6em; border-bottom: 1px solid var(--rule); overflow-wrap: anywhere; }
+thead th { border-bottom: 2px solid var(--rule); }
+figure { margin: 1.6em 0; color: var(--ink); }
+figure svg { display: block; width: 100%; max-width: 480px; height: auto; margin: 0 auto; }
+.scroll-figure { overflow-x: auto; margin: 1.6em 0; }
+.scroll-figure figure { margin: 0; }
+svg.flow-wide { width: 1296px; max-width: none; }
+figcaption { font-size: 0.95rem; color: var(--ink-soft); margin-top: 0.6em; max-width: 65ch; }
+nav ol { margin: 0.6em 0 1em; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Shield Expanded 1.7 guide</h1>
+
+<p>Shield Expanded is a mod by FoxMo for RimWorld, a colony simulation game. A mod is an add-on that adds content or code. The Steam Workshop, where players share mods, lists it as item 3575073524. This repo, the project folder under version control, holds a port, a changed copy that runs on RimWorld 1.7 instead of 1.6. This guide covers the mod, how the game loads it, the code, the port's changes, the tests, and what is still open.</p>
+
+<p>The guide has these sections, in order.</p>
+<nav aria-label="Sections">
+<ol>
+<li><a href="#what-the-mod-does">What the mod does</a></li>
+<li><a href="#how-rimworld-runs-a-mod">How RimWorld runs a mod</a></li>
+<li><a href="#mod-folder">What is in the mod folder</a></li>
+<li><a href="#code">How the code is organized</a></li>
+<li><a href="#content-groups">How each content group works</a></li>
+<li><a href="#port-changes">What the port changes from 1.6</a></li>
+<li><a href="#tests">How the tests prove the mod works</a></li>
+<li><a href="#status">Where things stand</a></li>
+<li><a href="#open-decisions">Open decisions</a></li>
+<li><a href="#glossary">Words used in this guide</a></li>
+</ol>
+</nav>
+
+<h2 id="what-the-mod-does">What the mod does</h2>
+
+<p>Each content group can be switched on or off in the mod settings, after a restart. The Workshop text names three groups.</p>
+
+<p>Shield Buildings &amp; Shield Network adds the Kinetic Shield Generator, the Shield Control Terminal, and the Shield Server Unit. A power grid is the set of buildings that share power through cables, and the buildings on one grid form one shield network. Upgrade points are the units that raise a shield's stats, such as max radius, min radius, charge speed, and max energy. The server unit holds them, and the terminal hands them out.</p>
+
+<p>Shield Equipment adds the ES shield belts, models ES0, ES1, ES2, and ES3. A belt absorbs a ranged hit while it has energy, and each hit costs energy. An empty belt lets the hit through. A worn belt recharges.</p>
+
+<p>Mech Serums adds recipes for the Mech Serum Healer and Mech Serum Resurrector. Both start from an Empty Mech Serum, an intermediate item. Vanilla means the game as it ships, without mods. Biotech is one of the game's expansions, and the serums get their effects from vanilla Biotech, so the tests check only the recipes. The Regenerator series is the other part. It adds injectors that regrow missing body parts.</p>
+
+<h2 id="how-rimworld-runs-a-mod">How RimWorld runs a mod</h2>
+
+<p>The game loads a mod in stages. It reads the list of active mods, then the mod's data, then its code. Figure 1 shows the order. These rules come from the game's own code, read with a decompiler on this PC.</p>
+
+<div class="scroll-figure">
+<figure>
+<svg class="flow-wide" viewBox="0 0 1296 140" role="img" aria-label="At start-up the game reads each mod's list entry, then its data, then its code.">
+<defs>
+<marker id="f1-arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker>
+</defs>
+<rect x="10" y="34" width="118" height="84" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="69" y="60" text-anchor="middle" font-size="13" fill="currentColor">Mods folder</text>
+<text x="69" y="76" text-anchor="middle" font-size="12" fill="currentColor">ModsConfig.xml</text>
+<text x="69" y="92" text-anchor="middle" font-size="12" fill="currentColor">lists mods</text>
+<rect x="203" y="34" width="118" height="84" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="262" y="60" text-anchor="middle" font-size="13" fill="currentColor">About.xml</text>
+<text x="262" y="76" text-anchor="middle" font-size="12" fill="currentColor">name, packageId,</text>
+<text x="262" y="92" text-anchor="middle" font-size="12" fill="currentColor">and versions</text>
+<rect x="396" y="34" width="118" height="84" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="455" y="60" text-anchor="middle" font-size="13" fill="currentColor">LoadFolders.xml</text>
+<text x="455" y="76" text-anchor="middle" font-size="12" fill="currentColor">picks the</text>
+<text x="455" y="92" text-anchor="middle" font-size="12" fill="currentColor">version block</text>
+<rect x="589" y="34" width="118" height="84" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="648" y="70" text-anchor="middle" font-size="13" fill="currentColor">Defs</text>
+<text x="648" y="86" text-anchor="middle" font-size="12" fill="currentColor">XML data</text>
+<rect x="782" y="34" width="118" height="84" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="841" y="70" text-anchor="middle" font-size="13" fill="currentColor">Assemblies</text>
+<text x="841" y="86" text-anchor="middle" font-size="12" fill="currentColor">DLL code</text>
+<rect x="975" y="34" width="118" height="84" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="1034" y="70" text-anchor="middle" font-size="13" fill="currentColor">Harmony</text>
+<text x="1034" y="86" text-anchor="middle" font-size="12" fill="currentColor">patches</text>
+<rect x="1168" y="34" width="118" height="84" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="1227" y="70" text-anchor="middle" font-size="13" fill="currentColor">The game</text>
+<text x="1227" y="86" text-anchor="middle" font-size="13" fill="currentColor">runs</text>
+<line x1="132" y1="76" x2="199" y2="76" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f1-arrow)"/>
+<line x1="325" y1="76" x2="392" y2="76" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f1-arrow)"/>
+<line x1="518" y1="76" x2="585" y2="76" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f1-arrow)"/>
+<line x1="711" y1="76" x2="778" y2="76" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f1-arrow)"/>
+<line x1="904" y1="76" x2="971" y2="76" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f1-arrow)"/>
+<line x1="1097" y1="76" x2="1164" y2="76" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f1-arrow)"/>
+<text x="165.5" y="52" text-anchor="middle" font-size="12" fill="currentColor">for each</text>
+<text x="165.5" y="66" text-anchor="middle" font-size="12" fill="currentColor">listed mod</text>
+<text x="358.5" y="52" text-anchor="middle" font-size="12" fill="currentColor">then</text>
+<text x="358.5" y="66" text-anchor="middle" font-size="12" fill="currentColor">version</text>
+<text x="551.5" y="52" text-anchor="middle" font-size="12" fill="currentColor">from the</text>
+<text x="551.5" y="66" text-anchor="middle" font-size="12" fill="currentColor">folders</text>
+<text x="744.5" y="52" text-anchor="middle" font-size="12" fill="currentColor">then</text>
+<text x="744.5" y="66" text-anchor="middle" font-size="12" fill="currentColor">code</text>
+<text x="937.5" y="52" text-anchor="middle" font-size="12" fill="currentColor">at</text>
+<text x="937.5" y="66" text-anchor="middle" font-size="12" fill="currentColor">start-up</text>
+<text x="1130.5" y="52" text-anchor="middle" font-size="12" fill="currentColor">then</text>
+<text x="1130.5" y="66" text-anchor="middle" font-size="12" fill="currentColor">play</text>
+</svg>
+<figcaption><span>Figure 1.</span> At start-up the game reads each mod's list entry, then its data, then its code.</figcaption>
+</figure>
+</div>
+
+<p>XML is a plain text format that marks up data with tags. The game reads the active mod list from <code>Config\ModsConfig.xml</code> in the save data folder. It loads only the listed mods, in list order.</p>
+
+<p>A packageId is the unique ID that tells mods apart. Each mod's <code>About\About.xml</code> holds its name, packageId, supported versions, and required mods. The game lowercases the packageId to match. This mod needs Harmony, a library that changes game methods at run time, so the game's own files stay unchanged. The Harmony mod is item 2009463077 on the Steam Workshop.</p>
+
+<p><code>LoadFolders.xml</code> has one block per version, such as <code>&lt;v1.7&gt;</code>. The game picks the block that matches its version exactly, or else the newest block not above it. On RimWorld 1.7.5000, the v1.7 block loads, and the port's v1.6 block does not. A slash means the mod's root folder. An entry marked IfModActive loads only while the named mod is active. The folder for Combat Extended, a separate mod that changes combat, uses IfModActive.</p>
+
+<p>A Def is one XML entry that describes one piece of content, such as a building. Defs are the files in a Defs folder that hold these entries. The outer tag names the kind of content, such as ThingDef or HediffDef. An entry marked <code>Abstract</code> is a template, and other entries name it in <code>ParentName</code>.</p>
+
+<p>The mod's code is written in C#, a programming language. A comp is a piece of extra behavior that a Def attaches to a thing. An attribute is a named value inside an XML tag. Class entries in a Def, such as <code>thingClass</code>, <code>hediffClass</code>, and the <code>Class</code> on a comp, name the C# class that the game creates.</p>
+
+<p>An assembly is a compiled code library, saved as a DLL file, which is the Windows format for compiled code. The game loads every DLL in each folder it loads. At start-up the game creates each mod's Mod class. For this mod, that class is RimElShrineShieldMod, which builds on RimElShrineMod. RimElShrineMod is abstract, so it serves only as a parent class.</p>
+
+<p>Keyed text is translated text, looked up by key name in Languages folders. English is the fallback language.</p>
+
+<h2 id="mod-folder">What is in the mod folder</h2>
+
+<p>The mod folder is <code>RimElShrine.Shields\</code>. The game reads it through <code>LoadFolders.xml</code>. Figure 2 shows the layout, and the table says what reads each folder.</p>
+
+<div class="scroll-figure">
+<figure>
+<svg viewBox="0 0 360 520" role="img" aria-label="On RimWorld 1.7.5000 the game loads the 1.7 folder. The 1.6 folder stays unused.">
+<rect x="6" y="6" width="348" height="50" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="18" y="27" font-size="14" fill="currentColor">RimElShrine.Shields</text>
+<text x="18" y="46" font-size="12" fill="currentColor">the mod folder</text>
+<line x1="18" y1="56" x2="18" y2="486" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<line x1="18" y1="102" x2="34" y2="102" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<rect x="34" y="76" width="320" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="46" y="97" font-size="13" fill="currentColor">About</text>
+<text x="46" y="115" font-size="12" fill="currentColor">About.xml, Preview.png, PublishedFileId.txt</text>
+<line x1="18" y1="166" x2="34" y2="166" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<rect x="34" y="140" width="320" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="46" y="161" font-size="13" fill="currentColor">Content</text>
+<text x="46" y="179" font-size="12" fill="currentColor">30 PNG icons, shared by both versions</text>
+<line x1="18" y1="230" x2="34" y2="230" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<g opacity="0.45">
+<rect x="34" y="204" width="320" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="46" y="225" font-size="13" fill="currentColor">1.6</text>
+<text x="46" y="243" font-size="12" fill="currentColor">Assemblies, Defs, Languages, Compatible</text>
+</g>
+<line x1="18" y1="294" x2="34" y2="294" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<rect x="34" y="268" width="320" height="52" rx="6" fill="currentColor" fill-opacity="0.14" stroke="currentColor" stroke-width="2"/>
+<text x="46" y="289" font-size="13" fill="currentColor">1.7</text>
+<text x="46" y="307" font-size="12" fill="currentColor">Assemblies, Defs, Languages, Compatible</text>
+<line x1="18" y1="358" x2="34" y2="358" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<rect x="34" y="332" width="320" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="46" y="353" font-size="13" fill="currentColor">LoadFolders.xml</text>
+<text x="46" y="371" font-size="12" fill="currentColor">one block per game version</text>
+<line x1="18" y1="422" x2="34" y2="422" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<rect x="34" y="396" width="320" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="46" y="417" font-size="13" fill="currentColor">workshop-desc-en.txt</text>
+<text x="46" y="435" font-size="12" fill="currentColor">Steam Workshop text in English</text>
+<line x1="18" y1="486" x2="34" y2="486" stroke="currentColor" stroke-width="1.5" fill="none"/>
+<rect x="34" y="460" width="320" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="46" y="481" font-size="13" fill="currentColor">workshop-desc-zh.txt</text>
+<text x="46" y="499" font-size="12" fill="currentColor">Steam Workshop text in Chinese</text>
+</svg>
+<figcaption><span>Figure 2.</span> On RimWorld 1.7.5000 the game loads the 1.7 folder. The 1.6 folder stays unused.</figcaption>
+</figure>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Folder or file</th><th scope="col">What it holds</th><th scope="col">What reads it</th></tr>
+</thead>
+<tbody>
+<tr><td><code>About\</code></td><td><code>About.xml</code>, <code>Preview.png</code>, and <code>PublishedFileId.txt</code></td><td>The game reads <code>About.xml</code>. No other file in this repo refers to the other two.</td></tr>
+<tr><td><code>Content\</code></td><td>30 icons in PNG, an image file format</td><td>The game reads them at run time, for both versions.</td></tr>
+<tr><td><code>1.6\</code></td><td>Assemblies, Defs, Languages, and <code>Compatible\CombatExtended\</code></td><td>Loaded only for version 1.6.</td></tr>
+<tr><td><code>1.7\</code></td><td>Assemblies, six Defs, Languages, and <code>Compatible\CombatExtended\</code></td><td>Loaded on RimWorld 1.7.5000. The Combat Extended folder loads only while Combat Extended is active.</td></tr>
+<tr><td><code>LoadFolders.xml</code></td><td>One block per game version</td><td>The game reads it to pick folders.</td></tr>
+<tr><td><code>workshop-desc-en.txt</code> and <code>workshop-desc-zh.txt</code></td><td>Steam Workshop text, in English and Chinese</td><td>No other file in this repo refers to them.</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="code">How the code is organized</h2>
+
+<p>The repo holds four C# projects that matter here. A project is a folder of C# code that builds one DLL file. Harmony patches change game methods, and the core library holds two. A GameComponent is a class that runs for the whole game, not for one object.</p>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Project</th><th scope="col">Folder</th><th scope="col">What it holds</th></tr>
+</thead>
+<tbody>
+<tr><td>RimElShrine, the core library</td><td><code>Source\RimElShrine\</code></td><td>Settings, the abstract start-up class <code>RimElShrineMod</code>, the two Harmony patches, the compatibility manager, and the ELSClass filter.</td></tr>
+<tr><td>RimElShrine.Shields, the shield mod</td><td><code>Source\RimElShrine.Shields\</code></td><td>The start-up class <code>RimElShrineShieldMod</code>, the generator, belt, injectors, and regen effect, and the tuning classes <code>ShieldSetting</code> and <code>MechserumSetting</code>.</td></tr>
+<tr><td>RimElShrine.Shields.CE, the Combat Extended project</td><td><code>Source\RimElShrine.Shields.Compatibility\</code></td><td>The Combat Extended version of the generator. No game test has run it.</td></tr>
+<tr><td>Test mod, in the folder ShieldValidation</td><td><code>tools\validation\ShieldValidation\</code></td><td><code>NetworkValidation</code>, <code>EquipmentValidation</code>, and <code>MechSerumValidation</code>, each a GameComponent, plus <code>ValidationSupport</code>.</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>Both Harmony patches are prefixes, which means they run before the game's own method. The first, on ModSettings.Write, makes this mod save its settings through its own method. The second, on LoadedModManager.ParseAndProcessXML, removes each Def whose ELSClass group is switched off. An ELSClass attribute names that group, such as shield_building. Both patches apply in one call, Harmony.PatchAll, when the mod starts.</p>
+
+<p>The game counts time in ticks. A tick is one step of the game's clock, and 60 ticks make one second. A pawn is any character in the game, such as a colonist. The game calls four kinds of code:</p>
+<ul>
+<li>The start-up class, once.</li>
+<li>Comp classes, one for each comp in a Def. The generator's comp is <code>Comp_ShieldNet_ProjInterceptorELS</code>.</li>
+<li>The hediff class <code>HediffWithComps_LimbsRegen</code>, whose Tick method runs every tick. A hediff is a health condition that the game tracks on a pawn.</li>
+<li>GameComponent classes. The test mod's checks run from <code>GameComponentUpdate</code>, once per frame.</li>
+</ul>
+
+<h2 id="content-groups">How each content group works</h2>
+
+<h3 id="network">The shield network</h3>
+
+<p>Each tick, the generator checks the projectiles on the map, which is one colony's play area. A projectile is a shot or thrown object in flight. If one crosses the generator's shield area, the generator absorbs it. The code is in <code>DoInterception</code> and <code>InterceptProjectile</code>, in <code>Comp_ShieldNet_ProjInterceptorELS.cs</code>.</p>
+
+<p>Each hit costs energy, based on the projectile's damage. If <code>UseKineticEnergy</code> is on, which it is not by default, the cost uses kinetic energy, the energy of motion. The cost is then multiplied by <code>BuildingDmgGlobalFactor</code>. The generator's Def sets <code>isInfiniteEnergy</code> to false, so hits drain its energy.</p>
+
+<p>The code keeps one <code>ShieldNet</code> for each <code>PowerNet</code>, the game's object for one power grid. Each server unit holds three upgrade points, set by <code>upgradeResources</code> on line 182 of <code>ShieldNet.xml</code>. The Apply button in the terminal's window clears the powered server units, then hands points to them in order. The upgrade value is the bonus the network gives a stat. With no powered terminal, it is 0.</p>
+
+<div class="scroll-figure">
+<figure>
+<svg viewBox="0 0 360 300" role="img" aria-label="One power grid makes one shield network. The terminal decides how the upgrade points are spent.">
+<defs>
+<marker id="f3-arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker>
+</defs>
+<rect x="8" y="8" width="344" height="284" rx="18" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="22" y="30" font-size="13" fill="currentColor">One power grid</text>
+<rect x="24" y="44" width="130" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="89" y="75" text-anchor="middle" font-size="12" fill="currentColor">Shield Server Unit</text>
+<rect x="206" y="44" width="130" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="271" y="75" text-anchor="middle" font-size="12" fill="currentColor">Shield Server Unit</text>
+<rect x="110" y="132" width="140" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="180" y="153" text-anchor="middle" font-size="12" fill="currentColor">Shield Control</text>
+<text x="180" y="171" text-anchor="middle" font-size="12" fill="currentColor">Terminal</text>
+<rect x="24" y="226" width="130" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="89" y="247" text-anchor="middle" font-size="12" fill="currentColor">Kinetic Shield</text>
+<text x="89" y="263" text-anchor="middle" font-size="12" fill="currentColor">Generator</text>
+<rect x="206" y="226" width="130" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="271" y="247" text-anchor="middle" font-size="12" fill="currentColor">Kinetic Shield</text>
+<text x="271" y="263" text-anchor="middle" font-size="12" fill="currentColor">Generator</text>
+<line x1="104" y1="96" x2="142" y2="132" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f3-arrow)"/>
+<line x1="256" y1="96" x2="218" y2="132" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f3-arrow)"/>
+<line x1="146" y1="184" x2="116" y2="226" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f3-arrow)"/>
+<line x1="214" y1="184" x2="244" y2="226" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f3-arrow)"/>
+<text x="100" y="122" text-anchor="end" font-size="12" fill="currentColor">points</text>
+<text x="260" y="122" text-anchor="start" font-size="12" fill="currentColor">points</text>
+<text x="108" y="210" text-anchor="end" font-size="12" fill="currentColor">allocates</text>
+<text x="252" y="210" text-anchor="start" font-size="12" fill="currentColor">allocates</text>
+</svg>
+<figcaption><span>Figure 3.</span> One power grid makes one shield network. The terminal decides how the upgrade points are spent.</figcaption>
+</figure>
+</div>
+
+<h3 id="belt">The shield belt</h3>
+
+<p>The ES shield belts are worn at the waist. A ranged or explosive hit costs the belt <code>damage × energyLossPerDamage × DmgGlobalFactor</code>. The energyLossPerDamage value is the energy lost for each point of damage. DmgGlobalFactor is a setting that scales that energy cost. The belt absorbs a hit only while its energy is above zero.</p>
+
+<p>The ES0 belt gains 0.17 energy per second while worn, as set by <code>EnergyShieldRechargeRate</code> in <code>Shields.xml</code>. Its energy stops at 1. The ES3 belt can use blood from its wearer to recharge faster, which causes minor blood loss.</p>
+
+<p>In run 20261107-181001, one ranged hit of 2 damage cost 0.066 energy, which matched the expected value.</p>
+
+<h3 id="mech-serums">The mech serums</h3>
+
+<p>An injector is an item that adds the regen effect to a pawn, or ends it. Using one destroys it. The regen effect is the hediff <code>ELS_Hediff_LimbsRegen</code>, which starts at severity 0.1 and can reach 1. Severity is the number that sets how strong a hediff is. An injector that adds the effect also sets a count of heals the effect has left. A Fast injector is a Limited or Forever injector with its Fast flag set.</p>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Injector</th><th scope="col">What it does</th><th scope="col">Count</th><th scope="col">Fast</th></tr>
+</thead>
+<tbody>
+<tr><td>Cleaner</td><td>Ends a running regen effect</td><td>Not used</td><td>No</td></tr>
+<tr><td>Limited</td><td>Adds the regen effect</td><td>3</td><td>No</td></tr>
+<tr><td>Forever</td><td>Adds the regen effect</td><td>None</td><td>No</td></tr>
+<tr><td>Fast Limited</td><td>Adds the regen effect</td><td>3</td><td>Yes</td></tr>
+<tr><td>Fast Forever</td><td>Adds the regen effect</td><td>None</td><td>Yes</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>The regen clock gains 0.5 seconds every 30 ticks. A missing part heals once the clock passes its cost, which is the part's max health times 60 seconds. Max health is the health a body part has when whole. A finger has max health 8, so the cost is 480 seconds. The clock must pass 480, which takes 961 steps of 0.5 seconds. Counted from the first tick of regrowth, the first step comes at tick 32 and the rest follow every 30 ticks. The finger therefore heals at tick 28,833, not at the 28,800 that 480 seconds at 60 ticks a second would give. The check window is 23,040 to 31,680 ticks.</p>
+
+<p>Each heal lowers the count by one. At zero, the effect ends. An effect with no count does not end from heals.</p>
+
+<p>Blood loss is the health condition that tracks how much blood a pawn has lost. Quick regen is a faster mode of the regen effect. It starts when severity is above 0.5. In the 1.7 build, a Fast injector sets severity to 1, so its effect starts in quick regen. The 1.6 build never reads the Fast flag, so a Fast injector does nothing extra there.</p>
+
+<p>In quick regen, the clock gains 1.5 seconds every 30 ticks, three times the normal speed. The setting <code>QuickRegenFactor</code> sets that speed, and it defaults to 3. Each step adds blood loss, by <code>QuickRegenBloodLossPercentPerHealth</code>, which defaults to 0.005. Quick regen stops once blood loss reaches <code>QuickRegenBloodLossMax</code>, which defaults to 0.35. It runs only while the pawn has blood loss, and it resumes when a bleed appears. So a healthy pawn regrows at normal speed.</p>
+
+<div class="scroll-figure">
+<figure>
+<svg viewBox="0 0 370 140" role="img" aria-label="A finger comes back at 9,633 ticks with quick regen and at 28,833 ticks without it.">
+<text x="24" y="16" font-size="13" fill="currentColor">Quick regen, with blood loss</text>
+<text x="346" y="16" text-anchor="end" font-size="13" fill="currentColor">9,633 ticks</text>
+<rect x="24" y="22" width="100.2" height="20" rx="3" fill="currentColor" fill-opacity="0.85"/>
+<text x="24" y="64" font-size="13" fill="currentColor">Normal regen, no blood loss</text>
+<text x="346" y="64" text-anchor="end" font-size="13" fill="currentColor">28,833 ticks</text>
+<rect x="24" y="70" width="299.9" height="20" rx="3" fill="currentColor" fill-opacity="0.22" stroke="currentColor" stroke-width="1"/>
+<line x1="24" y1="108" x2="336" y2="108" stroke="currentColor" stroke-width="1" opacity="0.5" fill="none"/>
+<line x1="24" y1="108" x2="24" y2="112" stroke="currentColor" stroke-width="1" opacity="0.5" fill="none"/>
+<line x1="128" y1="108" x2="128" y2="112" stroke="currentColor" stroke-width="1" opacity="0.5" fill="none"/>
+<line x1="232" y1="108" x2="232" y2="112" stroke="currentColor" stroke-width="1" opacity="0.5" fill="none"/>
+<line x1="336" y1="108" x2="336" y2="112" stroke="currentColor" stroke-width="1" opacity="0.5" fill="none"/>
+<text x="24" y="128" text-anchor="middle" font-size="12" fill="currentColor">0</text>
+<text x="128" y="128" text-anchor="middle" font-size="12" fill="currentColor">10,000</text>
+<text x="232" y="128" text-anchor="middle" font-size="12" fill="currentColor">20,000</text>
+<text x="336" y="128" text-anchor="middle" font-size="12" fill="currentColor">30,000</text>
+</svg>
+<figcaption><span>Figure 4.</span> A finger comes back at 9,633 ticks with quick regen and at 28,833 ticks without it.</figcaption>
+</figure>
+</div>
+
+<div class="scroll-figure">
+<figure>
+<svg viewBox="0 0 360 340" role="img" aria-label="Quick regen speeds up only a pawn that has blood loss.">
+<defs>
+<marker id="f5-arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker>
+</defs>
+<rect x="40" y="8" width="280" height="40" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="180" y="33" text-anchor="middle" font-size="13" fill="currentColor">Fast injector</text>
+<line x1="180" y1="48" x2="180" y2="64" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
+<rect x="40" y="64" width="280" height="40" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="180" y="89" text-anchor="middle" font-size="13" fill="currentColor">Severity set to 1</text>
+<line x1="180" y1="104" x2="180" y2="120" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
+<rect x="40" y="120" width="280" height="40" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="180" y="145" text-anchor="middle" font-size="13" fill="currentColor">Quick regen on, severity above 0.5</text>
+<line x1="180" y1="160" x2="180" y2="176" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
+<rect x="60" y="176" width="240" height="44" rx="22" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="180" y="203" text-anchor="middle" font-size="13" fill="currentColor">Blood loss present?</text>
+<line x1="110" y1="220" x2="110" y2="246" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
+<line x1="250" y1="220" x2="250" y2="246" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
+<text x="98" y="238" text-anchor="end" font-size="12" fill="currentColor">yes</text>
+<text x="262" y="238" text-anchor="start" font-size="12" fill="currentColor">no</text>
+<rect x="20" y="246" width="170" height="76" rx="6" fill="currentColor" fill-opacity="0.14" stroke="currentColor" stroke-width="2"/>
+<text x="105" y="278" text-anchor="middle" font-size="13" fill="currentColor">Regrows three times</text>
+<text x="105" y="294" text-anchor="middle" font-size="13" fill="currentColor">faster and adds</text>
+<text x="105" y="310" text-anchor="middle" font-size="13" fill="currentColor">blood loss</text>
+<rect x="190" y="246" width="150" height="76" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="265" y="282" text-anchor="middle" font-size="13" fill="currentColor">Regrows at the</text>
+<text x="265" y="298" text-anchor="middle" font-size="13" fill="currentColor">normal speed</text>
+</svg>
+<figcaption><span>Figure 5.</span> Quick regen speeds up only a pawn that has blood loss.</figcaption>
+</figure>
+</div>
+
+<h2 id="port-changes">What the port changes from 1.6</h2>
+
+<p>An ADR, or architecture decision record, is a short file in <code>docs\adr</code> that records one decision and its reason. A commit is one saved change in git, the tool that keeps the repo's history. A pull request is a proposed code change that gets reviewed before it merges. The code compiles against <code>Krafs.Rimworld.Ref</code> 1.7.4995-unstable, a reference package of stand-in game files one step behind the installed game. The unstable branch is the Steam test channel for RimWorld.</p>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Change</th><th scope="col">Where it lives</th><th scope="col">Effect</th></tr>
+</thead>
+<tbody>
+<tr><td>Target build</td><td>ADR 0002</td><td>RimWorld 1.7.5000 rev1275, the installed build from the unstable branch.</td></tr>
+<tr><td>New packageId</td><td><code>About\About.xml</code>, ADR 0003</td><td><code>foxcosmic.rimelshrine.shields17</code> lets the port load beside <code>FoxMo.RimElShrine.Shields</code>. One About.xml serves both version folders, so the 1.6 folder reports the new ID too.</td></tr>
+<tr><td>1.7-only guard</td><td><code>#if RIMWORLD_17</code>, ADR 0011</td><td>A compiler switch. Code inside it compiles only in the 1.7 build.</td></tr>
+<tr><td>Fast injectors</td><td>Same guard, ADR 0011</td><td>The 1.7 build sets severity to 1 for a Fast injector. The 1.6 build does not. Before 2026-11-07, no build read the Fast flag, and the 1.6 mod never read it.</td></tr>
+<tr><td>Vanilla blood loss lookup</td><td><code>HediffWithComps_LimbsRegen.Tick</code>, PR 1</td><td>The port's helper gave healthy pawns a zero-severity bleed, so they got quick regen. The game's own lookup replaces it. Merged 2026-11-07. The 1.6 source is the same file, so a rebuilt 1.6 DLL would include it.</td></tr>
+<tr><td>Data files</td><td>Defs, Languages, images</td><td>Defs and Languages match in both version folders. Images sit in the shared Content folder.</td></tr>
+<tr><td>Names kept</td><td>Def names, class names, settings keys</td><td>These match 1.6. Saves and translations depend on them.</td></tr>
+<tr><td>Rebuilt 1.7 assemblies</td><td>Commit 119d21e</td><td>The tracked DLLs did not match a rebuild of the unchanged source. The commit includes a fresh build, and the green run used it.</td></tr>
+<tr><td>Combat Extended</td><td><code>1.7\Compatible\CombatExtended\</code></td><td>Its own assembly, loaded only while Combat Extended is active. It has not run in the game.</td></tr>
+<tr><td>The 1.6 folder</td><td><code>1.6\</code></td><td>No commit after 00f42f4 changes it.</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="tests">How the tests prove the mod works</h2>
+
+<p>A validation run is a test run that checks the mod inside the game. The runner, <code>tools\validation\Invoke-Scenarios.ps1</code>, is a PowerShell script, which is Windows' built-in scripting tool. It starts RimWorld headless, meaning with no window, and loads the port and a test mod. The test mod's folder is ShieldValidation, and its package ID is <code>local.shields17.validation</code>.</p>
+
+<p>The runner refuses to start while RimWorld runs. It builds the test mod, writes <code>ModsConfig.xml</code> and <code>Prefs.xml</code> into the run's own Config folder, and makes two junctions in the game's Mods folder. A junction is a Windows folder link that makes one folder appear at a second path. The runner starts the game with its own save data folder and waits up to 300 seconds. Then it copies <code>Player.log</code>, the game's log file, removes the junctions, and checks the results.</p>
+
+<p>Three GameComponents run the checks inside the game. Each check writes one row to <code>validation-results.txt</code> and to the game log, marked <code>[ShieldValidation]</code>. A row is one check result. Each group also writes a completion row, which reads finished.</p>
+
+<p>A run passes only when:</p>
+<ul>
+<li>Every scenario row reads PASS, and every group completion row reads finished.</li>
+<li>The log markers match the rows.</li>
+<li>No other RimWorld process ran during the run.</li>
+<li>The mod list has the port and the test mod, with no notes.</li>
+<li>The log has no error that mentions the port.</li>
+</ul>
+
+<div class="scroll-figure">
+<figure>
+<svg viewBox="0 0 360 448" role="img" aria-label="A run passes only when the results file and the game log agree.">
+<defs>
+<marker id="f6-arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker>
+</defs>
+<rect x="30" y="8" width="300" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="180" y="30" text-anchor="middle" font-size="13" fill="currentColor">Runner</text>
+<text x="180" y="48" text-anchor="middle" font-size="12" fill="currentColor">Invoke-Scenarios.ps1</text>
+<line x1="180" y1="62" x2="180" y2="82" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f6-arrow)"/>
+<rect x="30" y="84" width="300" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="180" y="106" text-anchor="middle" font-size="13" fill="currentColor">Junctions and mod list</text>
+<text x="180" y="124" text-anchor="middle" font-size="12" fill="currentColor">two mod folders linked into the game</text>
+<line x1="180" y1="138" x2="180" y2="158" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f6-arrow)"/>
+<rect x="30" y="160" width="300" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="180" y="182" text-anchor="middle" font-size="13" fill="currentColor">RimWorld, headless</text>
+<text x="180" y="200" text-anchor="middle" font-size="12" fill="currentColor">one game session with no window</text>
+<line x1="180" y1="214" x2="180" y2="234" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f6-arrow)"/>
+<rect x="30" y="236" width="300" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="180" y="258" text-anchor="middle" font-size="13" fill="currentColor">GameComponent checks</text>
+<text x="180" y="276" text-anchor="middle" font-size="12" fill="currentColor">three test components write rows</text>
+<line x1="180" y1="290" x2="180" y2="310" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f6-arrow)"/>
+<rect x="30" y="312" width="300" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="180" y="334" text-anchor="middle" font-size="13" fill="currentColor">Results file and Player.log</text>
+<text x="180" y="352" text-anchor="middle" font-size="12" fill="currentColor">one row per check in each file</text>
+<line x1="180" y1="366" x2="180" y2="386" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f6-arrow)"/>
+<rect x="30" y="388" width="300" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="180" y="410" text-anchor="middle" font-size="13" fill="currentColor">Verdict</text>
+<text x="180" y="428" text-anchor="middle" font-size="12" fill="currentColor">PASS or FAIL</text>
+</svg>
+<figcaption><span>Figure 6.</span> A run passes only when the results file and the game log agree.</figcaption>
+</figure>
+</div>
+
+<p>A control run turns one part off on purpose, so its checks must fail. The switches are <code>-shieldvalidation-nopower</code>, <code>-shieldvalidation-nowear</code>, and <code>-shieldvalidation-noserum</code>. Run 20261107-180127 used the last one. It fails the six mech rows that need serum, and it passes the recipe row and the network and equipment rows, as designed.</p>
+
+<p>The project's rule is to reproduce a bug red in a run before fixing it. Three runs failed before the fix commit. Runs 20261107-174532 and 20261107-174938 failed the bleeding-pawn row. Run 20261107-175322 passed that row and failed the healthy-pawn row. Run 20261107-181001 passes both.</p>
+
+<p>Only one RimWorld session runs at a time, per ADR 0010. Every session writes the same Player.log, so overlapping sessions mix their lines. An overlapping run is not valid evidence, even when it reads PASS. A separate watcher outside this repo waits two quiet minutes before a run starts.</p>
+
+<p>The mech group steps the game one tick at a time, in its own loop. The game ignores speed changes made before the player has control, which is the case at a new colony's first tick. Without the loop, a finger would take about 8 minutes of real time to regrow at normal speed.</p>
+
+<h2 id="status">Where things stand</h2>
+
+<p>The latest full pass is run 20261107-181001, on RimWorld 1.7.5000 rev1275. Its 14 scenario rows read PASS, and its 3 completion rows read finished. Runs on 2026-11-05 passed the network and equipment rows on RimWorld 1.7.4998 rev1299, including run 20261105-152607. The change is merged in PR 1.</p>
+
+<p>A scenario row is one check result, not counting completion rows. The test rows call quick regen "fast regen", and the table keeps those names.</p>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Content group</th><th scope="col">Passing row</th><th scope="col">What the row proves</th></tr>
+</thead>
+<tbody>
+<tr><td rowspan="3">Shield Buildings &amp; Shield Network</td><td>Parts join one shield network</td><td>A generator, a terminal, and a server unit share one network.</td></tr>
+<tr><td>Terminal allocation reaches the network</td><td>Points given to a server unit reach the network.</td></tr>
+<tr><td>No power, no upgrade value</td><td>With no power, the network's upgrade value is 0.</td></tr>
+<tr><td rowspan="4">Shield Equipment</td><td>Colonist wears the ES belt</td><td>A colonist wears the ES0 belt.</td></tr>
+<tr><td>ES belt absorbs a ranged hit and loses energy</td><td>One hit costs 0.066 energy, as expected.</td></tr>
+<tr><td>ES belt with no energy lets a hit through</td><td>An empty belt lets the hit through.</td></tr>
+<tr><td>ES belt recharges while worn</td><td>The worn belt holds 0.408 energy after 144 ticks, as expected.</td></tr>
+<tr><td rowspan="7">Mech Serums</td><td>Recipes, injectors and research resolve</td><td>Both recipes make the product from the empty serum, and five regen injectors have the right flags.</td></tr>
+<tr><td>Regenerator injector adds the regen effect</td><td>A Limited injector adds the effect with a count of 3.</td></tr>
+<tr><td>Missing finger regrows under the regen effect</td><td>The finger returns at 28,833 ticks, inside 23,040 to 31,680, and the count drops to 2.</td></tr>
+<tr><td>Regen effect ends when its count runs out</td><td>With a count of 1, the effect ends after the heal.</td></tr>
+<tr><td>Cleaner stops a running regen effect</td><td>The Cleaner ends the effect, and the finger stays missing.</td></tr>
+<tr><td>Fast regen speeds up regrowth while a pawn has blood loss</td><td>The finger returns at 9,633 ticks, inside 7,680 to 10,560.</td></tr>
+<tr><td>Fast regen does nothing on a pawn with no blood loss</td><td>The finger returns at 28,833 ticks, with no blood loss.</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 id="not-covered">Not covered yet</h3>
+
+<p>Four areas are not covered yet:</p>
+<ul>
+<li>Combat interception, meaning a shield that stops real projectiles in a fight.</li>
+<li>The Combat Extended path. Nothing has run in the game yet.</li>
+<li>The Healer and Resurrector effects. Only their recipes are checked.</li>
+<li>The Steam Workshop upload. Upload as Private first, then switch to Public after the owner tests it. Before any upload, check <code>RimElShrine.Shields\About\PublishedFileId.txt</code>. It holds 3575073524, the original mod's Workshop item number.</li>
+</ul>
+
+<h2 id="open-decisions">Open decisions</h2>
+
+<p>Lucas decides these two open choices. Neither blocks the work, and each default applies if the owner does not answer.</p>
+
+<h3>D3. How the test clock runs</h3>
+
+<p>A finger takes 28,833 ticks to regrow, which is about 8 minutes at normal speed. The harness moves the game forward itself, one tick at a time. The other option is to let the game run at its fastest speed once the colony is ready. That is quicker, but it needs one more full run to prove it works. The default is to keep the loop. No work waits.</p>
+
+<h3>D4. Whether the usability check cures a bleed</h3>
+
+<p>The usability check, <code>CanBeUsedBy</code>, calls the port's <code>TryGetHediff</code> helper for the regen effect. With no regen effect, the helper sets the pawn's blood loss to zero. So checking a bleeding pawn can cure its bleed. The 1.6 build makes the same call.</p>
+
+<p>The options are to leave it in both builds, to fix it in the 1.7 build only, or to fix it in both. Fixing the 1.6 code changes FoxMo's build the next time someone builds it. The default is to leave it in both builds. No work waits.</p>
+
+<h3>Answered decisions</h3>
+
+<p>D1. Fast injectors work only while a pawn has blood loss. The owner answered on 2026-11-07, as ADR 0011 records.</p>
+
+<p>D2. The target is the installed build, RimWorld 1.7.5000 rev1275. The owner chose it on 2026-11-07, as ADR 0002 records.</p>
+
+<h2 id="glossary">Words used in this guide</h2>
+
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th scope="col">Term</th><th scope="col">Meaning</th></tr>
+</thead>
+<tbody>
+<tr><td>Mod</td><td>An add-on that adds content or code to RimWorld.</td></tr>
+<tr><td>Def</td><td>One XML entry that describes one piece of content.</td></tr>
+<tr><td>Assembly</td><td>A compiled code library, saved as a DLL file.</td></tr>
+<tr><td>Harmony</td><td>A library that changes game methods at run time.</td></tr>
+<tr><td>packageId</td><td>The unique ID that tells mods apart.</td></tr>
+<tr><td>Hediff</td><td>A health condition that the game tracks on a pawn.</td></tr>
+<tr><td>Comp</td><td>Extra behavior that a Def attaches to a thing.</td></tr>
+<tr><td>GameComponent</td><td>A class that runs for the whole game, not for one object. The test checks run each frame.</td></tr>
+<tr><td>Pawn</td><td>Any character in the game, such as a colonist.</td></tr>
+<tr><td>Blood loss</td><td>The health condition that tracks how much blood a pawn has lost.</td></tr>
+<tr><td>Quick regen</td><td>The faster mode of the regen effect. It adds blood loss.</td></tr>
+<tr><td>Shield network</td><td>The shield buildings on one power grid.</td></tr>
+<tr><td>ES shield belt</td><td>A worn shield belt, in models ES0, ES1, ES2, and ES3.</td></tr>
+<tr><td>Regenerator injector</td><td>An item that adds the regen effect to a pawn, or ends it.</td></tr>
+<tr><td>Mech serum</td><td>A serum made by a recipe, such as the Mech Serum Healer.</td></tr>
+<tr><td>Headless</td><td>Running the game with no window.</td></tr>
+<tr><td>Save data folder</td><td>The game's data folder. It holds Config\ModsConfig.xml, and each validation run gets its own.</td></tr>
+<tr><td>Junction</td><td>A Windows folder link that makes one folder appear at a second path.</td></tr>
+<tr><td>Scenario row</td><td>One check result, not counting completion rows.</td></tr>
+<tr><td>Control run</td><td>A run with one part turned off on purpose.</td></tr>
+<tr><td>Red and green</td><td>A test that fails before a fix is red, and passes after it, so it is green.</td></tr>
+<tr><td>ADR</td><td>An architecture decision record, a short file in docs\adr.</td></tr>
+<tr><td>CONTEXT.md</td><td>The repo file that defines the project's terms and scope.</td></tr>
+</tbody>
+</table>
+</div>
+
+</main>
+</body>
+</html>
