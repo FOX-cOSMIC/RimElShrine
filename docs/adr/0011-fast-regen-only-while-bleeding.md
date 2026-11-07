@@ -4,7 +4,7 @@ Lucas decided this on 2026-11-07, answering decision D1 with "I think they only 
 
 ## Decision
 
-A Fast injector sets the regen effect to severity 1, the top of its range. Quick regen starts above severity 0.5, so the effect runs in quick mode. Quick regen runs only while the pawn has blood loss. It adds blood loss as it works, and it stops when the pawn has no blood loss. A healthy pawn regrows at the normal speed.
+A Fast injector sets the regen effect to severity 1, the top of its range. Quick regen starts above severity 0.5, so the effect runs in quick mode. Quick regen runs only while the pawn has blood loss. It adds blood loss as it works, and it stops when the pawn has no blood loss. A healthy pawn regrows at the normal speed. In this record, a bleeding pawn means a pawn with blood loss, the state the regen code reads. The validation sets blood loss directly, and it does not model a wound.
 
 Two changes make this hold.
 
