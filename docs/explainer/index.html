@@ -111,11 +111,11 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h2 id="how-rimworld-runs-a-mod">How RimWorld runs a mod</h2>
 
-<p>The game loads a mod in stages. It reads the list of active mods, then the mod's data, then its code. Figure 1 shows the order. These rules come from the game's own code, read with a decompiler on this PC.</p>
+<p>The game loads a mod in stages. It reads the list of active mods, then the mod's code, then its data. Figure 1 shows the order. These rules come from the game's own code, read with a decompiler on this PC.</p>
 
 <div class="scroll-figure">
 <figure>
-<svg class="flow-wide" viewBox="0 0 1296 140" role="img" aria-label="At start-up the game reads each mod's list entry, then its data, then its code.">
+<svg class="flow-wide" viewBox="0 0 1296 140" role="img" aria-label="At start-up the game reads each mod's list entry, then its code, then its data.">
 <defs>
 <marker id="f1-arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker>
 </defs>
@@ -132,14 +132,14 @@ nav ol { margin: 0.6em 0 1em; }
 <text x="455" y="76" text-anchor="middle" font-size="12" fill="currentColor">picks the</text>
 <text x="455" y="92" text-anchor="middle" font-size="12" fill="currentColor">version block</text>
 <rect x="589" y="34" width="118" height="84" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
-<text x="648" y="70" text-anchor="middle" font-size="13" fill="currentColor">Defs</text>
-<text x="648" y="86" text-anchor="middle" font-size="12" fill="currentColor">XML data</text>
+<text x="648" y="70" text-anchor="middle" font-size="13" fill="currentColor">Assemblies</text>
+<text x="648" y="86" text-anchor="middle" font-size="12" fill="currentColor">DLL code</text>
 <rect x="782" y="34" width="118" height="84" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
-<text x="841" y="70" text-anchor="middle" font-size="13" fill="currentColor">Assemblies</text>
-<text x="841" y="86" text-anchor="middle" font-size="12" fill="currentColor">DLL code</text>
+<text x="841" y="70" text-anchor="middle" font-size="13" fill="currentColor">Harmony</text>
+<text x="841" y="86" text-anchor="middle" font-size="12" fill="currentColor">patches</text>
 <rect x="975" y="34" width="118" height="84" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
-<text x="1034" y="70" text-anchor="middle" font-size="13" fill="currentColor">Harmony</text>
-<text x="1034" y="86" text-anchor="middle" font-size="12" fill="currentColor">patches</text>
+<text x="1034" y="70" text-anchor="middle" font-size="13" fill="currentColor">Defs</text>
+<text x="1034" y="86" text-anchor="middle" font-size="12" fill="currentColor">XML data</text>
 <rect x="1168" y="34" width="118" height="84" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
 <text x="1227" y="70" text-anchor="middle" font-size="13" fill="currentColor">The game</text>
 <text x="1227" y="86" text-anchor="middle" font-size="13" fill="currentColor">runs</text>
@@ -155,14 +155,14 @@ nav ol { margin: 0.6em 0 1em; }
 <text x="358.5" y="66" text-anchor="middle" font-size="12" fill="currentColor">version</text>
 <text x="551.5" y="52" text-anchor="middle" font-size="12" fill="currentColor">from the</text>
 <text x="551.5" y="66" text-anchor="middle" font-size="12" fill="currentColor">folders</text>
-<text x="744.5" y="52" text-anchor="middle" font-size="12" fill="currentColor">then</text>
-<text x="744.5" y="66" text-anchor="middle" font-size="12" fill="currentColor">code</text>
-<text x="937.5" y="52" text-anchor="middle" font-size="12" fill="currentColor">at</text>
-<text x="937.5" y="66" text-anchor="middle" font-size="12" fill="currentColor">start-up</text>
+<text x="744.5" y="52" text-anchor="middle" font-size="12" fill="currentColor">then create</text>
+<text x="744.5" y="66" text-anchor="middle" font-size="12" fill="currentColor">mod classes</text>
+<text x="937.5" y="52" text-anchor="middle" font-size="12" fill="currentColor">then parse</text>
+<text x="937.5" y="66" text-anchor="middle" font-size="12" fill="currentColor">the XML</text>
 <text x="1130.5" y="52" text-anchor="middle" font-size="12" fill="currentColor">then</text>
 <text x="1130.5" y="66" text-anchor="middle" font-size="12" fill="currentColor">play</text>
 </svg>
-<figcaption><span>Figure 1.</span> At start-up the game reads each mod's list entry, then its data, then its code.</figcaption>
+<figcaption><span>Figure 1.</span> At start-up the game reads each mod's list entry, then its code, then its data.</figcaption>
 </figure>
 </div>
 
@@ -176,7 +176,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <p>The mod's code is written in C#, a programming language. A comp is a piece of extra behavior that a Def attaches to a thing. An attribute is a named value inside an XML tag. Class entries in a Def, such as <code>thingClass</code>, <code>hediffClass</code>, and the <code>Class</code> on a comp, name the C# class that the game creates.</p>
 
-<p>An assembly is a compiled code library, saved as a DLL file, which is the Windows format for compiled code. The game loads every DLL in each folder it loads. At start-up the game creates each mod's Mod class. For this mod, that class is RimElShrineShieldMod, which builds on RimElShrineMod. RimElShrineMod is abstract, so it serves only as a parent class.</p>
+<p>An assembly is a compiled code library, saved as a DLL file, which is the Windows format for compiled code. The game loads every DLL in the Assemblies subfolder of each folder it loads. At start-up the game creates each mod's Mod class, and creating that class applies the mod's Harmony patches. For this mod, that class is RimElShrineShieldMod, which builds on RimElShrineMod. RimElShrineMod is abstract, so it serves only as a parent class.</p>
 
 <p>Keyed text is translated text, looked up by key name in Languages folders. English is the fallback language.</p>
 
@@ -274,9 +274,15 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h3 id="network">The shield network</h3>
 
-<p>Each tick, the generator checks the projectiles on the map, which is one colony's play area. A projectile is a shot or thrown object in flight. If one crosses the generator's shield area, the generator absorbs it. The code is in <code>DoInterception</code> and <code>InterceptProjectile</code>, in <code>Comp_ShieldNet_ProjInterceptorELS.cs</code>.</p>
+<p>Unless it is stunned, the generator checks the projectiles on the map every tick. The map is one colony's play area. A projectile is a shot or thrown object in flight. The generator must be active. It becomes active when a recharge finishes, and it stops being active when its energy runs out or an EMP hits it. It intercepts a projectile only when all of these hold:</p>
+<ul>
+<li>The shot's type is switched on. A ground shot needs <code>InterceptGround</code>. An overhead shot, such as a mortar shell, needs <code>InterceptOverhead</code>.</li>
+<li>The shot is incoming and <code>InterceptIn</code> is on, or it is outgoing and <code>AllowOut</code> is off. An incoming shot is inside the radius now. A ground shot also started outside the radius, and an overhead shot has its destination inside it. An outgoing shot started inside the radius and is outside it now.</li>
+<li>If <code>IFFOn</code> is on, the shot's launcher, or the launcher's faction, is hostile to the generator's faction.</li>
+</ul>
+<p>These rules come from reading the code. No test has run them in a fight. See <a href="#not-covered">Not covered yet</a>. The code is in <code>DoInterception</code> and <code>InterceptProjectile</code>, in <code>Comp_ShieldNet_ProjInterceptorELS.cs</code>.</p>
 
-<p>Each hit costs energy, based on the projectile's damage. If <code>UseKineticEnergy</code> is on, which it is not by default, the cost uses kinetic energy, the energy of motion. The cost is then multiplied by <code>BuildingDmgGlobalFactor</code>. The generator's Def sets <code>isInfiniteEnergy</code> to false, so hits drain its energy.</p>
+<p>Each hit costs energy, based on the projectile's damage. If <code>UseKineticEnergy</code> is on, which it is not by default, the cost uses kinetic energy, the energy of motion. The cost is then multiplied by <code>BuildingDmgGlobalFactor</code>. The generator's Def sets <code>isInfiniteEnergy</code> to false, so hits drain its energy. When the energy runs out, the shield breaks, turns off, and starts to recharge.</p>
 
 <p>The code keeps one <code>ShieldNet</code> for each <code>PowerNet</code>, the game's object for one power grid. Each server unit holds three upgrade points, set by <code>upgradeResources</code> on line 182 of <code>ShieldNet.xml</code>. The Apply button in the terminal's window clears the powered server units, then hands points to them in order. The upgrade value is the bonus the network gives a stat. With no powered terminal, it is 0.</p>
 
@@ -316,7 +322,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h3 id="belt">The shield belt</h3>
 
-<p>The ES shield belts are worn at the waist. A ranged or explosive hit costs the belt <code>damage × energyLossPerDamage × DmgGlobalFactor</code>. The energyLossPerDamage value is the energy lost for each point of damage. DmgGlobalFactor is a setting that scales that energy cost. The belt absorbs a hit only while its energy is above zero.</p>
+<p>The ES shield belts are worn at the waist. A ranged or explosive hit costs the belt <code>damage × energyLossPerDamage × DmgGlobalFactor</code>. The energyLossPerDamage value is the energy lost for each point of damage. DmgGlobalFactor is a setting that scales that energy cost. The belt absorbs a ranged or explosive hit only while it is worn, its shield is in the Active state, and it has energy. When the shield breaks, it spends a reset period in the Resetting state before it can absorb again. On belts that use blood transfer, the reset can end early by drawing blood from the wearer.</p>
 
 <p>The ES0 belt gains 0.17 energy per second while worn, as set by <code>EnergyShieldRechargeRate</code> in <code>Shields.xml</code>. Its energy stops at 1. The ES3 belt can use blood from its wearer to recharge faster, which causes minor blood loss.</p>
 
@@ -347,11 +353,11 @@ nav ol { margin: 0.6em 0 1em; }
 
 <p>Blood loss is the health condition that tracks how much blood a pawn has lost. Quick regen is a faster mode of the regen effect. It starts when severity is above 0.5. In the 1.7 build, a Fast injector sets severity to 1, so its effect starts in quick regen. The 1.6 build never reads the Fast flag, so a Fast injector does nothing extra there.</p>
 
-<p>In quick regen, the clock gains 1.5 seconds every 30 ticks, three times the normal speed. The setting <code>QuickRegenFactor</code> sets that speed, and it defaults to 3. Each step adds blood loss, by <code>QuickRegenBloodLossPercentPerHealth</code>, which defaults to 0.005. Quick regen stops once blood loss reaches <code>QuickRegenBloodLossMax</code>, which defaults to 0.35. It runs only while the pawn has blood loss, and it resumes when a bleed appears. So a healthy pawn regrows at normal speed.</p>
+<p>In quick regen, the clock gains 1.5 seconds every 30 ticks, three times the normal speed, while the extra time applies. The setting <code>QuickRegenFactor</code> sets that speed, and it defaults to 3. Each step adds blood loss equal to the extra seconds divided by <code>LimbsRegenSecondsPerHealth</code>, times <code>QuickRegenBloodLossPercentPerHealth</code>, which defaults to 0.005. The extra time applies only while the pawn's blood loss is below <code>QuickRegenBloodLossMax</code>, which defaults to 0.35, and only when the next step's blood loss still fits under that cap. Otherwise the part regrows at normal speed, so a pawn with no blood loss gets no extra time.</p>
 
 <div class="scroll-figure">
 <figure>
-<svg viewBox="0 0 370 140" role="img" aria-label="A finger comes back at 9,633 ticks with quick regen and at 28,833 ticks without it.">
+<svg viewBox="0 0 370 140" role="img" aria-label="In the test, a finger came back at 9,633 ticks with quick regen and at 28,833 ticks without it.">
 <text x="24" y="16" font-size="13" fill="currentColor">Quick regen, with blood loss</text>
 <text x="346" y="16" text-anchor="end" font-size="13" fill="currentColor">9,633 ticks</text>
 <rect x="24" y="22" width="100.2" height="20" rx="3" fill="currentColor" fill-opacity="0.85"/>
@@ -368,13 +374,13 @@ nav ol { margin: 0.6em 0 1em; }
 <text x="232" y="128" text-anchor="middle" font-size="12" fill="currentColor">20,000</text>
 <text x="336" y="128" text-anchor="middle" font-size="12" fill="currentColor">30,000</text>
 </svg>
-<figcaption><span>Figure 4.</span> A finger comes back at 9,633 ticks with quick regen and at 28,833 ticks without it.</figcaption>
+<figcaption><span>Figure 4.</span> In the test, a finger came back at 9,633 ticks with quick regen and at 28,833 ticks without it.</figcaption>
 </figure>
 </div>
 
 <div class="scroll-figure">
 <figure>
-<svg viewBox="0 0 360 340" role="img" aria-label="Quick regen speeds up only a pawn that has blood loss.">
+<svg viewBox="0 0 360 340" role="img" aria-label="Quick regen speeds up only a pawn with blood loss below the cap.">
 <defs>
 <marker id="f5-arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker>
 </defs>
@@ -388,7 +394,7 @@ nav ol { margin: 0.6em 0 1em; }
 <text x="180" y="145" text-anchor="middle" font-size="13" fill="currentColor">Quick regen on, severity above 0.5</text>
 <line x1="180" y1="160" x2="180" y2="176" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
 <rect x="60" y="176" width="240" height="44" rx="22" fill="none" stroke="currentColor" stroke-width="1.5"/>
-<text x="180" y="203" text-anchor="middle" font-size="13" fill="currentColor">Blood loss present?</text>
+<text x="180" y="203" text-anchor="middle" font-size="13" fill="currentColor">Blood loss below the cap?</text>
 <line x1="110" y1="220" x2="110" y2="246" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
 <line x1="250" y1="220" x2="250" y2="246" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
 <text x="98" y="238" text-anchor="end" font-size="12" fill="currentColor">yes</text>
@@ -401,7 +407,7 @@ nav ol { margin: 0.6em 0 1em; }
 <text x="265" y="282" text-anchor="middle" font-size="13" fill="currentColor">Regrows at the</text>
 <text x="265" y="298" text-anchor="middle" font-size="13" fill="currentColor">normal speed</text>
 </svg>
-<figcaption><span>Figure 5.</span> Quick regen speeds up only a pawn that has blood loss.</figcaption>
+<figcaption><span>Figure 5.</span> Quick regen speeds up only a pawn with blood loss below the cap.</figcaption>
 </figure>
 </div>
 
@@ -440,15 +446,15 @@ nav ol { margin: 0.6em 0 1em; }
 <p>A run passes only when:</p>
 <ul>
 <li>Every scenario row reads PASS, and every group completion row reads finished.</li>
-<li>The log markers match the rows.</li>
+<li>The log has one <code>[ShieldValidation]</code> marker for each row. The runner compares the counts, not the text of each marker.</li>
 <li>No other RimWorld process ran during the run.</li>
 <li>The mod list has the port and the test mod, with no notes.</li>
-<li>The log has no error that mentions the port.</li>
+<li>The log has no error line that mentions the port or the test mod.</li>
 </ul>
 
 <div class="scroll-figure">
 <figure>
-<svg viewBox="0 0 360 448" role="img" aria-label="A run passes only when the results file and the game log agree.">
+<svg viewBox="0 0 360 448" role="img" aria-label="A run passes only when every scenario row reads PASS, each group reads finished, and the log has one marker per row.">
 <defs>
 <marker id="f6-arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker>
 </defs>
@@ -470,13 +476,13 @@ nav ol { margin: 0.6em 0 1em; }
 <line x1="180" y1="290" x2="180" y2="310" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f6-arrow)"/>
 <rect x="30" y="312" width="300" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
 <text x="180" y="334" text-anchor="middle" font-size="13" fill="currentColor">Results file and Player.log</text>
-<text x="180" y="352" text-anchor="middle" font-size="12" fill="currentColor">one row per check in each file</text>
+<text x="180" y="352" text-anchor="middle" font-size="12" fill="currentColor">a row per check, and a marker per row</text>
 <line x1="180" y1="366" x2="180" y2="386" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f6-arrow)"/>
 <rect x="30" y="388" width="300" height="52" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
 <text x="180" y="410" text-anchor="middle" font-size="13" fill="currentColor">Verdict</text>
 <text x="180" y="428" text-anchor="middle" font-size="12" fill="currentColor">PASS or FAIL</text>
 </svg>
-<figcaption><span>Figure 6.</span> A run passes only when the results file and the game log agree.</figcaption>
+<figcaption><span>Figure 6.</span> A run passes only when every scenario row reads PASS, each group reads finished, and the log has one marker per row.</figcaption>
 </figure>
 </div>
 
@@ -512,7 +518,7 @@ nav ol { margin: 0.6em 0 1em; }
 <tr><td>Missing finger regrows under the regen effect</td><td>The finger returns at 28,833 ticks, inside 23,040 to 31,680, and the count drops to 2.</td></tr>
 <tr><td>Regen effect ends when its count runs out</td><td>With a count of 1, the effect ends after the heal.</td></tr>
 <tr><td>Cleaner stops a running regen effect</td><td>The Cleaner ends the effect, and the finger stays missing.</td></tr>
-<tr><td>Fast regen speeds up regrowth while a pawn has blood loss</td><td>The finger returns at 9,633 ticks, inside 7,680 to 10,560.</td></tr>
+<tr><td>Fast regen speeds up regrowth while a pawn has blood loss</td><td>The finger returns at 9,633 ticks, inside 7,680 to 10,560. The test calls the injector directly, so it skips the usability check.</td></tr>
 <tr><td>Fast regen does nothing on a pawn with no blood loss</td><td>The finger returns at 28,833 ticks, with no blood loss.</td></tr>
 </tbody>
 </table>
@@ -520,12 +526,13 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h3 id="not-covered">Not covered yet</h3>
 
-<p>Four areas are not covered yet:</p>
+<p>Five areas are not covered yet:</p>
 <ul>
 <li>Combat interception, meaning a shield that stops real projectiles in a fight.</li>
 <li>The Combat Extended path. Nothing has run in the game yet.</li>
 <li>The Healer and Resurrector effects. Only their recipes are checked.</li>
 <li>The Steam Workshop upload. Upload as Private first, then switch to Public after the owner tests it. Before any upload, check <code>RimElShrine.Shields\About\PublishedFileId.txt</code>. It holds 3575073524, the original mod's Workshop item number.</li>
+<li>The player's path to use an injector. The Fast rows call the injector's <code>DoEffect</code> method directly. That skips the usability check, which can clear blood loss, as decision D4 describes.</li>
 </ul>
 
 <h2 id="open-decisions">Open decisions</h2>
@@ -534,7 +541,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h3>D3. How the test clock runs</h3>
 
-<p>A finger takes 28,833 ticks to regrow, which is about 8 minutes at normal speed. The harness moves the game forward itself, one tick at a time. The other option is to let the game run at its fastest speed once the colony is ready. That is quicker, but it needs one more full run to prove it works. The default is to keep the loop. No work waits.</p>
+<p>A finger takes 28,833 ticks to regrow, which is about 8 minutes at normal speed. The harness moves the game forward itself, one tick at a time. The other option is to let the game run at its fastest speed once the colony is ready. Its speed has not been measured here, and it needs one more full run to prove it works. The default is to keep the loop. No work waits.</p>
 
 <h3>D4. Whether the usability check cures a bleed</h3>
 
