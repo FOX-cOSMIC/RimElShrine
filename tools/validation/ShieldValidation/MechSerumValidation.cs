@@ -17,8 +17,8 @@ namespace ShieldValidation
         private const string ScenarioRegrow = "mech serum: a missing finger regrows under the regen effect";
         private const string ScenarioCountEnds = "mech serum: regen effect ends when its count runs out";
         private const string ScenarioCleaner = "mech serum: cleaner stops a running regen effect";
-        private const string ScenarioFastBleeding = "mech serum: fast regen speeds up regrowth on a bleeding pawn";
-        private const string ScenarioFastHealthy = "mech serum: fast regen does nothing on a pawn that is not bleeding";
+        private const string ScenarioFastBleeding = "mech serum: fast regen speeds up regrowth while a pawn has blood loss";
+        private const string ScenarioFastHealthy = "mech serum: fast regen does nothing on a pawn with no blood loss";
         private const string GroupComplete = "mech serum group complete";
         private const string FingerDefName = "Finger";
         private const string BasicResearch = "ELS_ResearchProject_BasicMechSerumProduction";
@@ -35,12 +35,13 @@ namespace ShieldValidation
         private const float WindowLow = 0.8f;
         private const float WindowHigh = 1.1f;
         private const int FrameBudgetMs = 25;
-        // Quick regen stops once blood loss reaches QuickRegenBloodLossMax, 0.35. The bleeding pawn starts at 0.1, under that cap.
+        // Quick regen stops once blood loss reaches QuickRegenBloodLossMax, 0.35. The pawn with blood loss starts at 0.1, under that cap.
+        // The test sets blood loss directly, because that is the state the regen code reads. It does not model a wound.
         private const float BleedingSeverity = 0.1f;
 
         // Patient A regrows under a Limited injector (count 3). B regrows with its count set to 1. C is cleaned while its effect runs.
         // D gets a Fast injector. D is a diagnostic only, not a required row.
-        // E is bleeding and gets a Fast injector. F is healthy and gets a Fast injector.
+        // E has blood loss and gets a Fast injector. F has none and gets a Fast injector.
         private sealed class Patient
         {
             public Pawn Colonist;
@@ -151,7 +152,7 @@ namespace ShieldValidation
             bool passApply = usableBefore && !usableAfter && applied;
             ValidationSupport.Record(ScenarioApply, (passApply ? "PASS: " : "FAIL: ") + "usable before " + usableBefore + ", usable after " + usableAfter + ", remaining " + Remaining(regenA));
 
-            // E is bleeding before its injector goes on, so the quick branch has blood loss to spend. F has none.
+            // E has blood loss before its injector goes on, so the quick branch has blood loss to spend. F has none.
             var bleeding = e.Colonist.health.AddHediff(HediffDefOf.BloodLoss);
             bleeding.Severity = BleedingSeverity;
             if (!noSerum)
