@@ -274,7 +274,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h3 id="network">The shield network</h3>
 
-<p>Unless it is stunned, the generator checks the projectiles on the map every tick. The map is one colony's play area. A projectile is a shot or thrown object in flight. The generator must be active. It becomes active when a recharge finishes, and it stops being active when its energy runs out or an EMP hits it. It intercepts a projectile only when all of these hold:</p>
+<p>Unless it is stunned, the generator checks the projectiles on the map every tick. The map is one colony's play area. A projectile is a shot or thrown object in flight. The generator must be active. It becomes active when a recharge finishes. It stops being active when a hit uses up its energy, when an EMP hits it, or when its energy drains below zero without power. It intercepts a projectile only when all of these hold:</p>
 <ul>
 <li>The shot's type is switched on. A ground shot needs <code>InterceptGround</code>. An overhead shot, such as a mortar shell, needs <code>InterceptOverhead</code>.</li>
 <li>The shot is incoming and <code>InterceptIn</code> is on, or it is outgoing and <code>AllowOut</code> is off. An incoming shot is inside the radius now. A ground shot also started outside the radius, and an overhead shot has its destination inside it. An outgoing shot started inside the radius and is outside it now.</li>
@@ -282,7 +282,7 @@ nav ol { margin: 0.6em 0 1em; }
 </ul>
 <p>These rules come from reading the code. No test has run them in a fight. See <a href="#not-covered">Not covered yet</a>. The code is in <code>DoInterception</code> and <code>InterceptProjectile</code>, in <code>Comp_ShieldNet_ProjInterceptorELS.cs</code>.</p>
 
-<p>Each hit costs energy, based on the projectile's damage. If <code>UseKineticEnergy</code> is on, which it is not by default, the cost uses kinetic energy, the energy of motion. The cost is then multiplied by <code>BuildingDmgGlobalFactor</code>. The generator's Def sets <code>isInfiniteEnergy</code> to false, so hits drain its energy. When the energy runs out, the shield breaks, turns off, and starts to recharge.</p>
+<p>Each hit costs energy, based on the projectile's damage. If <code>UseKineticEnergy</code> is on, which it is not by default, the cost uses kinetic energy, the energy of motion. The cost is then multiplied by <code>BuildingDmgGlobalFactor</code>. The generator's Def sets <code>isInfiniteEnergy</code> to false, so hits drain its energy. A hit that uses up the energy breaks the shield and turns it off. The generator recharges only while it has power.</p>
 
 <p>The code keeps one <code>ShieldNet</code> for each <code>PowerNet</code>, the game's object for one power grid. Each server unit holds three upgrade points, set by <code>upgradeResources</code> on line 182 of <code>ShieldNet.xml</code>. The Apply button in the terminal's window clears the powered server units, then hands points to them in order. The upgrade value is the bonus the network gives a stat. With no powered terminal, it is 0.</p>
 
@@ -380,7 +380,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <div class="scroll-figure">
 <figure>
-<svg viewBox="0 0 360 340" role="img" aria-label="Quick regen speeds up only a pawn with blood loss below the cap.">
+<svg viewBox="0 0 360 340" role="img" aria-label="Quick regen speeds up a pawn only while it has blood loss below the cap and the next step still fits under it. A pawn with no blood loss regrows at normal speed.">
 <defs>
 <marker id="f5-arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker>
 </defs>
@@ -393,21 +393,22 @@ nav ol { margin: 0.6em 0 1em; }
 <rect x="40" y="120" width="280" height="40" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
 <text x="180" y="145" text-anchor="middle" font-size="13" fill="currentColor">Quick regen on, severity above 0.5</text>
 <line x1="180" y1="160" x2="180" y2="176" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
-<rect x="60" y="176" width="240" height="44" rx="22" fill="none" stroke="currentColor" stroke-width="1.5"/>
-<text x="180" y="203" text-anchor="middle" font-size="13" fill="currentColor">Blood loss below the cap?</text>
-<line x1="110" y1="220" x2="110" y2="246" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
-<line x1="250" y1="220" x2="250" y2="246" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
-<text x="98" y="238" text-anchor="end" font-size="12" fill="currentColor">yes</text>
-<text x="262" y="238" text-anchor="start" font-size="12" fill="currentColor">no</text>
-<rect x="20" y="246" width="170" height="76" rx="6" fill="currentColor" fill-opacity="0.14" stroke="currentColor" stroke-width="2"/>
-<text x="105" y="278" text-anchor="middle" font-size="13" fill="currentColor">Regrows three times</text>
-<text x="105" y="294" text-anchor="middle" font-size="13" fill="currentColor">faster and adds</text>
-<text x="105" y="310" text-anchor="middle" font-size="13" fill="currentColor">blood loss</text>
-<rect x="190" y="246" width="150" height="76" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
-<text x="265" y="282" text-anchor="middle" font-size="13" fill="currentColor">Regrows at the</text>
-<text x="265" y="298" text-anchor="middle" font-size="13" fill="currentColor">normal speed</text>
+<rect x="20" y="176" width="320" height="60" rx="30" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="180" y="202" text-anchor="middle" font-size="13" fill="currentColor">Has blood loss below the cap,</text>
+<text x="180" y="218" text-anchor="middle" font-size="13" fill="currentColor">and the next step still fits under it?</text>
+<line x1="110" y1="236" x2="110" y2="262" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
+<line x1="250" y1="236" x2="250" y2="262" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
+<text x="98" y="254" text-anchor="end" font-size="12" fill="currentColor">yes</text>
+<text x="262" y="254" text-anchor="start" font-size="12" fill="currentColor">no</text>
+<rect x="20" y="262" width="170" height="76" rx="6" fill="currentColor" fill-opacity="0.14" stroke="currentColor" stroke-width="2"/>
+<text x="105" y="294" text-anchor="middle" font-size="13" fill="currentColor">Regrows three times</text>
+<text x="105" y="310" text-anchor="middle" font-size="13" fill="currentColor">faster and adds</text>
+<text x="105" y="326" text-anchor="middle" font-size="13" fill="currentColor">blood loss</text>
+<rect x="190" y="262" width="150" height="76" rx="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text x="265" y="298" text-anchor="middle" font-size="13" fill="currentColor">Regrows at the</text>
+<text x="265" y="314" text-anchor="middle" font-size="13" fill="currentColor">normal speed</text>
 </svg>
-<figcaption><span>Figure 5.</span> Quick regen speeds up only a pawn with blood loss below the cap.</figcaption>
+<figcaption><span>Figure 5.</span> Quick regen speeds up a pawn only while it has blood loss below the cap and the next step still fits under it. A pawn with no blood loss regrows at normal speed.</figcaption>
 </figure>
 </div>
 
@@ -445,16 +446,17 @@ nav ol { margin: 0.6em 0 1em; }
 
 <p>A run passes only when:</p>
 <ul>
-<li>Every scenario row reads PASS, and every group completion row reads finished.</li>
+<li>Every required scenario row reads PASS, and every group completion row reads finished.</li>
 <li>The log has one <code>[ShieldValidation]</code> marker for each row. The runner compares the counts, not the text of each marker.</li>
 <li>No other RimWorld process ran during the run.</li>
 <li>The mod list has the port and the test mod, with no notes.</li>
 <li>The log has no error line that mentions the port or the test mod.</li>
 </ul>
+<p>The runner checks only the rows named in its two lists. A failing row that the lists do not name does not fail the run.</p>
 
 <div class="scroll-figure">
 <figure>
-<svg viewBox="0 0 360 448" role="img" aria-label="A run passes only when every scenario row reads PASS, each group reads finished, and the log has one marker per row.">
+<svg viewBox="0 0 360 448" role="img" aria-label="A run passes only when every required scenario row reads PASS, each group reads finished, and the log has one marker per row.">
 <defs>
 <marker id="f6-arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker>
 </defs>
@@ -482,7 +484,7 @@ nav ol { margin: 0.6em 0 1em; }
 <text x="180" y="410" text-anchor="middle" font-size="13" fill="currentColor">Verdict</text>
 <text x="180" y="428" text-anchor="middle" font-size="12" fill="currentColor">PASS or FAIL</text>
 </svg>
-<figcaption><span>Figure 6.</span> A run passes only when every scenario row reads PASS, each group reads finished, and the log has one marker per row.</figcaption>
+<figcaption><span>Figure 6.</span> A run passes only when every required scenario row reads PASS, each group reads finished, and the log has one marker per row.</figcaption>
 </figure>
 </div>
 
