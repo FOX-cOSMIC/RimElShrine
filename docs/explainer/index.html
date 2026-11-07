@@ -353,7 +353,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <p>Blood loss is the health condition that tracks how much blood a pawn has lost. Quick regen is a faster mode of the regen effect. It starts when severity is above 0.5. In the 1.7 build, a Fast injector sets severity to 1, so its effect starts in quick regen. The 1.6 build never reads the Fast flag, so a Fast injector does nothing extra there.</p>
 
-<p>In quick regen, the clock gains 1.5 seconds every 30 ticks, three times the normal speed, while the extra time applies. The setting <code>QuickRegenFactor</code> sets that speed, and it defaults to 3. Each step adds blood loss equal to the extra seconds divided by <code>LimbsRegenSecondsPerHealth</code>, times <code>QuickRegenBloodLossPercentPerHealth</code>, which defaults to 0.005. The extra time applies only while the pawn's blood loss is below <code>QuickRegenBloodLossMax</code>, which defaults to 0.35, and only when the next step's blood loss still fits under that cap. Otherwise the part regrows at normal speed, so a pawn with no blood loss gets no extra time.</p>
+<p>In quick regen, the clock gains 1.5 seconds every 30 ticks, three times the normal speed, while the extra time applies. The setting <code>QuickRegenFactor</code> sets that speed, and it defaults to 3. Each step adds blood loss equal to the extra seconds divided by <code>LimbsRegenSecondsPerHealth</code>, times <code>QuickRegenBloodLossPercentPerHealth</code>, which defaults to 0.005. The extra time applies only while the pawn's blood loss is below <code>QuickRegenBloodLossMax</code>, which defaults to 0.35, and only when the blood loss after the next step is still at or below that cap. Otherwise the part regrows at normal speed, so a pawn with no blood loss gets no extra time.</p>
 
 <div class="scroll-figure">
 <figure>
@@ -380,7 +380,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <div class="scroll-figure">
 <figure>
-<svg viewBox="0 0 360 340" role="img" aria-label="Quick regen speeds up a pawn only while it has blood loss below the cap and the next step still fits under it. A pawn with no blood loss regrows at normal speed.">
+<svg viewBox="0 0 360 340" role="img" aria-label="Quick regen speeds up a pawn only while it has blood loss below the cap and the next step ends at or below the cap. A pawn with no blood loss regrows at normal speed.">
 <defs>
 <marker id="f5-arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker>
 </defs>
@@ -395,7 +395,7 @@ nav ol { margin: 0.6em 0 1em; }
 <line x1="180" y1="160" x2="180" y2="176" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
 <rect x="20" y="176" width="320" height="60" rx="30" fill="none" stroke="currentColor" stroke-width="1.5"/>
 <text x="180" y="202" text-anchor="middle" font-size="13" fill="currentColor">Has blood loss below the cap,</text>
-<text x="180" y="218" text-anchor="middle" font-size="13" fill="currentColor">and the next step still fits under it?</text>
+<text x="180" y="218" text-anchor="middle" font-size="13" fill="currentColor">and the next step ends at or below the cap?</text>
 <line x1="110" y1="236" x2="110" y2="262" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
 <line x1="250" y1="236" x2="250" y2="262" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
 <text x="98" y="254" text-anchor="end" font-size="12" fill="currentColor">yes</text>
@@ -408,7 +408,7 @@ nav ol { margin: 0.6em 0 1em; }
 <text x="265" y="298" text-anchor="middle" font-size="13" fill="currentColor">Regrows at the</text>
 <text x="265" y="314" text-anchor="middle" font-size="13" fill="currentColor">normal speed</text>
 </svg>
-<figcaption><span>Figure 5.</span> Quick regen speeds up a pawn only while it has blood loss below the cap and the next step still fits under it. A pawn with no blood loss regrows at normal speed.</figcaption>
+<figcaption><span>Figure 5.</span> Quick regen speeds up a pawn only while it has blood loss below the cap and the next step ends at or below the cap. A pawn with no blood loss regrows at normal speed.</figcaption>
 </figure>
 </div>
 
