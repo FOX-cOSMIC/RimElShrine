@@ -10,7 +10,7 @@ The repo's other mods, `RimElShrine.ShuttleFuel` and `RimElShrine.MoveMonolith`,
 
 ## Constraints
 
-- Target RimWorld 1.7.4998 rev1299, Steam unstable branch (ADR 0002).
+- Target the installed RimWorld build, 1.7.5000 rev1275, Steam unstable branch (ADR 0002, updated 2026-11-07).
 - Leave `RimElShrine.Shields/1.6/` and its assemblies unchanged. Build 1.7 into `RimElShrine.Shields/1.7/`, and add a `<v1.7>` block to `RimElShrine.Shields/LoadFolders.xml`.
 - Give the port a new `packageId` in `About.xml`. Lucas has the original (`FoxMo.RimElShrine.Shields`) subscribed, and a shared id collides with it.
 - Keep Def names, XML class names, and settings keys from 1.6. Saves and translations key on them. Record each change 1.7 forces.
@@ -24,7 +24,8 @@ The repo's other mods, `RimElShrine.ShuttleFuel` and `RimElShrine.MoveMonolith`,
 ## Build
 
 - 1.7 build (works, 0 errors): `dotnet build Source/RimElShrine.Shields/RimElShrine.Shields.csproj -c Release -p:RimWorldVersion=1.7`. It targets net10.0 with Krafs.Rimworld.Ref 1.7.4995-unstable and Lib.Harmony.Ref 2.4.2 (ADRs 0006, 0007). Output goes to `RimElShrine.Shields/1.7/Assemblies/`.
-- 1.6 build: the same projects with the default `RimWorldVersion` (1.6). It targets net472 and writes to `RimElShrine.Shields/1.6/`. Do not run it while the port is in progress, because it overwrites the 1.6 assemblies.
+- 1.6 build: the same projects with the default `RimWorldVersion` (1.6). It targets net472 and writes to `RimElShrine.Shields/1.6/`. Do not run it while the port is in progress, because it overwrites the 1.6 assemblies. To compile the 1.6 variant without writing those assemblies, add `-p:OutputPath=<a scratch folder>`.
+- The 1.7 build defines `RIMWORLD_17`. Code inside `#if RIMWORLD_17` runs only in the 1.7 build (ADR 0011).
 - Combat Extended counterpart (1.7): `dotnet build Source/RimElShrine.Shields.Compatibility/RimElShrine.Shields.CE.csproj -c Release -p:RimWorldVersion=1.7` (0 errors). It compiles against `%USERPROFILE%\.rimworld-refs\CombatExtended-1.7-Test\CombatExtended.dll`, a CE 1.7-Test build kept outside the repo (ADR 0008). The committed 1.6 `CombatExtended.dll` cannot be used, because it needs `UnityEngine.CoreModule`, which 1.7 does not provide. The CE path's runtime behavior is unproven.
 - Write decompiles and run logs to `.artifacts/`, and list `.artifacts/` in `.gitignore`.
 - Record the build command here once it works.
@@ -32,7 +33,7 @@ The repo's other mods, `RimElShrine.ShuttleFuel` and `RimElShrine.MoveMonolith`,
 ## Verification
 
 - Compiling is not playability. A gameplay change is proven only by a run in RimWorld 1.7 that exercises it.
-- Runtime validation runs live in `tools/validation/` in this repo (ADR 0009). The smoke run `tools/validation/Invoke-Smoke.ps1` passed on 2026-11-05. The scenario runner `tools/validation/Invoke-Scenarios.ps1` runs the group checks on 1.7.4998 (ADR 0009). The status of each group is in `tools/validation/README.md`. Until a scenario runs, report each gameplay change as unproven.
+- Runtime validation runs live in `tools/validation/` in this repo (ADR 0009). The smoke run `tools/validation/Invoke-Smoke.ps1` passed on 2026-11-05. The scenario runner `tools/validation/Invoke-Scenarios.ps1` runs the group checks on the installed 1.7 build (ADR 0002 and ADR 0009). The status of each group is in `tools/validation/README.md`. Until a scenario runs, report each gameplay change as unproven.
 - Reproduce a bug red in a run before fixing it: the run fails on the bug and passes on the fix.
 - Check every Harmony attribute, patched method, and reflected name against the installed 1.7 code.
 - Fix the cause of each error. A disabled patch or a hidden error is not a fix. Report failures and untested cases as they are.

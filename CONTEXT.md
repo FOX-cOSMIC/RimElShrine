@@ -44,6 +44,12 @@ A wearable shield belt from the ES series, ES0 to ES3. Advanced ES0 to ES2 model
 **Mech Serum**:
 A serum made by one of the mech serum recipes. The mod adds the Empty Mech Serum, an intermediate that other serums are made from, and the Regenerator series, which gradually repairs damaged limbs.
 
+**Fast injector**:
+A Regenerator injector with the Fast setting. It turns on quick regen, so it helps only a pawn that is bleeding. See ADR 0011.
+
+**Quick regen**:
+The faster regen mode. It costs blood loss, so it runs only while the pawn is bleeding.
+
 ## Compatibility and proof
 
 **Combat Extended path**:
