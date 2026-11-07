@@ -25,7 +25,15 @@ namespace RimElShrine.Items.LimbsRegenInjector
                 }
                 else
                 {
-                    if (pawn.health.AddHediff(ELS_Hediff_LimbsRegen) is HediffWithComps_LimbsRegen hediff) hediff.lastRegenCount = Props.lastRegenCount;
+                    if (pawn.health.AddHediff(ELS_Hediff_LimbsRegen) is HediffWithComps_LimbsRegen hediff)
+                    {
+                        hediff.lastRegenCount = Props.lastRegenCount;
+#if RIMWORLD_17
+                        // Quick regen starts above 0.5 severity, and it runs only while the pawn has blood loss.
+                        // A Fast injector sets the top severity, so it speeds up a bleeding pawn and does nothing for a healthy one.
+                        if (Props.isFastRegen) hediff.Severity = 1f;
+#endif
+                    }
                     if (PawnUtility.ShouldSendNotificationAbout(pawn))
                     {
                         Messages.Message("LimbsRegenInjector_ApplyRegenEffectMsg".ES_Translate(pawn), pawn, MessageTypeDefOf.PositiveEvent);
