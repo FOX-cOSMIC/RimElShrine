@@ -47,6 +47,7 @@ namespace ShieldValidation
             if (Current.ProgramState != ProgramState.Playing || LongEventHandler.AnyEventNowOrWaiting) return;
             var map = Find.CurrentMap;
             if (map == null) return;
+            ValidationSupport.WriteUnnamedControlRow();
             try
             {
                 Run(map);

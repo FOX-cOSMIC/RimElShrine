@@ -157,6 +157,12 @@ foreach ($name in $required) {
     $result = ($row[0] -split ' \| ', 3)[2]
     if (-not $result.StartsWith('PASS')) { $problems += "$name -> $result" }
 }
+# A row that neither list names fails the run, whatever it reads, so a check added without a list entry cannot pass unseen.
+$named = @($required) + $groups
+foreach ($entry in $rows) {
+    $entryName = ($entry -split ' \| ', 3)[1]
+    if ($named -notcontains $entryName) { $problems += "row not named in the runner's lists: $entryName -> " + ($entry -split ' \| ', 3)[2] }
+}
 $marks = @($lines | Where-Object { $_ -match '\[ShieldValidation\] ' })
 if ($marks.Count -ne $rows.Count) { $problems += "results file has $($rows.Count) rows but the log has $($marks.Count) markers" }
 if ($concurrent.Count -gt 0) { $problems += "another RimWorld process ran during this run (process ids $($concurrent -join ', ')), so the shared game log is not this run's alone" }

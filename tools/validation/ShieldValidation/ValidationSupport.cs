@@ -45,5 +45,16 @@ namespace ShieldValidation
             File.AppendAllText(Path.Combine(GenFilePaths.SaveDataFolderPath, "validation-results.txt"), line + Environment.NewLine);
             Log.Message("[ShieldValidation] " + line);
         }
+
+        private static bool unnamedControlWritten;
+
+        // Control runs pass -shieldvalidation-unnamedrow. The row it writes is named by no runner list and reads FAIL,
+        // so the runner must fail the run. It is written once per game session.
+        public static void WriteUnnamedControlRow()
+        {
+            if (unnamedControlWritten || !GenCommandLine.CommandLineArgPassed("shieldvalidation-unnamedrow")) return;
+            unnamedControlWritten = true;
+            Record("control: unnamed row", "FAIL: deliberate control row that no runner list names");
+        }
     }
 }

@@ -94,7 +94,7 @@ nav ol { margin: 0.6em 0 1em; }
 <li><a href="#port-changes">What the port changes from 1.6</a></li>
 <li><a href="#tests">How the tests prove the mod works</a></li>
 <li><a href="#status">Where things stand</a></li>
-<li><a href="#open-decisions">Open decisions</a></li>
+<li><a href="#decisions">Decisions</a></li>
 <li><a href="#glossary">Words used in this guide</a></li>
 </ol>
 </nav>
@@ -447,16 +447,17 @@ nav ol { margin: 0.6em 0 1em; }
 <p>A run passes only when:</p>
 <ul>
 <li>Every required scenario row reads PASS, and every group completion row reads finished.</li>
+<li>Every result row is named in one of the runner's two lists.</li>
 <li>The log has one <code>[ShieldValidation]</code> marker for each row. The runner compares the counts, not the text of each marker.</li>
 <li>No other RimWorld process ran during the run.</li>
 <li>The mod list has the port and the test mod, with no notes.</li>
 <li>The log has no error line that mentions the port or the test mod.</li>
 </ul>
-<p>The runner checks only the rows named in its two lists. A failing row that the lists do not name does not fail the run.</p>
+<p>The runner also fails a run that has a row its two lists do not name, even when that row reads PASS. A new check must go on a list, or the run fails. Lucas chose this on 2026-11-07, as decision D5 and ADR 0012 record.</p>
 
 <div class="scroll-figure">
 <figure>
-<svg viewBox="0 0 360 448" role="img" aria-label="A run passes only when every required scenario row reads PASS, each group reads finished, and the log has one marker per row.">
+<svg viewBox="0 0 360 448" role="img" aria-label="A run passes only when every required scenario row reads PASS, each group reads finished, every result row is named in a runner list, and the log has one marker per row.">
 <defs>
 <marker id="f6-arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker>
 </defs>
@@ -484,11 +485,12 @@ nav ol { margin: 0.6em 0 1em; }
 <text x="180" y="410" text-anchor="middle" font-size="13" fill="currentColor">Verdict</text>
 <text x="180" y="428" text-anchor="middle" font-size="12" fill="currentColor">PASS or FAIL</text>
 </svg>
-<figcaption><span>Figure 6.</span> A run passes only when every required scenario row reads PASS, each group reads finished, and the log has one marker per row.</figcaption>
+<figcaption><span>Figure 6.</span> A run passes only when every required scenario row reads PASS, each group reads finished, every result row is named in a runner list, and the log has one marker per row.</figcaption>
 </figure>
 </div>
 
 <p>A control run turns one part off on purpose, so its checks must fail. The switches are <code>-shieldvalidation-nopower</code>, <code>-shieldvalidation-nowear</code>, and <code>-shieldvalidation-noserum</code>. Run 20261107-180127 used the last one. It fails the six mech rows that need serum, and it passes the recipe row and the network and equipment rows, as designed.</p>
+<p>The switch <code>-shieldvalidation-unnamedrow</code> adds one row that no list names, and the row reads FAIL. Run 20261107-235413 passed with it on the unchanged runner. That is the gap. On the new runner, run 20261107-235531 fails with it. Run 20261107-235624, with no switch, passes all 17 rows.</p>
 
 <p>The project's rule is to reproduce a bug red in a run before fixing it. Three runs failed before the fix commit. Runs 20261107-174532 and 20261107-174938 failed the bleeding-pawn row. Run 20261107-175322 passed that row and failed the healthy-pawn row. Run 20261107-181001 passes both.</p>
 
@@ -498,7 +500,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h2 id="status">Where things stand</h2>
 
-<p>The latest full pass is run 20261107-181001, on RimWorld 1.7.5000 rev1275. Its 14 scenario rows read PASS, and its 3 completion rows read finished. Runs on 2026-11-05 passed the network and equipment rows on RimWorld 1.7.4998 rev1299, including run 20261105-152607. The change is merged in PR 1.</p>
+<p>The latest full pass is run 20261107-235624, on RimWorld 1.7.5000 rev1275. Its 14 scenario rows read PASS, and its 3 completion rows read finished. It ran under the rule that fails a row no list names. Run 20261107-181001 passed the same rows before that rule. Runs on 2026-11-05 passed the network and equipment rows on RimWorld 1.7.4998 rev1299, including run 20261105-152607. The change is merged in PR 1.</p>
 
 <p>A scenario row is one check result, not counting completion rows. The test rows call quick regen "fast regen", and the table keeps those names.</p>
 
@@ -534,28 +536,32 @@ nav ol { margin: 0.6em 0 1em; }
 <li>The Combat Extended path. Nothing has run in the game yet.</li>
 <li>The Healer and Resurrector effects. Only their recipes are checked.</li>
 <li>The Steam Workshop upload. Upload as Private first, then switch to Public after the owner tests it. Before any upload, check <code>RimElShrine.Shields\About\PublishedFileId.txt</code>. It holds 3575073524, the original mod's Workshop item number.</li>
-<li>The player's path to use an injector. The Fast rows call the injector's <code>DoEffect</code> method directly. That skips the usability check, which can clear blood loss, as decision D4 describes.</li>
+<li>The player's path to use an injector. The Fast rows call the injector's <code>DoEffect</code> method directly. That skips the usability check, which can clear blood loss. Lucas chose to leave that check unchanged, as decision D4 records.</li>
 </ul>
 
-<h2 id="open-decisions">Open decisions</h2>
+<h2 id="decisions">Decisions</h2>
 
-<p>Lucas decides these two open choices. Neither blocks the work, and each default applies if the owner does not answer.</p>
+<p>Lucas answered every decision. Each answer is dated, and the ADR named beside it holds the record.</p>
+
+<h3>D1. When Fast injectors work</h3>
+
+<p>Fast injectors work only while a pawn has blood loss. Lucas chose this on 2026-11-07, and ADR 0011 records it.</p>
+
+<h3>D2. Which RimWorld build the port targets</h3>
+
+<p>The port targets the installed build, RimWorld 1.7.5000 rev1275. Lucas chose this on 2026-11-07, and ADR 0002 records it.</p>
 
 <h3>D3. How the test clock runs</h3>
 
-<p>A finger takes 28,833 ticks to regrow, which is about 8 minutes at normal speed. The harness moves the game forward itself, one tick at a time. The other option is to let the game run at its fastest speed once the colony is ready. Its speed has not been measured here, and it needs one more full run to prove it works. The default is to keep the loop. No work waits.</p>
+<p>A finger takes 28,833 ticks to regrow, which is about 8 minutes at normal speed. The harness moves the game forward itself, one tick at a time. The other option was to let the game run at its fastest speed once the colony is ready. That option is not built, and its speed was not measured. Lucas chose to keep the loop on 2026-11-07, and ADR 0009 records it.</p>
 
 <h3>D4. Whether the usability check cures a bleed</h3>
 
-<p>The usability check, <code>CanBeUsedBy</code>, calls the port's <code>TryGetHediff</code> helper for the regen effect. With no regen effect, the helper sets the pawn's blood loss to zero. So checking a bleeding pawn can cure its bleed. The 1.6 build makes the same call.</p>
+<p>The usability check, <code>CanBeUsedBy</code>, calls the port's <code>TryGetHediff</code> helper for the regen effect. With no regen effect, the helper sets the pawn's blood loss to zero, so checking a bleeding pawn can cure its bleed. The 1.6 build makes the same call. Lucas chose to leave both builds unchanged on 2026-11-07, and ADR 0011 records it. Fixing the 1.6 code would change FoxMo's build the next time someone builds it.</p>
 
-<p>The options are to leave it in both builds, to fix it in the 1.7 build only, or to fix it in both. Fixing the 1.6 code changes FoxMo's build the next time someone builds it. The default is to leave it in both builds. No work waits.</p>
+<h3>D5. Whether the runner fails on rows its lists do not name</h3>
 
-<h3>Answered decisions</h3>
-
-<p>D1. Fast injectors work only while a pawn has blood loss. The owner answered on 2026-11-07, as ADR 0011 records.</p>
-
-<p>D2. The target is the installed build, RimWorld 1.7.5000 rev1275. The owner chose it on 2026-11-07, as ADR 0002 records.</p>
+<p>A failing row that neither list named did not fail the run. Lucas chose to fail the run on any such row, as a separate change, on 2026-11-07. ADR 0012 records it. The red, control, and normal runs are under Where things stand.</p>
 
 <h2 id="glossary">Words used in this guide</h2>
 

@@ -25,3 +25,5 @@ Two changes make this hold.
 - The port now differs from the 1.6 mod on the Fast injectors. The 1.6 build keeps its old behavior, because its code is compiled without the guard. Removing the guard changes the 1.6 build the next time someone builds it.
 - A separate bug remains. The injector's usability check, `Comp_LimbsRegenInjector.CanBeUsedBy`, uses the same helper. Checking a bleeding pawn sets that pawn's blood loss to zero, which cures the bleeding. The 1.6 build has the same bug. This change does not fix it, and decision D4 asks Lucas how to handle it.
 - Red and green runs for this change are recorded in `tools/validation/README.md`.
+
+Updated 2026-11-07: Lucas chose to leave the usability check unchanged in both builds, as decision D4. Checking a bleeding pawn still cures its bleed, in 1.6 and 1.7 alike.

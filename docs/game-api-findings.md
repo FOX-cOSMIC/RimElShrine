@@ -75,7 +75,7 @@ Fast regeneration (decided 2026-11-07, ADR 0011):
 - Measured in run `20261107-175804`: the finger of a pawn with blood loss came back at 9,633 ticks, and the finger of a pawn with none came back at 28,833 ticks. Run `20261107-175322` showed the healthy pawn at 9,633 ticks before the lookup change, because the port's helper gave it a zero-severity `BloodLoss` hediff.
 - The keyed text in `LimbsRegenKeys.xml` describes quick regen that costs blood loss: "Fast regeneration may cause additional blood loss symptoms."
 - The port's `CommonUtility.TryGetHediff` extension creates a zero-severity `BloodLoss` hediff when the pawn has none of the requested def, and it sets an existing bleed's severity to 0. The quick branch called it until 2026-11-07, which would have given a healthy pawn with quick regen a phantom bleed. The branch now calls `Verse.HediffSet.TryGetHediff`.
-- `Comp_LimbsRegenInjector.CanBeUsedBy` still calls the extension for the regen effect. A bleeding pawn that has no regen effect loses its bleed when the check runs. The 1.6 build has the same call. Decision D4 is open.
+- `Comp_LimbsRegenInjector.CanBeUsedBy` still calls the extension for the regen effect. A bleeding pawn that has no regen effect loses its bleed when the check runs. The 1.6 build has the same call. Lucas chose on 2026-11-07 to leave both builds unchanged, as decision D4 and ADR 0011 record.
 
 ## Not covered
 
