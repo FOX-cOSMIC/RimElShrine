@@ -67,13 +67,15 @@ Regen behavior, from `HediffWithComps_LimbsRegen.Tick` and confirmed by run `202
 - Each heal lowers `lastRegenCount` by one. At 0 the code sets `Severity` to 0, and the next tick removes the hediff. The clean run showed the effect removed with the count at 0.
 - The cleaner sets `Severity` to 0. The clean run showed the effect removed and the finger still missing.
 
-Fast regeneration, not covered by the required rows (an open design decision; see `tools/validation/README.md`):
+Fast regeneration (decided 2026-11-07, ADR 0011):
 
-- The Fast injectors set `isFastRegen` in the XML, and `CompProperties_LimbsRegenInjector.isFastRegen` is declared. No code reads it. The Fast injectors add the hediff at its default severity, 0.1.
-- `HediffWithComps_LimbsRegen.IsQuickRegen` is `Severity > 0.5f`. No code raises the regen hediff above 0.1, so quick regen never starts.
-- The quick branch takes blood loss only from an existing `BloodLoss` hediff. With none, it sets `reachedMaxBloodLoss`, which disables quick regen. A healthy pawn therefore never gets quick regen.
-- The clean run's diagnostic lines (`20261107-135819`) agree: `fast regen applied: severity 0.1, quick False, blood loss hediff False`, and at the end the same, with the finger back at tick 28,833. The Fast injector regrows at the same time as a normal one.
+- The Fast injectors set `isFastRegen` in the XML. Before 2026-11-07 no code read the flag, and the 1.6 build never read it either.
+- Since 2026-11-07, the 1.7 build sets the regen hediff's severity to 1 for a Fast injector, inside an `#if RIMWORLD_17` block. `HediffWithComps_LimbsRegen.IsQuickRegen` is `Severity > 0.5f`, so the effect runs in quick mode.
+- The quick branch takes blood loss only from an existing `BloodLoss` hediff, read with `Verse.HediffSet.TryGetHediff`, which never creates one. With none, it sets `reachedMaxBloodLoss`, and quick regen waits until a bleed appears. A healthy pawn therefore regrows at the normal speed.
+- Measured in run `20261107-175804`: a bleeding pawn's finger came back at 9,633 ticks, and a healthy pawn's at 28,833 ticks. Run `20261107-175322` showed the healthy pawn at 9,633 ticks before the lookup change, because the port's helper gave it a zero-severity `BloodLoss` hediff.
 - The keyed text in `LimbsRegenKeys.xml` describes quick regen that costs blood loss: "Fast regeneration may cause additional blood loss symptoms."
+- The port's `CommonUtility.TryGetHediff` extension creates a zero-severity `BloodLoss` hediff when the pawn has none of the requested def, and it sets an existing bleed's severity to 0. The quick branch called it until 2026-11-07, which would have given a healthy pawn with quick regen a phantom bleed. The branch now calls `Verse.HediffSet.TryGetHediff`.
+- `Comp_LimbsRegenInjector.CanBeUsedBy` still calls the extension for the regen effect. A bleeding pawn that has no regen effect loses its bleed when the check runs. The 1.6 build has the same call. Decision D4 is open.
 
 ## Not covered
 

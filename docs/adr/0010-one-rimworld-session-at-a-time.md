@@ -12,4 +12,6 @@ Consequences:
 
 - A shield run starts only when no RimWorld process is running. The runner stops a run when another RimWorld process starts during it.
 - Shield runs wait for a free window before they start. The ZLevels runner is not changed by this decision.
+
+Correction, 2026-11-07: The scenario runner does not wait. It refuses to start while a RimWorld process runs, and it stops a run when another RimWorld process starts during it. A run that needs to wait uses a watcher outside this repo. That watcher checks every 10 seconds, and it starts only after two minutes with no RimWorld process and no other validation runner.
 - A run that overlaps another session is not valid evidence, even when its results file reads PASS.
