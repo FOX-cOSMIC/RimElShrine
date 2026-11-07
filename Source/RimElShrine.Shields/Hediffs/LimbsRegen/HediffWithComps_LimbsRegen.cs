@@ -103,7 +103,8 @@ namespace RimElShrine.Hediffs.LimbsRegen
                     var incresement = updateIntervalTicks.TicksToSeconds();
                     if (IsQuickRegen)
                     {
-                        pawn.TryGetHediff(HediffDefOf.BloodLoss, out var bloodLossHediff);
+                        // Vanilla lookup. The port's TryGetHediff would create a zero-severity bleed on a healthy pawn.
+                        pawn.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var bloodLossHediff);
                         var additionalIncresement = incresement * (Setting.QuickRegenFactor - 1);
                         if (bloodLossHediff is not null && (bloodLossHediff.Severity < Setting.QuickRegenBloodLossMax))
                         {
