@@ -46,7 +46,9 @@ $required = @(
     'mech serum: regenerator injector adds the regen effect',
     'mech serum: a missing finger regrows under the regen effect',
     'mech serum: regen effect ends when its count runs out',
-    'mech serum: cleaner stops a running regen effect'
+    'mech serum: cleaner stops a running regen effect',
+    'mech serum: fast regen speeds up regrowth on a bleeding pawn',
+    'mech serum: fast regen does nothing on a pawn that is not bleeding'
 )
 # Each group writes one completion row when it ends. The run is complete when every group has written its row.
 $groups = @('network group complete', 'equipment group complete', 'mech serum group complete')
