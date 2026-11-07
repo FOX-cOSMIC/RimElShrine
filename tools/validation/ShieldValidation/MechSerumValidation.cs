@@ -9,7 +9,7 @@ using Verse;
 
 namespace ShieldValidation
 {
-    // Mech Serum checks: the Regenerator series on four colonists, each missing one finger. Runs only when the game starts with -shieldvalidation.
+    // Mech Serum checks: the Regenerator series on six colonists, each missing one finger. Runs only when the game starts with -shieldvalidation.
     public class MechSerumValidation : GameComponent
     {
         private const string ScenarioDefs = "mech serum: recipes, injectors and research resolve";
@@ -17,6 +17,8 @@ namespace ShieldValidation
         private const string ScenarioRegrow = "mech serum: a missing finger regrows under the regen effect";
         private const string ScenarioCountEnds = "mech serum: regen effect ends when its count runs out";
         private const string ScenarioCleaner = "mech serum: cleaner stops a running regen effect";
+        private const string ScenarioFastBleeding = "mech serum: fast regen speeds up regrowth on a bleeding pawn";
+        private const string ScenarioFastHealthy = "mech serum: fast regen does nothing on a pawn that is not bleeding";
         private const string GroupComplete = "mech serum group complete";
         private const string FingerDefName = "Finger";
         private const string BasicResearch = "ELS_ResearchProject_BasicMechSerumProduction";
@@ -33,14 +35,18 @@ namespace ShieldValidation
         private const float WindowLow = 0.8f;
         private const float WindowHigh = 1.1f;
         private const int FrameBudgetMs = 25;
+        // Quick regen stops once blood loss reaches QuickRegenBloodLossMax, 0.35. The bleeding pawn starts at 0.1, under that cap.
+        private const float BleedingSeverity = 0.1f;
 
         // Patient A regrows under a Limited injector (count 3). B regrows with its count set to 1. C is cleaned while its effect runs.
         // D gets a Fast injector. D is a diagnostic only, not a required row.
+        // E is bleeding and gets a Fast injector. F is healthy and gets a Fast injector.
         private sealed class Patient
         {
             public Pawn Colonist;
             public BodyPartRecord Finger;
             public int RegrownAt = -1;
+            public bool BleedingAtRegrow;
         }
 
         private static DateTime lastClock = DateTime.MinValue;
@@ -51,7 +57,11 @@ namespace ShieldValidation
         private Patient b;
         private Patient c;
         private Patient d;
+        private Patient e;
+        private Patient f;
         private float expectedTicks;
+        private float expectedFastTicks;
+        private bool fastQuickAtApply;
         private bool cleanerDone;
         private bool cleanerHadEffect;
 
@@ -100,9 +110,13 @@ namespace ShieldValidation
             {
                 int elapsed = Find.TickManager.TicksGame - stageStart;
                 if (!cleanerDone && elapsed >= CleanerAtTicks) ApplyCleaner();
-                foreach (var p in new[] { a, b, c, d })
+                foreach (var p in new[] { a, b, c, d, e, f })
                 {
-                    if (p.RegrownAt < 0 && !p.Colonist.health.hediffSet.PartIsMissing(p.Finger)) p.RegrownAt = elapsed;
+                    if (p.RegrownAt < 0 && !p.Colonist.health.hediffSet.PartIsMissing(p.Finger))
+                    {
+                        p.RegrownAt = elapsed;
+                        p.BleedingAtRegrow = p.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out _);
+                    }
                 }
                 if (elapsed >= DeadlineTicks()) break;
                 if (budget.ElapsedMilliseconds >= FrameBudgetMs) return;
@@ -120,7 +134,11 @@ namespace ShieldValidation
             b = NewPatient(map);
             c = NewPatient(map);
             d = NewPatient(map);
-            expectedTicks = a.Finger.def.GetMaxHealth(a.Colonist) * RimElShrine.Settings.GetSetting<MechserumSetting>().LimbsRegenSecondsPerHealth * TicksPerSecond;
+            e = NewPatient(map);
+            f = NewPatient(map);
+            var setting = RimElShrine.Settings.GetSetting<MechserumSetting>();
+            expectedTicks = a.Finger.def.GetMaxHealth(a.Colonist) * setting.LimbsRegenSecondsPerHealth * TicksPerSecond;
+            expectedFastTicks = expectedTicks / setting.QuickRegenFactor;
 
             // Control runs pass -shieldvalidation-noserum, which applies no injector. The checks after the apply step must then fail.
             bool noSerum = GenCommandLine.CommandLineArgPassed("shieldvalidation-noserum");
@@ -133,6 +151,9 @@ namespace ShieldValidation
             bool passApply = usableBefore && !usableAfter && applied;
             ValidationSupport.Record(ScenarioApply, (passApply ? "PASS: " : "FAIL: ") + "usable before " + usableBefore + ", usable after " + usableAfter + ", remaining " + Remaining(regenA));
 
+            // E is bleeding before its injector goes on, so the quick branch has blood loss to spend. F has none.
+            var bleeding = e.Colonist.health.AddHediff(HediffDefOf.BloodLoss);
+            bleeding.Severity = BleedingSeverity;
             if (!noSerum)
             {
                 Injector(LimitedDef).DoEffect(b.Colonist);
@@ -140,7 +161,11 @@ namespace ShieldValidation
                 if (regenB != null) regenB.lastRegenCount = 1;
                 Injector(ForeverDef).DoEffect(c.Colonist);
                 Injector(FastForeverDef).DoEffect(d.Colonist);
+                Injector(FastLimitedDef).DoEffect(e.Colonist);
+                Injector(FastLimitedDef).DoEffect(f.Colonist);
             }
+            var regenE = Regen(e.Colonist);
+            fastQuickAtApply = regenE != null && regenE.IsQuickRegen;
             LogFastRegen("applied");
         }
 
@@ -167,6 +192,14 @@ namespace ShieldValidation
             bool passCleaner = cleanerHadEffect && endedC && stillMissing;
             ValidationSupport.Record(ScenarioCleaner, (passCleaner ? "PASS: " : "FAIL: ") + "effect running before the cleaner " + cleanerHadEffect + ", effect removed " + endedC + ", finger still missing " + stillMissing);
 
+            bool bleedingAtRegrow = e.BleedingAtRegrow;
+            bool passFast = fastQuickAtApply && InFastWindow(e.RegrownAt) && bleedingAtRegrow;
+            ValidationSupport.Record(ScenarioFastBleeding, (passFast ? "PASS: " : "FAIL: ") + "quick regen on after the injector " + fastQuickAtApply + ", " + FastTiming(e.RegrownAt) + ", blood loss when the finger came back " + bleedingAtRegrow);
+
+            bool bleedingOnHealthy = f.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out _);
+            bool passHealthy = Regen(f.Colonist) != null && InWindow(f.RegrownAt) && !bleedingOnHealthy;
+            ValidationSupport.Record(ScenarioFastHealthy, (passHealthy ? "PASS: " : "FAIL: ") + Timing(f.RegrownAt) + ", blood loss on the healthy pawn " + bleedingOnHealthy);
+
             LogFastRegen("at the end");
         }
 
@@ -188,6 +221,17 @@ namespace ShieldValidation
         private bool InWindow(int at)
         {
             return at >= 0 && at >= WindowLow * expectedTicks && at <= WindowHigh * expectedTicks;
+        }
+
+        private bool InFastWindow(int at)
+        {
+            return at >= 0 && at >= WindowLow * expectedFastTicks && at <= WindowHigh * expectedFastTicks;
+        }
+
+        private string FastTiming(int at)
+        {
+            if (at < 0) return "finger still missing at the deadline";
+            return "finger back at " + at + " ticks, fast window " + (int)(WindowLow * expectedFastTicks) + " to " + (int)(WindowHigh * expectedFastTicks);
         }
 
         private string Timing(int at)
