@@ -57,22 +57,22 @@ Checked with `ilspycmd` against the installed `Assembly-CSharp.dll` at `C:\Steam
 | `Verse.TimeSpeed` | Enum: `Paused`, `Normal`, `Fast`, `Superfast`, `Ultrafast`. |
 | `Verse.TickManager.TickRateMultiplier` | Fast 3. Superfast 18 with no map, 12 when nothing is happening, otherwise 6. Ultrafast 15 with a map, 150 with no map. |
 | `Verse.TickManager.TickManagerUpdate` | Runs ticks while real time allows, up to `2 * TickRateMultiplier` per frame and at most 45 ms per frame. |
-| `Verse.TickManager.CurTimeSpeed` (setter) | Ignored unless `PlayerCanControl`. That is false while `Game.PlayerHasControl` is false (a fade or a gravship cutscene), or while `Find.GravshipController.LandingAreaConfirmationInProgress` is true. In run `20261105-233422` the speed read `Normal` for the whole run. In run `20261105-233814` it read `Paused` from about tick 20,000. The landing flag was false in both runs, so the cause of the pause is not confirmed. |
+| `Verse.TickManager.CurTimeSpeed` (setter) | Ignored unless `PlayerCanControl`, which is false while `Game.PlayerHasControl` is false. That is the case at the first tick of a new colony, while the screen fades. In the clean run `20261107-135819` the first clock line reads `player has control False`, and every later line reads `True`. The speed reads `Normal` for the whole run, because the network group sets it once at its setup, before control returns, and nothing sets it again. `Find.GravshipController.LandingAreaConfirmationInProgress` was `False` on every clock line of that run, so the gravship landing is not the cause. Run `20261105-233814` read `Paused` from about tick 20,000. The clean run did not pause, and that cause is not confirmed. |
 | `Verse.TickManager.DoSingleTick()` | The game's own per-tick function. The frame loop calls it once per tick. The mech group calls it directly while it waits, because the speed setter is ignored. |
 
-Regen behavior, from `HediffWithComps_LimbsRegen.Tick` and confirmed by run `20261105-233814`:
+Regen behavior, from `HediffWithComps_LimbsRegen.Tick` and confirmed by run `20261107-135819`:
 
 - The regen clock starts on the first tick and gains 0.5 s every 30 ticks. A part heals when the clock is above `maxHealth * LimbsRegenSecondsPerHealth`.
-- Finger at the default 60 s per health: 8 * 60 = 480 s, which is 28,833 ticks. The run measured the finger back at tick 28,833, inside the window 23,040 to 31,680.
-- Each heal lowers `lastRegenCount` by one. At 0 the code sets `Severity` to 0, and the next tick removes the hediff. The run showed the effect removed with the count at 0.
-- The cleaner sets `Severity` to 0. The run showed the effect removed and the finger still missing.
+- Finger at the default 60 s per health: 8 * 60 = 480 s, which is 28,833 ticks. The clean run measured the finger back at tick 28,833, inside the window 23,040 to 31,680.
+- Each heal lowers `lastRegenCount` by one. At 0 the code sets `Severity` to 0, and the next tick removes the hediff. The clean run showed the effect removed with the count at 0.
+- The cleaner sets `Severity` to 0. The clean run showed the effect removed and the finger still missing.
 
 Fast regeneration, not covered by the required rows (an open design decision; see `tools/validation/README.md`):
 
 - The Fast injectors set `isFastRegen` in the XML, and `CompProperties_LimbsRegenInjector.isFastRegen` is declared. No code reads it. The Fast injectors add the hediff at its default severity, 0.1.
 - `HediffWithComps_LimbsRegen.IsQuickRegen` is `Severity > 0.5f`. No code raises the regen hediff above 0.1, so quick regen never starts.
 - The quick branch takes blood loss only from an existing `BloodLoss` hediff. With none, it sets `reachedMaxBloodLoss`, which disables quick regen. A healthy pawn therefore never gets quick regen.
-- The run's diagnostic lines agree: `fast regen applied: severity 0.1, quick False, blood loss hediff False`, and at the end the same, with the finger back at tick 28,833.
+- The clean run's diagnostic lines (`20261107-135819`) agree: `fast regen applied: severity 0.1, quick False, blood loss hediff False`, and at the end the same, with the finger back at tick 28,833. The Fast injector regrows at the same time as a normal one.
 - The keyed text in `LimbsRegenKeys.xml` describes quick regen that costs blood loss: "Fast regeneration may cause additional blood loss symptoms."
 
 ## Not covered
