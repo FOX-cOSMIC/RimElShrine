@@ -19,6 +19,7 @@ The repo's other mods, `RimElShrine.ShuttleFuel` and `RimElShrine.MoveMonolith`,
 - Leave the committed DLLs in `Source/references/` unchanged.
 - Validate in isolated savedata, in a new colony. Existing saves and the live mod list stay as they are.
 - Steam Workshop: upload as Private first. Lucas switches the listing to Public after testing.
+- Give the port its own Workshop item. `RimElShrine.Shields/About/PublishedFileId.txt` names only that item, never the original's 3575073524, or an upload would target the original.
 - No license file exists, so this port grants no redistribution rights. Keep FoxMo's credit and the upstream link in `About.xml` and the Workshop text.
 
 ## Build
@@ -33,7 +34,7 @@ The repo's other mods, `RimElShrine.ShuttleFuel` and `RimElShrine.MoveMonolith`,
 ## Verification
 
 - Compiling is not playability. A gameplay change is proven only by a run in RimWorld 1.7 that exercises it.
-- Runtime validation runs live in `tools/validation/` in this repo (ADR 0009). The smoke run `tools/validation/Invoke-Smoke.ps1` passed on 2026-11-05. The scenario runner `tools/validation/Invoke-Scenarios.ps1` runs the group checks on the installed 1.7 build (ADR 0002 and ADR 0009). The status of each group is in `tools/validation/README.md`. Until a scenario runs, report each gameplay change as unproven.
+- Runtime validation runs live in `tools/validation/` in this repo (ADR 0009). The smoke run is `tools/validation/Invoke-Smoke.ps1`, and the scenario runner is `tools/validation/Invoke-Scenarios.ps1`. Both run on the installed 1.7 build (ADR 0002 and ADR 0009). The status of each group is in `tools/validation/README.md`. Until a scenario runs, report each gameplay change as unproven.
 - Reproduce a bug red in a run before fixing it: the run fails on the bug and passes on the fix.
 - Check every Harmony attribute, patched method, and reflected name against the installed 1.7 code.
 - Fix the cause of each error. A disabled patch or a hidden error is not a fix. Report failures and untested cases as they are.
