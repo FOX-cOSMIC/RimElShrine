@@ -501,7 +501,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h2 id="status">Where things stand</h2>
 
-<p>The latest full pass is run 20261107-235624, on RimWorld 1.7.5000 rev1275. Its 14 scenario rows read PASS, and its 3 completion rows read finished. It ran under the rule that fails a row no list names. Run 20261107-181001 passed the same rows before that rule. Runs on 2026-11-05 passed the network and equipment rows on RimWorld 1.7.4998 rev1299, including run 20261105-152607. The change is merged in PR 1.</p>
+<p>The latest full pass is run 20261108-163933, on RimWorld 1.7.5000 rev1275, on the commit e9e4045. Its 18 scenario rows read PASS, and its 3 completion rows read finished. The runner fails any row that no list names, and the run had no error line that mentions the port. Earlier passes are listed in <code>tools\validation\README.md</code>. Runs on 2026-11-05 passed the network and equipment rows on RimWorld 1.7.4998 rev1299, including run 20261105-152607. The change is merged in PR 1.</p>
 
 <p>A scenario row is one check result, not counting completion rows. The test rows call quick regen "fast regen", and the table keeps those names.</p>
 
