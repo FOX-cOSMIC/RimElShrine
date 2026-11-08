@@ -31,6 +31,14 @@ Runs the Shield Expanded 1.7 port inside RimWorld and records pass or fail resul
   - Combat interception and the Combat Extended path: not covered yet.
 - The unnamed-row rule is decision D5, recorded in ADR 0012 on 2026-11-07. The runner fails any row that neither list names. The control switch `-shieldvalidation-unnamedrow` writes one such row, and the row reads FAIL. On the unchanged runner, red run `20261107-235413` passed with that row, which is the gap. On the new runner, control run `20261107-235531` fails with the problem `row not named in the runner's lists`, and it exits 1. Normal run `20261107-235624` passes all 17 rows with no problem.
 
+## Recordings
+
+- `Record-CombatDemo.ps1` records the real game window in a new colony. A shield generator's dome stops a hostile turret's shots, and one drafted colonist stands inside the dome. It runs `ShieldValidation\CombatDemo.cs` with `-shieldvalidation-combat`. The demo writes only `[ShieldCombat]` lines and no validation rows, so the runner's rules do not change. Output goes to `.artifacts\combat\<timestamp>\`: `combat.mp4`, `summary.txt`, `Player.log`, and the frames.
+- The scene is scripted. Other colonists are despawned, the generator's battery starts with 300 Wd, the turret is placed when the dome comes up, the colonist is drafted and unarmed, and the buildings belong to the player. Every other setting is the game's default.
+- Run `20261108-010345` (1.7.5000 rev1275): 22 shots fired, 22 intercepted, 0 colonist injuries, and the dome up at the end. The one ERROR line is the duplicate packageId `Aoba.DeadManSwitch.Core`, the same as the smoke run.
+- The recording is not a runner group. The combat row under Status stays "not covered yet".
+- Not in the video: the ES belt, raids, and Combat Extended.
+
 ## Known issues
 
 - The injector's usability check cures a bleeding pawn. `Comp_LimbsRegenInjector.CanBeUsedBy` calls the port's `TryGetHediff` helper for the regen effect. When the pawn has no regen effect, the helper sets the pawn's existing blood loss to 0. The 1.6 build has the same call. Lucas chose on 2026-11-07 to leave both builds unchanged, as decision D4 and ADR 0011 record.
