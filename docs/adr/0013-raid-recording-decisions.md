@@ -4,7 +4,7 @@ Lucas decided two settings for the recorded combat demo on 2026-11-08. The two q
 
 ## Decision
 
-Lucas chose the raid scene, `Record-CombatDemo.ps1 -Scene raid`. Three colonists stand inside the dome, each with a rifle and an ES0 belt, and three raiders with revolvers stand outside it. He asked for the belts on the colonists and for the colonists to fire through the dome they stand in.
+Lucas chose the raid scene, `Record-CombatDemo.ps1 -Scene raid`. Three colonists stand inside the dome, each with a rifle and an ES0 belt, and three raiders with revolvers stand outside it. Lucas asked for the belts on the colonists and for the colonists to fire through the dome they stand in.
 
 Lucas chose to try the game's own raid AI. The raiders then run the game's raid lord, and the trial worked, so the raid scene uses the raid lord by default (`-RaidAI game`). The scripted aim stays available as `-RaidAI scripted`.
 

@@ -21,3 +21,9 @@ A Fast injector still sets the regen effect to severity 1. Quick regen then spee
 - At the default settings, a finger adds about 0.027 blood loss. That stays well under the cap of 0.35.
 - The validation row for a healthy Fast pawn changes from "does nothing" to "speeds up regrowth". The label row drops its test for blood loss. Both row names changed.
 - The Workshop text and the in-game Fast descriptions say the speed-up works with or without blood loss.
+
+## Proof
+
+- Red run `20261108-200958` on commit `614106d`, on RimWorld 1.7.5000 rev1275. The healthy-pawn row fails. The finger came back at 28,833 ticks, outside the fast window of 7,680 to 10,560, with no blood loss. The other 20 rows pass, including the bleeding-pawn row at 9,633 ticks.
+- Green run `20261108-202332` on commit `140d470`, with the 1.7 assemblies that commit rebuilt. All 18 scenario rows and 3 completion rows pass. The healthy pawn's finger came back at 9,633 ticks, with blood loss when it came back.
+- The 1.6 build has no runtime runner. Its proof is a build with 0 errors on commit `140d470`. Nothing in 1.6 raises the regen severity above 0.5, so the fast path does not run there.

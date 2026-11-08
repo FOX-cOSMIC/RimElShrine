@@ -502,7 +502,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h2 id="status">Where things stand</h2>
 
-<p>The latest full pass is run 20261108-163933, on RimWorld 1.7.5000 rev1275, on the commit e9e4045. Its 18 scenario rows read PASS, and its 3 completion rows read finished. The runner fails any row that no list names, and the run had no error line that mentions the port. Earlier passes are listed in <code>tools\validation\README.md</code>. Runs on 2026-11-05 passed the network and equipment rows on RimWorld 1.7.4998 rev1299, including run 20261105-152607. The change is merged in PR 1.</p>
+<p>The latest full pass is run 20261108-202332, on RimWorld 1.7.5000 rev1275, on the commit 140d470. Its 18 scenario rows read PASS, and its 3 completion rows read finished. The red run before the fix is run 20261108-200958, on the commit 614106d. The runner fails any row that no list names, and the run had no error line that mentions the port. Earlier passes are listed in <code>tools\validation\README.md</code>. Runs on 2026-11-05 passed the network and equipment rows on RimWorld 1.7.4998 rev1299, including run 20261105-152607. The change is merged in PR 1.</p>
 
 <p>A scenario row is one check result, not counting completion rows. The test rows call quick regen "fast regen", and the table keeps those names.</p>
 
@@ -564,7 +564,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h3>D4. Whether the usability check cures a bleed</h3>
 
-<p>The usability check, <code>CanBeUsedBy</code>, called the port's <code>TryGetHediff</code> helper for the regen effect. With no regen effect, the helper set the pawn's blood loss to zero, so checking a bleeding pawn cured its bleed. The 1.6 build made the same call. On 2026-11-07 Lucas chose to leave both builds unchanged. On 2026-11-08 he reopened the question and chose to fix the check in both builds. The check now reads the regen effect with the game's own lookup, which only reads. ADR 0011 records both answers.</p>
+<p>The usability check, <code>CanBeUsedBy</code>, called the port's <code>TryGetHediff</code> helper for the regen effect. With no regen effect, the helper set the pawn's blood loss to zero, so checking a bleeding pawn cured its bleed. The 1.6 build made the same call. On 2026-11-07 Lucas chose to leave both builds unchanged. On 2026-11-08 Lucas reopened the question and chose to fix the check in both builds. The check now reads the regen effect with the game's own lookup, which only reads. ADR 0011 records both answers.</p>
 
 <h3>D5. Whether the runner fails on rows its lists do not name</h3>
 
