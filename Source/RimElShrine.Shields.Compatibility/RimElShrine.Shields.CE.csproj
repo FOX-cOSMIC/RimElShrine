@@ -45,7 +45,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <CombatExtendedRef17 Condition="'$(CombatExtendedRef17)' == ''">$(USERPROFILE)\.rimworld-refs\CombatExtended-1.7-Test\CombatExtended.dll</CombatExtendedRef17>
+    <CombatExtendedRef17 Condition="'$(CombatExtendedRef17)' == ''">$(USERPROFILE)\.rimworld-refs\CombatExtended-1.7-Test-src\Assemblies\CombatExtended.dll</CombatExtendedRef17>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(RimWorldVersion)' != '1.7'">

@@ -7,7 +7,7 @@ Differences from the 1.6 mod:
 [list]
 [*]The Fast regenerator injectors speed up regrowth for any colonist with a missing part, whether or not the colonist is bleeding. Fast regen adds blood loss as it runs, and it stops speeding up at the blood loss cap.
 [*]Checking whether an injector can be used no longer resets a bleeding colonist's blood loss to zero.
-[*]The Combat Extended compatibility part is included for 1.7, but it has not been tested in game yet.
+[*]The Combat Extended compatibility part is included for 1.7. It was tested in game with a Combat Extended 1.7 test build, not a released Combat Extended version.
 [/list]
 [hr][/hr]
 
@@ -55,7 +55,7 @@ Under normal circumstances, there should be no compatibility issues.
 
 Mods with compatibility parts:
 [list]
-[*]Combat Extended. The 1.7 compatibility part is included, but it has not been tested in game yet.
+[*]Combat Extended. The 1.7 compatibility part is included. It was tested in game with a Combat Extended 1.7 test build.
 [/list]
 
 [hr][/hr]

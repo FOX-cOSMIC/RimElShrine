@@ -16,10 +16,10 @@
     </li>
 	</modDependencies>
 	<description>
-1.7版本包含Combat Extended兼容组件，尚未在游戏中测试。
+1.7版本包含Combat Extended兼容组件，已在RimWorld 1.7中使用Combat Extended 1.7测试版完成游戏测试。
 添加了可建造的护盾发生器与由护盾、服务器单元和控制终端组成的护盾网络；添加了一系列可以抵御多种伤害的护盾腰带；添加了机械液制造配方，并随之扩展了一类肢体再生效果的机械液；每个对应项目均添加了对应研究科技。
 
-Includes a Combat Extended compatibility part for 1.7, not yet tested in game.
+Includes a Combat Extended compatibility part for 1.7. It was tested in RimWorld 1.7 with a Combat Extended 1.7 test build.
 Adds constructible shield generators and a shield network composed of shields, server units, and control terminals. Adds a series of shield belts capable of resisting various types of damage. Adds Mech Serum production recipes, along with an expanded line of limb regeneration serums. Corresponding research projects are included for each addition. All mod data is configurable in the mod settings.
 
 1.7 port by FOX-cOSMIC. Original 1.6 mod by FoxMo. Upstream: https://github.com/ElShrineFox221/RimElShrine
