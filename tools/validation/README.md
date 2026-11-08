@@ -30,6 +30,7 @@ Runs the Shield Expanded 1.7 port inside RimWorld and records pass or fail resul
   - Mech Serum Healer and Resurrector: only the recipes are checked. Their effects come from vanilla Biotech.
   - Combat interception and the Combat Extended path: not covered yet.
 - Scenario run on 2026-11-08, after the recording scenes were refactored: verdict PASS, all 17 rows, in run `20261108-112516`. The first attempt, run `20261108-112328`, failed because another session started a RimWorld process during it, so the shared log was not that run's alone. The runner refused to count it.
+- Mech Serum usability and label rows: covered since 2026-11-08. Lucas chose on 2026-11-08 to fix the usability check in both builds (decision D4, reopened; ADR 0011). The red run `20261108-142312` fails the two new rows on the unfixed build. The usability row reads blood loss 0.1 before the check and 0 after it. The label row reads `Disable Fast` on a Fast pawn with no blood loss. The green run `20261108-142616` passes all 19 rows on the fixed build. The other 17 rows pass in both runs. The fast finger came back at 9,633 ticks in the red run and at 9,635 ticks in the green run. Both are inside the window of 7,680 to 10,560 ticks. The two-tick difference is not traced.
 - The unnamed-row rule is decision D5, recorded in ADR 0012 on 2026-11-07. The runner fails any row that neither list names. The control switch `-shieldvalidation-unnamedrow` writes one such row, and the row reads FAIL. On the unchanged runner, red run `20261107-235413` passed with that row, which is the gap. On the new runner, control run `20261107-235531` fails with the problem `row not named in the runner's lists`, and it exits 1. Normal run `20261107-235624` passes all 17 rows with no problem.
 
 ## Recordings
@@ -48,5 +49,5 @@ Runs the Shield Expanded 1.7 port inside RimWorld and records pass or fail resul
 
 ## Known issues
 
-- The injector's usability check cures a bleeding pawn. `Comp_LimbsRegenInjector.CanBeUsedBy` calls the port's `TryGetHediff` helper for the regen effect. When the pawn has no regen effect, the helper sets the pawn's existing blood loss to 0. The 1.6 build has the same call. Lucas chose on 2026-11-07 to leave both builds unchanged, as decision D4 and ADR 0011 record.
+- The 1.6 assemblies still have the old usability check. Lucas chose on 2026-11-08 to fix the check in both builds, as decision D4 and ADR 0011 record. The source change is in shared code, and the 1.7 build has it. The 1.6 DLL is not rebuilt, because AGENTS.md says to leave `RimElShrine.Shields/1.6/` unchanged. A rebuild needs a separate go from Lucas.
 - The Fast rows call the injector's `DoEffect` method directly, so they skip the usability check that D4 describes.

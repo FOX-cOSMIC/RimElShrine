@@ -27,3 +27,5 @@ Two changes make this hold.
 - Red and green runs for this change are recorded in `tools/validation/README.md`.
 
 Updated 2026-11-07: Lucas chose to leave the usability check unchanged in both builds, as decision D4. Checking a bleeding pawn still cures its bleed, in 1.6 and 1.7 alike.
+
+Updated 2026-11-08: Lucas reopened D4 and chose option 1, fix the usability check in both builds, and he invoked full send for it. The 2026-11-07 wording, that the check cures the bleeding, overstated the effect. The check set blood loss to 0 while it ran, and an open wound refilled it. `Comp_LimbsRegenInjector.CanBeUsedBy` now reads the regen effect with the vanilla `HediffSet.TryGetHediff`, which only reads. A pawn with no blood loss now shows the normal fast label, not `Disable Fast`, because only blood loss at the cap sets that label. The source change is in shared code, so the 1.6 build compiles it. The 1.6 assemblies are not rebuilt in this change, because AGENTS.md says to leave them unchanged. Red run `20261108-142312` fails on the unfixed build, and green run `20261108-142616` passes all 19 rows on the fixed build.

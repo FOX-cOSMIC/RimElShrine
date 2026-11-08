@@ -116,7 +116,11 @@ namespace RimElShrine.Hediffs.LimbsRegen
                                 secondsCount += additionalIncresement;
                             }
                         }
-                        else reachedMaxBloodLoss = true;
+                        else
+                        {
+                            // Only blood loss at the cap sets the flag. A pawn with no blood loss is not at the cap.
+                            reachedMaxBloodLoss = bloodLossHediff is not null;
+                        }
                     }
                     secondsCount += incresement;
                 }
