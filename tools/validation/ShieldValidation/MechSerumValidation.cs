@@ -277,17 +277,32 @@ namespace ShieldValidation
             var regenJ = Regen(j.Colonist);
             var settingJ = RimElShrine.Settings.GetSetting<MechserumSetting>();
             float savedFactor = settingJ.QuickRegenFactor;
+            bool clearBefore = false;
+            bool bloodBefore = false;
+            bool exactAtCap = false;
             bool capAtEdge = false;
             if (regenJ != null)
             {
-                settingJ.QuickRegenFactor = 1f;
-                if (j.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var edgeBleeding)) edgeBleeding.Severity = settingJ.QuickRegenBloodLossMax;
-                regenJ.Tick();
-                capAtEdge = regenJ.LabelInBrackets.Contains(CapLabelText()) && regenJ.TipStringExtra.Contains(CapTipText());
-                settingJ.QuickRegenFactor = savedFactor;
+                clearBefore = !regenJ.LabelInBrackets.Contains(CapLabelText()) && !regenJ.TipStringExtra.Contains(CapTipText());
+                if (j.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var edgeBleeding))
+                {
+                    bloodBefore = true;
+                    edgeBleeding.Severity = settingJ.QuickRegenBloodLossMax;
+                    exactAtCap = edgeBleeding.Severity == settingJ.QuickRegenBloodLossMax;
+                }
+                try
+                {
+                    settingJ.QuickRegenFactor = 1f;
+                    regenJ.Tick();
+                    capAtEdge = regenJ.LabelInBrackets.Contains(CapLabelText()) && regenJ.TipStringExtra.Contains(CapTipText());
+                }
+                finally
+                {
+                    settingJ.QuickRegenFactor = savedFactor;
+                }
             }
-            bool passEdge = regenJ != null && capAtEdge;
-            ValidationSupport.Record(ScenarioCapEdge, (passEdge ? "PASS: " : "FAIL: ") + "cap label and tip at exactly the cap with multiplier 1 " + capAtEdge + ", label [" + (regenJ == null ? "no regen effect" : regenJ.LabelInBrackets) + "]");
+            bool passEdge = regenJ != null && clearBefore && bloodBefore && exactAtCap && capAtEdge;
+            ValidationSupport.Record(ScenarioCapEdge, (passEdge ? "PASS: " : "FAIL: ") + "clear before " + clearBefore + ", blood loss before " + bloodBefore + ", exactly at the cap " + exactAtCap + ", cap label and tip after the tick " + capAtEdge + ", label [" + (regenJ == null ? "no regen effect" : regenJ.LabelInBrackets) + "]");
         }
 
         // Diagnostic for the Fast injector. It logs what the game does with the Fast flag, and is not a required row.
