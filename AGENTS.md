@@ -11,12 +11,12 @@ The repo's other mods, `RimElShrine.ShuttleFuel` and `RimElShrine.MoveMonolith`,
 ## Constraints
 
 - Target the installed RimWorld build, 1.7.5000 rev1275, Steam unstable branch (ADR 0002, updated 2026-11-07).
-- Leave `RimElShrine.Shields/1.6/` and its assemblies unchanged. Build 1.7 into `RimElShrine.Shields/1.7/`, and add a `<v1.7>` block to `RimElShrine.Shields/LoadFolders.xml`.
+- Build 1.7 into `RimElShrine.Shields/1.7/`, and add a `<v1.7>` block to `RimElShrine.Shields/LoadFolders.xml`. Rebuilding `RimElShrine.Shields/1.6/` and its assemblies is allowed. The commit that rebuilds them says which files changed.
 - Give the port a new `packageId` in `About.xml`. Lucas has the original (`FoxMo.RimElShrine.Shields`) subscribed, and a shared id collides with it.
 - Keep Def names, XML class names, and settings keys from 1.6. Saves and translations key on them. Record each change 1.7 forces.
 - Keep the Combat Extended path: `1.6/Compatible/CombatExtended` loads only when `CETeam.CombatExtended` is active. Give 1.7 its own counterpart.
 - Ship no game DLLs and no Harmony DLL. Harmony comes from the `brrainz.harmony` dependency.
-- Leave the committed DLLs in `Source/references/` and the 1.6 assemblies unchanged.
+- Leave the committed DLLs in `Source/references/` unchanged.
 - Validate in isolated savedata, in a new colony. Existing saves and the live mod list stay as they are.
 - Steam Workshop: upload as Private first. Lucas switches the listing to Public after testing.
 - No license file exists, so this port grants no redistribution rights. Keep FoxMo's credit and the upstream link in `About.xml` and the Workshop text.
@@ -24,7 +24,7 @@ The repo's other mods, `RimElShrine.ShuttleFuel` and `RimElShrine.MoveMonolith`,
 ## Build
 
 - 1.7 build (works, 0 errors): `dotnet build Source/RimElShrine.Shields/RimElShrine.Shields.csproj -c Release -p:RimWorldVersion=1.7`. It targets net10.0 with Krafs.Rimworld.Ref 1.7.4995-unstable and Lib.Harmony.Ref 2.4.2 (ADRs 0006, 0007). Output goes to `RimElShrine.Shields/1.7/Assemblies/`.
-- 1.6 build: the same projects with the default `RimWorldVersion` (1.6). It targets net472 and writes to `RimElShrine.Shields/1.6/`. Do not run it while the port is in progress, because it overwrites the 1.6 assemblies. To compile the 1.6 variant without writing those assemblies, add `-p:OutputPath=<a scratch folder>`.
+- 1.6 build: the same projects with the default `RimWorldVersion` (1.6). It targets net472 and writes to `RimElShrine.Shields/1.6/`, which overwrites the 1.6 assemblies. To check that the 1.6 source compiles without writing those assemblies, add `-p:OutputPath=<a scratch folder>`.
 - The 1.7 build defines `RIMWORLD_17`. Code inside `#if RIMWORLD_17` runs only in the 1.7 build (ADR 0011).
 - Combat Extended counterpart (1.7): `dotnet build Source/RimElShrine.Shields.Compatibility/RimElShrine.Shields.CE.csproj -c Release -p:RimWorldVersion=1.7` (0 errors). It compiles against `%USERPROFILE%\.rimworld-refs\CombatExtended-1.7-Test\CombatExtended.dll`, a CE 1.7-Test build kept outside the repo (ADR 0008). The committed 1.6 `CombatExtended.dll` cannot be used, because it needs `UnityEngine.CoreModule`, which 1.7 does not provide. The CE path's runtime behavior is unproven.
 - Write decompiles and run logs to `.artifacts/`, and list `.artifacts/` in `.gitignore`.
