@@ -1,5 +1,16 @@
 [code][b]Languages: [/b]Simplified Chinese, English(Machine Translated)[/code]
 
+[h2]Shield Expanded 1.7[/h2]
+This is a port of Shield Expanded to RimWorld 1.7, made by FOX-cOSMIC. The original 1.6 mod is by FoxMo (Workshop item 3575073524). The port has its own package ID, so it loads beside the original. It needs Harmony.
+
+Differences from the 1.6 mod:
+[list]
+[*]The Fast regenerator injectors speed up regrowth only while the colonist has blood loss. A healthy colonist regrows at the normal speed. Fast regen adds blood loss as it runs, and it stops at the blood loss cap.
+[*]Checking whether an injector can be used no longer resets a bleeding colonist's blood loss to zero.
+[*]The Combat Extended compatibility part is included for 1.7, but it has not been tested in game yet.
+[/list]
+[hr][/hr]
+
 All data for this mod can be adjusted in the mod settings, and each content section can be freely enabled or disabled (requires a game restart).
 
 Adds constructible shield generators and a shield network composed of shields, server units, and control terminals. Adds a series of shield belts capable of resisting various types of damage. Adds Mech Serum production recipes, expanding them to include a type with limb regeneration effects.
@@ -42,14 +53,17 @@ The expanded shield belt series is rewritten by inheriting from the vanilla Comp
 
 Under normal circumstances, there should be no compatibility issues.
 
-Specifically compatible with the following mod(s):
+Mods with compatibility parts:
 [list]
-[*]CE (Combat Extended);
+[*]Combat Extended. The 1.7 compatibility part is included, but it has not been tested in game yet.
 [/list]
 
 [hr][/hr]
 
-[h2]Note[/h2]
+[h2]Notes[/h2]
+Please leave a comment on this listing for any bugs in the port.
+
+The original 1.6 note by FoxMo reads:
 This is my first RimWorld mod. Please leave a comment for any bugs, I'll fix them periodically ♪(´▽｀)
 PS: Refactored the entire code framework... maintaining/updating the mod should be easier now... hopefully? :D
-PPS: GitHub repository here: [url=https://github.com/ElShrineFox221/RimElShrine]RimElShrine[/url]
+PPS: Original GitHub repository: [url=https://github.com/ElShrineFox221/RimElShrine]RimElShrine[/url]
