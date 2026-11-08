@@ -71,11 +71,11 @@ Fast regeneration (decided 2026-11-07, ADR 0011):
 
 - The Fast injectors set `isFastRegen` in the XML. Before 2026-11-07 no code read the flag, and the 1.6 build never read it either.
 - Since 2026-11-07, the 1.7 build sets the regen hediff's severity to 1 for a Fast injector, inside an `#if RIMWORLD_17` block. `HediffWithComps_LimbsRegen.IsQuickRegen` is `Severity > 0.5f`, so the effect runs in quick mode.
-- The quick branch takes blood loss only from an existing `BloodLoss` hediff, read with `Verse.HediffSet.TryGetHediff`, which never creates one. With none, it sets `reachedMaxBloodLoss`, and quick regen waits until a bleed appears. A healthy pawn therefore regrows at the normal speed.
+- The quick branch takes blood loss only from an existing `BloodLoss` hediff, read with `Verse.HediffSet.TryGetHediff`, which never creates one. With no blood loss, the quick step adds no extra seconds, so a healthy pawn regrows at the normal speed.
 - Measured in run `20261107-175804`: the finger of a pawn with blood loss came back at 9,633 ticks, and the finger of a pawn with none came back at 28,833 ticks. Run `20261107-175322` showed the healthy pawn at 9,633 ticks before the lookup change, because the port's helper gave it a zero-severity `BloodLoss` hediff.
 - The keyed text in `LimbsRegenKeys.xml` describes quick regen that costs blood loss: "Fast regeneration may cause additional blood loss symptoms."
 - The port's `CommonUtility.TryGetHediff` extension creates a zero-severity `BloodLoss` hediff when the pawn has none of the requested def, and it sets an existing bleed's severity to 0. The quick branch called it until 2026-11-07, which would have given a healthy pawn with quick regen a phantom bleed. The branch now calls `Verse.HediffSet.TryGetHediff`.
-- `Comp_LimbsRegenInjector.CanBeUsedBy` still calls the extension for the regen effect. A bleeding pawn that has no regen effect loses its bleed when the check runs. The 1.6 build has the same call. Lucas chose on 2026-11-07 to leave both builds unchanged, as decision D4 and ADR 0011 record.
+- Since commit 99dbf40 (2026-11-08), `Comp_LimbsRegenInjector.CanBeUsedBy` reads the regen effect with `Verse.HediffSet.TryGetHediff`, so the check no longer clears blood loss. Lucas first chose to leave the check unchanged on 2026-11-07. He reopened it on 2026-11-08 and chose to fix it in both builds, as decision D4 and ADR 0011 record.
 
 ## Raid and turret recordings (2026-11-08)
 
@@ -83,11 +83,11 @@ Checked with `ilspycmd` against the installed `Assembly-CSharp.dll` (1.7.5000 re
 
 - `RimWorld.JobGiver_AIFightEnemy.TryGiveJob` returns no job when the pawn has no `mindState.enemyTarget`. `FindAttackTarget` accepts only targets the pawn can see. A raider that loses sight of every colonist does nothing. Run `20261108-110251` showed three idle raiders at the south edge of the map, with the colonists in revolver range.
 - The `AssaultColony` duty runs `JobGiver_AIFightEnemies`, then `JobGiver_AIGotoNearestHostile` (`Duties_Misc.xml`). The `Defend` duty runs `JobGiver_AIDefendPoint`, then `ThinkNode_ForbidOutsideFlagRadius` with a 16-cell limit, then `JobGiver_WanderNearDutyLocation` with an 8-cell radius. In run `20261108-110839`, defend-duty raiders still walked about 11 cells from their spot and had no target.
-- `Verse.AI.JobDriver_AttackStatic` calls `TryStartAttack` on `TargetA` every tick. It ends when the target is gone, destroyed, or downed after starting healthy, or when `numAttacksMade` reaches `job.maxNumStaticAttacks`. That field defaults to `int.MaxValue` in `Verse.AI.Job`. The job is not casual-interruptible. The raid scene uses it. From run `20261108-111238` on, each raider fired about every two seconds from its spawn spot.
+- `Verse.AI.JobDriver_AttackStatic` calls `TryStartAttack` on `TargetA` every tick. It ends when the target is gone, destroyed, or downed after starting healthy, or when `numAttacksMade` reaches `job.maxNumStaticAttacks`. That field defaults to `int.MaxValue` in `Verse.AI.Job`. The job is not casual-interruptible. The scripted raid scene uses it. From run `20261108-111238` on, each raider fired about every two seconds from its spawn spot.
 - `new Job(JobDef, LocalTargetInfo)` and `Pawn_JobTracker.StartJob(Job, JobCondition)` start a job. `Pawn_JobTracker.curJob` is public.
 - `Pawn_EquipmentTracker.PrimaryEq` returns a `CompEquippable`, not the weapon. The weapon is `PrimaryEq.parent`. Reading `PrimaryEq.def` does not compile.
 - `PawnDuty(DutyDef def, LocalTargetInfo focus, float radius = -1f)` takes a focus cell and a radius.
-- `LordMaker.MakeNewLord(Faction, LordJob, Map, IEnumerable<Pawn>)` is in `Verse.AI.Group`, not `RimWorld`. `LordJob_AssaultColony` takes `canTimeoutOrFlee`, which defaults to true and gates its exit-the-map toil. The raid scene does not use a lord.
+- `LordMaker.MakeNewLord(Faction, LordJob, Map, IEnumerable<Pawn>)` is in `Verse.AI.Group`, not `RimWorld`. `LordJob_AssaultColony` takes `canTimeoutOrFlee`, which defaults to true and gates its exit-the-map toil. The scripted raid scene (`-RaidAI scripted`) does not use a lord. The default raid scene (`-RaidAI game`) starts one with `LordJob_AssaultColony(canKidnap: false, canTimeoutOrFlee: false, canSteal: false)`, so the raiders stay on the map.
 - `Comp_ShieldNet_ProjInterceptorELS.InterceptProjectile` stops a projectile only when its launcher is hostile to the shield's faction, and only while `IFFOn` is set. IFF is on by default. The check sits at lines 311 to 317. In run `20261108-111632`, colonists fired 47 shots, and none ended at the dome edge.
 - `Comp_ApparelShield.PostPreApplyDamage` absorbs damage that reaches the wearer, ranged or melee. It does not stop projectiles in flight. The ES0 belt's energy max is 1, the value the 1.6 original sets. A revolver hit costs 12 × 0.033 = 0.396 energy, so a full belt takes three revolver hits before it breaks. The third hit drops it below zero, and that hit is still absorbed.
 - ES0 capacity. `Shields.xml` sets max energy 1 and recharge 0.17 per second for ES0, the same as the 1.6 original. ES1 to ES3 set 1.2, 1.7, and 3. The ES0 def does not set `energyLossPerDamage`, so it takes the game's default of 0.033 (`RimWorld.CompProperties_Shield`). Vanilla `Apparel_ShieldBelt` sets max 1.1 and recharge 0.13 (`Apparel_Belts.xml`), with the same default cost.
@@ -104,14 +104,14 @@ Checked with `ilspycmd` against the installed `Assembly-CSharp.dll`, RimWorld 1.
 
 - `HediffGiver_Bleeding.OnIntervalPassed` adds `BleedRateTotal * 0.001` to the blood loss hediff while `BleedRateTotal` is at least 0.1. Below 0.1 it subtracts 0.000333. `Pawn_HealthTracker` calls it every 60 ticks. Over 60,000 ticks, an open wound adds its bleed rate in total.
 - `Hediff.ShouldRemove` is true at severity 0 or below. `Pawn_HealthTracker` removes a hediff that reports it, so a blood loss hediff at zero is removed.
-- `Comp_LimbsRegenInjector.CanBeUsedBy` calls the port's `TryGetHediff` helper, `Source/RimElShrine/CommonUtility.cs` line 90. When the regen hediff is absent, the helper gets or adds the blood loss hediff and sets its severity to 0. That applies to any pawn, including one that is bleeding.
+- Before commit 99dbf40, `Comp_LimbsRegenInjector.CanBeUsedBy` called the port's `TryGetHediff` helper, `Source/RimElShrine/CommonUtility.cs` line 90. When the regen hediff is absent, the helper gets or adds the blood loss hediff and sets its severity to 0. That applies to any pawn, including one that is bleeding.
 - The game calls `CompUsable.CanBeUsedBy`, which calls the injector's check, from four places:
   - `CompFloatMenuOptions` at `CompUsable.cs` line 78, once for each selected pawn when the item's menu is built.
   - `TryStartUseJob` at `CompUsable.cs` line 105.
   - `UsedBy` at `CompUsable.cs` line 163, before the effect applies.
   - `JobDriver_UseItem.MakeNewToils` at line 42, as a `FailOn` condition. `JobDriver.DriverTick` checks it on every tick while the job runs.
-- From the decompile only, not run in game: while a use job runs, its pawn's blood loss stays at 0. After the injector applies, an open wound refills blood loss at its bleed rate.
-- `HediffWithComps_LimbsRegen.Tick` finds no blood loss hediff on a pawn with none, so `reachedMaxBloodLoss` becomes true. The label then reads "Disable Fast" and the tip reads "disabled due to current severe blood loss symptoms", while a body part is regrowing on a pawn that is not bleeding. The timing is correct. On the unfixed build, red run `20261108-142312` shows the label on a healthy Fast pawn reads `Disable Fast`. On the fixed build, green run `20261108-142616` shows `Fast Regen`, because only blood loss at the cap sets the flag now.
+- Before the fix, and from the decompile only, not run in game: while a use job runs, its pawn's blood loss stays at 0. After the injector applies, an open wound refills blood loss at its bleed rate.
+- On the unfixed build, `HediffWithComps_LimbsRegen.Tick` found no blood loss hediff on a pawn with none, so `reachedMaxBloodLoss` became true. The label then read "Disable Fast", and the tip read "disabled due to current severe blood loss symptoms", while a body part regrew on a pawn that was not bleeding. The timing was correct. Red run `20261108-142312` showed the label on a healthy Fast pawn reading `Disable Fast`. On the fixed build, green run `20261108-142616` shows `Fast Regen`, because only blood loss at the cap sets the flag now.
 - `Comp_ApparelShield.CompTick` calls the same helper with `BloodLoss` as the definition. That finds the existing hediff and does not set it to 0.
 - Each fast step adds the extra seconds divided by `LimbsRegenSecondsPerHealth`, times `QuickRegenBloodLossPercentPerHealth`. By that formula, one finger adds about 0.027 blood loss, under the `QuickRegenBloodLossMax` cap of 0.35.
 - The checks on patient A in `MechSerumValidation.cs` use a pawn with no blood loss, so they never see the reset. The row `mech serum: injector usability check leaves blood loss alone` checks a bleeding pawn. Red run `20261108-142312` fails it, and green run `20261108-142616` passes it.
@@ -120,4 +120,8 @@ Checked with `ilspycmd` against the installed `Assembly-CSharp.dll`, RimWorld 1.
 ## Not covered
 
 - The ShuttleFuel and MoveMonolith patches. They are out of scope.
-- Runtime behavior. A patch that fails to apply shows up only when the game starts with the mod enabled.
+- Real wounds. The validation rows set blood loss directly, so they do not model a wound.
+- The Combat Extended counterpart. It has never run in game.
+- The 1.6 build at runtime. No 1.6 install is available on this machine, and no runner exists for it.
+- The game's use job, start to end. The rows call `DoEffect` and `CanBeUsedBy` directly.
+- Patch failures. A patch that fails to apply shows up only when the game starts with the mod enabled. The smoke run checks that the port's patches apply.

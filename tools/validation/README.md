@@ -44,12 +44,14 @@ Runs the Shield Expanded 1.7 port inside RimWorld and records pass or fail resul
 - Run `20261108-010345` is the turret scene on 1.7.5000 rev1275. It shows 22 shots fired, 22 intercepted, 0 colonist injuries, and the dome up at the end. Run `20261108-112114` is the turret scene after the refactor, and it gives the same result.
 - Run `20261108-111632` is the raid with the scripted aim. It shows 128 raider shots fired and 41 intercepted. Colonists fired 47 shots, and none ended at the dome edge. The dome went down three times. The belts absorbed 18 hits. Thirteen colonist injuries came after the belts broke, and two colonists ended the fight downed. One raider died. The fight ended at the 90-second limit with the dome up. The one ERROR line is the duplicate packageId `Aoba.DeadManSwitch.Core`, the same as the smoke run.
 - Run `20261108-114853` is the raid with the game's own raid lord, which is the default now. It shows 140 raider shots fired and 46 intercepted. Colonists fired 56 shots, and none ended at the dome edge. Four raider health losses happened 18 to 24 cells from the generator while the dome was up. The colonists took no injuries, and the belts absorbed 25 hits. The dome went down four times, and the fight ended at the 90-second limit with the dome down.
-- Lucas chose to try the game's raid AI on 2026-11-08 as decision D2. The trial worked, so the game's raid lord is the default. The scripted aim stays available as `-RaidAI scripted`.
-- Lucas chose the raid scene on 2026-11-08 as decision D1. He asked for shield belts on the colonists and for colonists to fire through the dome they stand in.
+- Lucas chose to try the game's raid AI on 2026-11-08. ADR 0013 records it. The trial worked, so the game's raid lord is the default. The scripted aim stays available as `-RaidAI scripted`.
+- Lucas chose the raid scene on 2026-11-08. ADR 0013 records it. He asked for shield belts on the colonists and for colonists to fire through the dome they stand in.
 - The recordings are not runner groups. The combat row under Status stays "not covered yet".
 - Not in the video: Combat Extended, the desktop overlay, and the ES1 to ES3 belts. Only the ES0 belt appears.
 
 ## Known issues
 
 - The 1.6 build has no runtime runner. Lucas chose on 2026-11-08 to fix the usability check in both builds (decision D4, ADR 0011). He then allowed a 1.6 rebuild in `AGENTS.md` (decision D7). The 1.6 assemblies were rebuilt from the fixed source. A decompile diff against the old assemblies shows the usability fix as the only change that runs in 1.6. The Fast regen code is compiled into 1.6 too, but nothing in 1.6 raises the regen severity above 0.5, so that code does not run there.
-- The Fast rows call the injector's `DoEffect` method directly, so they skip the usability check that D4 describes.
+- The Fast rows call the injector's `DoEffect` method directly. The usability row calls `CanBeUsedBy` directly. No row runs the game's use job from start to end, so the path a player takes to use an injector is not covered.
+- The Fast label reads `Fast Regen` on a healthy Fast pawn, although its regrowth runs at the normal speed until a bleed starts. The wording is not decided.
+- `RimElShrine.Shields/About/PublishedFileId.txt` was removed in `cf808da`, because it held the original mod's Workshop item id, 3575073524. After the first private upload, record the port's own id in that file.
