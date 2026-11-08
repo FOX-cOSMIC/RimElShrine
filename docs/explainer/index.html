@@ -353,15 +353,15 @@ nav ol { margin: 0.6em 0 1em; }
 
 <p>Blood loss is the health condition that tracks how much blood a pawn has lost. Quick regen is a faster mode of the regen effect. It starts when severity is above 0.5. In the 1.7 build, a Fast injector sets severity to 1, so its effect starts in quick regen. The 1.6 build never reads the Fast flag, so a Fast injector does nothing extra there.</p>
 
-<p>In quick regen, the clock gains 1.5 seconds every 30 ticks, three times the normal speed, while the extra time applies. The setting <code>QuickRegenFactor</code> sets that speed, and it defaults to 3. Each step adds blood loss equal to the extra seconds divided by <code>LimbsRegenSecondsPerHealth</code>, times <code>QuickRegenBloodLossPercentPerHealth</code>, which defaults to 0.005. The extra time applies only while the pawn's blood loss is below <code>QuickRegenBloodLossMax</code>, which defaults to 0.35, and only when the blood loss after the next step is still at or below that cap. Otherwise the part regrows at normal speed, so a pawn with no blood loss gets no extra time.</p>
+<p>In quick regen, the clock gains 1.5 seconds every 30 ticks, three times the normal speed, while the extra time applies. The setting <code>QuickRegenFactor</code> sets that speed, and it defaults to 3. Each step adds blood loss equal to the extra seconds divided by <code>LimbsRegenSecondsPerHealth</code>, times <code>QuickRegenBloodLossPercentPerHealth</code>, which defaults to 0.005. The extra time applies only while the pawn's blood loss is below <code>QuickRegenBloodLossMax</code>, which defaults to 0.35, and only when the blood loss after the next step is still at or below that cap. Otherwise the part regrows at normal speed. A pawn with no blood loss gets the extra time too. Its blood loss starts at zero and rises with each step.</p>
 
 <div class="scroll-figure">
 <figure>
-<svg viewBox="0 0 370 140" role="img" aria-label="In the test, a finger came back at 9,633 ticks with quick regen and at 28,833 ticks without it.">
-<text x="24" y="16" font-size="13" fill="currentColor">Quick regen, with blood loss</text>
+<svg viewBox="0 0 370 140" role="img" aria-label="In the test, a finger came back at 9,633 ticks with a Fast injector and at 28,833 ticks with a normal injector.">
+<text x="24" y="16" font-size="13" fill="currentColor">Fast injector</text>
 <text x="346" y="16" text-anchor="end" font-size="13" fill="currentColor">9,633 ticks</text>
 <rect x="24" y="22" width="100.2" height="20" rx="3" fill="currentColor" fill-opacity="0.85"/>
-<text x="24" y="64" font-size="13" fill="currentColor">Normal regen, no blood loss</text>
+<text x="24" y="64" font-size="13" fill="currentColor">Normal injector</text>
 <text x="346" y="64" text-anchor="end" font-size="13" fill="currentColor">28,833 ticks</text>
 <rect x="24" y="70" width="299.9" height="20" rx="3" fill="currentColor" fill-opacity="0.22" stroke="currentColor" stroke-width="1"/>
 <line x1="24" y1="108" x2="336" y2="108" stroke="currentColor" stroke-width="1" opacity="0.5" fill="none"/>
@@ -374,13 +374,13 @@ nav ol { margin: 0.6em 0 1em; }
 <text x="232" y="128" text-anchor="middle" font-size="12" fill="currentColor">20,000</text>
 <text x="336" y="128" text-anchor="middle" font-size="12" fill="currentColor">30,000</text>
 </svg>
-<figcaption><span>Figure 4.</span> In the test, a finger came back at 9,633 ticks with quick regen and at 28,833 ticks without it.</figcaption>
+<figcaption><span>Figure 4.</span> In the test, a finger came back at 9,633 ticks with a Fast injector and at 28,833 ticks with a normal injector.</figcaption>
 </figure>
 </div>
 
 <div class="scroll-figure">
 <figure>
-<svg viewBox="0 0 360 340" role="img" aria-label="Quick regen speeds up a pawn only while it has blood loss below the cap and the next step ends at or below the cap. A pawn with no blood loss regrows at normal speed.">
+<svg viewBox="0 0 360 340" role="img" aria-label="Quick regen speeds up a pawn while the next step keeps its blood loss at or below the cap. A pawn with no blood loss qualifies, and its blood loss starts at zero.">
 <defs>
 <marker id="f5-arrow" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker>
 </defs>
@@ -394,8 +394,8 @@ nav ol { margin: 0.6em 0 1em; }
 <text x="180" y="145" text-anchor="middle" font-size="13" fill="currentColor">Quick regen on, severity above 0.5</text>
 <line x1="180" y1="160" x2="180" y2="176" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
 <rect x="20" y="176" width="320" height="60" rx="30" fill="none" stroke="currentColor" stroke-width="1.5"/>
-<text x="180" y="202" text-anchor="middle" font-size="13" fill="currentColor">Has blood loss below the cap,</text>
-<text x="180" y="218" text-anchor="middle" font-size="13" fill="currentColor">and the next step ends at or below the cap?</text>
+<text x="180" y="202" text-anchor="middle" font-size="13" fill="currentColor">Would the next step keep</text>
+<text x="180" y="218" text-anchor="middle" font-size="13" fill="currentColor">blood loss at or below the cap?</text>
 <line x1="110" y1="236" x2="110" y2="262" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
 <line x1="250" y1="236" x2="250" y2="262" stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#f5-arrow)"/>
 <text x="98" y="254" text-anchor="end" font-size="12" fill="currentColor">yes</text>
@@ -408,7 +408,7 @@ nav ol { margin: 0.6em 0 1em; }
 <text x="265" y="298" text-anchor="middle" font-size="13" fill="currentColor">Regrows at the</text>
 <text x="265" y="314" text-anchor="middle" font-size="13" fill="currentColor">normal speed</text>
 </svg>
-<figcaption><span>Figure 5.</span> Quick regen speeds up a pawn only while it has blood loss below the cap and the next step ends at or below the cap. A pawn with no blood loss regrows at normal speed.</figcaption>
+<figcaption><span>Figure 5.</span> Quick regen speeds up a pawn while the next step keeps its blood loss at or below the cap. A pawn with no blood loss qualifies, and its blood loss starts at zero.</figcaption>
 </figure>
 </div>
 
@@ -426,6 +426,7 @@ nav ol { margin: 0.6em 0 1em; }
 <tr><td>New packageId</td><td><code>About\About.xml</code>, ADR 0003</td><td><code>foxcosmic.rimelshrine.shields17</code> lets the port load beside <code>FoxMo.RimElShrine.Shields</code>. One About.xml serves both version folders, so the 1.6 folder reports the new ID too.</td></tr>
 <tr><td>1.7-only guard</td><td><code>#if RIMWORLD_17</code>, ADR 0011</td><td>A compiler switch. Code inside it compiles only in the 1.7 build.</td></tr>
 <tr><td>Fast injectors</td><td>Same guard, ADR 0011</td><td>The 1.7 build sets severity to 1 for a Fast injector. The 1.6 build does not. Before 2026-11-07, no build read the Fast flag, and the 1.6 mod never read it.</td></tr>
+<tr><td>Quick regen on a pawn with no blood loss</td><td><code>HediffWithComps_LimbsRegen.Tick</code>, <code>QuickRegenBloodLoss</code>, ADR 0014</td><td>Lucas reversed D1 on 2026-11-08. A pawn with no blood loss gets the quick speed, and its first step creates the bleed. The 1.6 build keeps its guard, so its behavior does not change.</td></tr>
 <tr><td>Vanilla blood loss lookup</td><td><code>HediffWithComps_LimbsRegen.Tick</code>, PR 1</td><td>The port's helper gave healthy pawns a zero-severity bleed, so they got quick regen. The game's own lookup replaces it. Merged 2026-11-07. The 1.6 build has the same change, and its DLL was rebuilt on 2026-11-08.</td></tr>
 <tr><td>Usability check</td><td><code>Comp_LimbsRegenInjector.CanBeUsedBy</code>, ADR 0011</td><td>Reads the regen effect with the game's own lookup, so checking a bleeding pawn keeps its blood loss. Both builds. Fixed on 2026-11-08, commit 99dbf40.</td></tr>
 <tr><td>Data files</td><td>Defs, Languages, images</td><td>Defs and Languages match in both version folders. Images sit in the shared Content folder.</td></tr>
@@ -524,9 +525,9 @@ nav ol { margin: 0.6em 0 1em; }
 <tr><td>Regen effect ends when its count runs out</td><td>With a count of 1, the effect ends after the heal.</td></tr>
 <tr><td>Cleaner stops a running regen effect</td><td>The Cleaner ends the effect, and the finger stays missing.</td></tr>
 <tr><td>Fast regen speeds up regrowth while a pawn has blood loss</td><td>The finger returns at 9,633 ticks, inside 7,680 to 10,560. The test calls the injector directly, so it skips the usability check.</td></tr>
-<tr><td>Fast regen does nothing on a pawn with no blood loss</td><td>The finger returns at 28,833 ticks, with no blood loss.</td></tr>
+<tr><td>Fast regen speeds up regrowth on a pawn with no blood loss</td><td>The finger returns inside 7,680 to 10,560 ticks, and the pawn has blood loss when it returns. The test calls the injector directly.</td></tr>
 <tr><td>Usability check leaves blood loss alone</td><td>The regen injector is usable and the cleaner is not. Blood loss stays at 0.1 across the check.</td></tr>
-<tr><td>Fast regen label on a pawn with no blood loss does not read disabled</td><td>The label reads Fast Regen, not Disable Fast, and the cap tip is absent.</td></tr>
+<tr><td>Fast regen label on a healthy pawn does not read disabled</td><td>The label reads Fast Regen, not Disable Fast, and the cap tip is absent.</td></tr>
 <tr><td>Cap label clears after blood loss ends</td><td>While the pawn is held above the cap, the label reads Disable Fast. It clears after the blood loss ends.</td></tr>
 <tr><td>Cap label holds at exactly the cap when the fast multiplier is 1</td><td>At a multiplier of 1, a pawn exactly at the cap shows the cap label and tip. The test restores the multiplier afterward.</td></tr>
 </tbody>
@@ -551,7 +552,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h3>D1. When Fast injectors work</h3>
 
-<p>Fast injectors work only while a pawn has blood loss. Lucas chose this on 2026-11-07, and ADR 0011 records it.</p>
+<p>Lucas first chose on 2026-11-07 that Fast injectors work only while a pawn has blood loss, as ADR 0011 records. On 2026-11-08, Lucas reversed that. Fast injectors now work on any pawn with a missing part, bleeding or not, and ADR 0014 records the change.</p>
 
 <h3>D2. Which RimWorld build the port targets</h3>
 

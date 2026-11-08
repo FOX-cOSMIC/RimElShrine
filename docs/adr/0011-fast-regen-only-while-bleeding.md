@@ -1,5 +1,7 @@
 # Fast injectors speed up only a bleeding pawn
 
+Superseded in part by ADR 0014, decided on 2026-11-08. Lucas reversed the rule that quick regen runs only while the pawn has blood loss. The other decisions in this record still hold.
+
 Lucas decided this on 2026-11-07, answering decision D1 with "I think they only work when they can help." Before this decision, the Fast Regenerator injectors did nothing extra. Their XML sets `isFastRegen`, and no code read that flag. The 1.6 mod never read it either, so this decision changes the port's behavior from the 1.6 mod.
 
 ## Decision

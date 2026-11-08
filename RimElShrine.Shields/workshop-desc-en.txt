@@ -5,7 +5,7 @@ This is a port of Shield Expanded to RimWorld 1.7, made by FOX-cOSMIC. The origi
 
 Differences from the 1.6 mod:
 [list]
-[*]The Fast regenerator injectors speed up regrowth only while the colonist has blood loss. A healthy colonist regrows at the normal speed. Fast regen adds blood loss as it runs, and it stops at the blood loss cap.
+[*]The Fast regenerator injectors speed up regrowth for any colonist with a missing part, whether or not the colonist is bleeding. Fast regen adds blood loss as it runs, and it stops speeding up at the blood loss cap.
 [*]Checking whether an injector can be used no longer resets a bleeding colonist's blood loss to zero.
 [*]The Combat Extended compatibility part is included for 1.7, but it has not been tested in game yet.
 [/list]

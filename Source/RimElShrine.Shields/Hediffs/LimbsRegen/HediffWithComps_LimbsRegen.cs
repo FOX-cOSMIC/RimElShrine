@@ -103,17 +103,13 @@ namespace RimElShrine.Hediffs.LimbsRegen
                 {
                     pastTicks -= updateIntervalTicks;
                     var incresement = updateIntervalTicks.TicksToSeconds();
-                    if (IsQuickRegen)
+                    if (IsQuickRegen && !reachedMaxBloodLoss)
                     {
-                        // Vanilla lookup. The port's TryGetHediff would create a zero-severity bleed on a healthy pawn.
-                        pawn.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var bloodLossHediff);
                         var additionalIncresement = incresement * (Setting.QuickRegenFactor - 1);
-                        if (bloodLossHediff is not null && !reachedMaxBloodLoss)
-                        {
-                            var loss = additionalIncresement / Setting.LimbsRegenSecondsPerHealth * Setting.QuickRegenBloodLossPercentPerHealth;
-                            bloodLossHediff.Severity += loss;
-                            secondsCount += additionalIncresement;
-                        }
+                        var loss = additionalIncresement / Setting.LimbsRegenSecondsPerHealth * Setting.QuickRegenBloodLossPercentPerHealth;
+                        // The cost is blood loss. A pawn with none gets a bleed at zero, which this step raises. A zero cost creates none.
+                        if (loss > 0) QuickRegenBloodLoss().Severity += loss;
+                        secondsCount += additionalIncresement;
                     }
                     secondsCount += incresement;
                 }
@@ -127,6 +123,14 @@ namespace RimElShrine.Hediffs.LimbsRegen
             var loss = additionalIncresement / Setting.LimbsRegenSecondsPerHealth * Setting.QuickRegenBloodLossPercentPerHealth;
             // At the cap counts as at the cap, also when a quick step adds nothing (the factor's minimum is 1).
             return bloodLossHediff.Severity >= Setting.QuickRegenBloodLossMax || bloodLossHediff.Severity + loss > Setting.QuickRegenBloodLossMax;
+        }
+        // The blood loss that quick regen spends. A pawn with none gets a bleed at severity zero, and the caller raises it.
+        private Hediff QuickRegenBloodLoss()
+        {
+            if (pawn.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var bloodLoss)) return bloodLoss;
+            bloodLoss = pawn.health.AddHediff(HediffDefOf.BloodLoss);
+            bloodLoss.Severity = 0;
+            return bloodLoss;
         }
         protected bool TryGetMissingPart(out Hediff_MissingPart? missingPartHediff, out float maxHealth)
         {
