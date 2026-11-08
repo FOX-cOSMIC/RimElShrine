@@ -1,13 +1,16 @@
 # Records a video of the Shield Expanded 1.7 port in combat. The game runs windowed, and the validation mod saves the
-# game's own frame every few ticks (ShieldValidation\CombatDemo.cs). This script runs the game, then turns the frames into
+# game's own frame every few ticks (ShieldValidation\DemoScene.cs). This script runs the game, then turns the frames into
 # combat.mp4. Each frame lasts the game time it covers, so the video runs at game speed. Output: .artifacts\combat\<timestamp>\.
+# -Scene turret (the default) runs CombatDemo.cs: a turret outside the dome fires at one colonist inside it.
+# -Scene raid runs RaidDemo.cs: three raiders outside the dome attack three armed colonists with ES0 belts inside it.
 # The wiring follows Invoke-Scenarios.ps1.
 param(
     [string]$RimWorldDirectory = 'C:\SteamLibrary\steamapps\common\RimWorld',
     [int]$TimeoutSeconds = 300,
     [int]$WindowWidth = 1280,
     [int]$WindowHeight = 720,
-    [int]$OutputFps = 30
+    [int]$OutputFps = 30,
+    [ValidateSet('turret', 'raid')][string]$Scene = 'turret'
 )
 $ErrorActionPreference = 'Stop'
 
@@ -108,7 +111,8 @@ function Test-DemoMarker([string]$pattern) {
 }
 
 try {
-    $gameArgs = @('-NoCrashDialog', '-quicktest', ('"-savedatafolder={0}"' -f $run), '-shieldvalidation-combat')
+    $sceneSwitch = if ($Scene -eq 'raid') { '-shieldvalidation-raid' } else { '-shieldvalidation-combat' }
+    $gameArgs = @('-NoCrashDialog', '-quicktest', ('"-savedatafolder={0}"' -f $run), $sceneSwitch)
     $process = Start-Process -FilePath $exe -WorkingDirectory $game -ArgumentList $gameArgs -PassThru
 
     # Wait for the game window and its title.
@@ -175,6 +179,7 @@ $errors = @($lines | Where-Object { $_ -match ' ERROR ' })
 $videoWritten = (Test-Path -LiteralPath $video) -and ((Get-Item -LiteralPath $video).Length -gt 0)
 $summary = @(
     "run: $run",
+    "scene: $Scene",
     "video: $video",
     "video written: $videoWritten",
     "frames: $($frames.Count), game seconds covered: $((($lastTick - $firstTick) / 60.0).ToString('0.0', $invariant))",

@@ -77,6 +77,22 @@ Fast regeneration (decided 2026-11-07, ADR 0011):
 - The port's `CommonUtility.TryGetHediff` extension creates a zero-severity `BloodLoss` hediff when the pawn has none of the requested def, and it sets an existing bleed's severity to 0. The quick branch called it until 2026-11-07, which would have given a healthy pawn with quick regen a phantom bleed. The branch now calls `Verse.HediffSet.TryGetHediff`.
 - `Comp_LimbsRegenInjector.CanBeUsedBy` still calls the extension for the regen effect. A bleeding pawn that has no regen effect loses its bleed when the check runs. The 1.6 build has the same call. Lucas chose on 2026-11-07 to leave both builds unchanged, as decision D4 and ADR 0011 record.
 
+## Raid and turret recordings (2026-11-08)
+
+Checked with `ilspycmd` against the installed `Assembly-CSharp.dll` (1.7.5000 rev1275). The run IDs are in `tools/validation/README.md`.
+
+- `RimWorld.JobGiver_AIFightEnemy.TryGiveJob` returns no job when the pawn has no `mindState.enemyTarget`. `FindAttackTarget` accepts only targets the pawn can see. A raider that loses sight of every colonist does nothing. Run `20261108-110251` showed three idle raiders at the south edge of the map, with the colonists in revolver range.
+- The `AssaultColony` duty runs `JobGiver_AIFightEnemies`, then `JobGiver_AIGotoNearestHostile` (`Duties_Misc.xml`). The `Defend` duty runs `JobGiver_AIDefendPoint`, then `ThinkNode_ForbidOutsideFlagRadius` with a 16-cell limit, then `JobGiver_WanderNearDutyLocation` with an 8-cell radius. In run `20261108-110839`, defend-duty raiders still walked about 11 cells from their spot and had no target.
+- `Verse.AI.JobDriver_AttackStatic` calls `TryStartAttack` on `TargetA` every tick. It ends when the target is gone, destroyed, or downed after starting healthy, or when `numAttacksMade` reaches `job.maxNumStaticAttacks`. That field defaults to `int.MaxValue` in `Verse.AI.Job`. The job is not casual-interruptible. The raid scene uses it. From run `20261108-111238` on, each raider fired about every two seconds from its spawn spot.
+- `new Job(JobDef, LocalTargetInfo)` and `Pawn_JobTracker.StartJob(Job, JobCondition)` start a job. `Pawn_JobTracker.curJob` is public.
+- `Pawn_EquipmentTracker.PrimaryEq` returns a `CompEquippable`, not the weapon. The weapon is `PrimaryEq.parent`. Reading `PrimaryEq.def` does not compile.
+- `PawnDuty(DutyDef def, LocalTargetInfo focus, float radius = -1f)` takes a focus cell and a radius.
+- `LordMaker.MakeNewLord(Faction, LordJob, Map, IEnumerable<Pawn>)` is in `Verse.AI.Group`, not `RimWorld`. `LordJob_AssaultColony` takes `canTimeoutOrFlee`, which defaults to true and gates its exit-the-map toil. The raid scene does not use a lord.
+- `Comp_ShieldNet_ProjInterceptorELS.InterceptProjectile` stops a projectile only when its launcher is hostile to the shield's faction, and only while `IFFOn` is set. IFF is on by default. The check sits at lines 311 to 317. In run `20261108-111632`, colonists fired 47 shots, and none ended at the dome edge.
+- `Comp_ApparelShield.PostPreApplyDamage` absorbs damage that reaches the wearer, ranged or melee. It does not stop projectiles in flight. The ES0 belt's energy max reads 1.0 in these scenes, so a belt breaks after about four hits.
+- The port has no Harmony patch on `Verb`, `CanHitTarget`, `ShootLine`, or the AI target finder. The raider AI is the game's own.
+- The dome's energy readout is `x/1000`. A dome comes up at energy 100 in these scenes. Each intercepted revolver shot removed about 11 to 12 energy in the logs. The dome went down at energy 0 and came back at 100 about 20 seconds later.
+
 ## Not covered
 
 - The ShuttleFuel and MoveMonolith patches. They are out of scope.
