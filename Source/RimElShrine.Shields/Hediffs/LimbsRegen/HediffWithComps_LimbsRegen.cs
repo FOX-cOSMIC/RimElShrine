@@ -125,7 +125,8 @@ namespace RimElShrine.Hediffs.LimbsRegen
             if (!pawn.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var bloodLossHediff)) return false;
             var additionalIncresement = updateIntervalTicks.TicksToSeconds() * (Setting.QuickRegenFactor - 1);
             var loss = additionalIncresement / Setting.LimbsRegenSecondsPerHealth * Setting.QuickRegenBloodLossPercentPerHealth;
-            return bloodLossHediff.Severity + loss > Setting.QuickRegenBloodLossMax;
+            // At the cap counts as at the cap, also when a quick step adds nothing (the factor's minimum is 1).
+            return bloodLossHediff.Severity >= Setting.QuickRegenBloodLossMax || bloodLossHediff.Severity + loss > Setting.QuickRegenBloodLossMax;
         }
         protected bool TryGetMissingPart(out Hediff_MissingPart? missingPartHediff, out float maxHealth)
         {

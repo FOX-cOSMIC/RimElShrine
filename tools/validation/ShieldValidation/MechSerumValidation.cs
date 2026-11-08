@@ -72,6 +72,7 @@ namespace ShieldValidation
         private bool cleanerHadEffect;
         private bool capRecovered;
         private float capBloodLoss;
+        private bool capShownAtEnd;
 
         // RimWorld creates each GameComponent with a Game argument, so this constructor must take one.
         public MechSerumValidation(Game game)
@@ -118,8 +119,8 @@ namespace ShieldValidation
             {
                 int elapsed = Find.TickManager.TicksGame - stageStart;
                 if (!cleanerDone && elapsed >= CleanerAtTicks) ApplyCleaner();
-                // H's blood loss is held at the cap until its finger is back. It stands in for a wound that keeps bleeding.
-                if (h.RegrownAt < 0 && h.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var held)) held.Severity = capBloodLoss;
+                // H's blood loss is held above the cap until it is removed below. It stands in for a wound that keeps bleeding.
+                if (!capRecovered && h.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var held)) held.Severity = capBloodLoss;
                 foreach (var p in new[] { a, b, c, d, e, f, h })
                 {
                     if (p.RegrownAt < 0 && !p.Colonist.health.hediffSet.PartIsMissing(p.Finger))
@@ -128,9 +129,11 @@ namespace ShieldValidation
                         p.BleedingAtRegrow = p.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out _);
                     }
                 }
-                // H's blood loss ends once its finger is back, with no regrowth left to run. The cap label must clear then.
-                if (!capRecovered && h.RegrownAt >= 0)
+                // One tick after H's finger is back, with H's blood loss still held above the cap, the cap label must show. Then H's blood loss ends.
+                if (!capRecovered && h.RegrownAt >= 0 && elapsed > h.RegrownAt)
                 {
+                    var regenNow = Regen(h.Colonist);
+                    capShownAtEnd = regenNow != null && (regenNow.LabelInBrackets.Contains(CapLabelText()) || regenNow.TipStringExtra.Contains(CapTipText()));
                     if (h.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var bloodLeft)) h.Colonist.health.RemoveHediff(bloodLeft);
                     capRecovered = true;
                 }
@@ -178,11 +181,12 @@ namespace ShieldValidation
             bool passUsability = usableRegen && !usableCleaner && keptBlood;
             ValidationSupport.Record(ScenarioUsability, (passUsability ? "PASS: " : "FAIL: ") + "regen injector usable " + usableRegen + ", cleaner usable " + usableCleaner + ", blood loss before " + BleedingSeverity.ToString("0.###") + ", after " + usabilityBleeding.Severity.ToString("0.###"));
 
-            // H is at the blood loss cap when its fast regen goes on. It is held there until its finger is back, because natural
-            // recovery would otherwise lower it below the cap before the first quick update. Its blood loss then ends. The cap label must clear.
+            // H is at the blood loss cap when its fast regen goes on. It is held just above the cap until its blood loss ends, so natural
+            // recovery cannot take it under the cap between two ticks. Once its finger is back and one tick has passed, its blood loss ends.
+            // The cap label must show during that tick and clear after it.
             h = NewPatient(map);
             var capBleeding = h.Colonist.health.AddHediff(HediffDefOf.BloodLoss);
-            capBloodLoss = setting.QuickRegenBloodLossMax;
+            capBloodLoss = setting.QuickRegenBloodLossMax + 0.01f;
             capBleeding.Severity = capBloodLoss;
             if (!noSerum) Injector(FastLimitedDef).DoEffect(h.Colonist);
 
@@ -252,8 +256,8 @@ namespace ShieldValidation
             string tipH = regenH == null ? string.Empty : regenH.TipStringExtra;
             bool capShownH = labelH.Contains(capText) || tipH.Contains(capTip);
             bool bloodLeftH = h.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out _);
-            bool passCap = capRecovered && regenH != null && labelH.Contains(fastText) && !capShownH && !bloodLeftH;
-            ValidationSupport.Record(ScenarioCapClears, (passCap ? "PASS: " : "FAIL: ") + "label [" + labelH + "], blood loss cap shown " + capShownH + ", blood loss ended " + capRecovered + ", blood loss left " + bloodLeftH);
+            bool passCap = capShownAtEnd && capRecovered && regenH != null && labelH.Contains(fastText) && !capShownH && !bloodLeftH;
+            ValidationSupport.Record(ScenarioCapClears, (passCap ? "PASS: " : "FAIL: ") + "cap shown while held above the cap " + capShownAtEnd + ", label [" + labelH + "], blood loss cap shown " + capShownH + ", blood loss ended " + capRecovered + ", blood loss left " + bloodLeftH);
 
             LogFastRegen("at the end");
         }
@@ -299,6 +303,9 @@ namespace ShieldValidation
         {
             return regen == null ? "no effect" : regen.lastRegenCount.ToString();
         }
+
+        private static string CapLabelText() => "CannotRegenQuick".ES_Translate().RawText;
+        private static string CapTipText() => "CannotRegenQuickTip".ES_Translate().RawText;
 
         private static Patient NewPatient(Map map)
         {
