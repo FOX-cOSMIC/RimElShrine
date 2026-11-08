@@ -21,6 +21,7 @@ namespace ShieldValidation
         private const string ScenarioFastHealthy = "mech serum: fast regen does nothing on a pawn with no blood loss";
         private const string ScenarioUsability = "mech serum: injector usability check leaves blood loss alone";
         private const string ScenarioFastLabel = "mech serum: fast regen label on a pawn with no blood loss does not read disabled";
+        private const string ScenarioCapClears = "mech serum: fast regen cap label clears after blood loss ends";
         private const string GroupComplete = "mech serum group complete";
         private const string FingerDefName = "Finger";
         private const string BasicResearch = "ELS_ResearchProject_BasicMechSerumProduction";
@@ -63,11 +64,14 @@ namespace ShieldValidation
         private Patient d;
         private Patient e;
         private Patient f;
+        private Patient h;
         private float expectedTicks;
         private float expectedFastTicks;
         private bool fastQuickAtApply;
         private bool cleanerDone;
         private bool cleanerHadEffect;
+        private bool capRecovered;
+        private float capBloodLoss;
 
         // RimWorld creates each GameComponent with a Game argument, so this constructor must take one.
         public MechSerumValidation(Game game)
@@ -114,13 +118,21 @@ namespace ShieldValidation
             {
                 int elapsed = Find.TickManager.TicksGame - stageStart;
                 if (!cleanerDone && elapsed >= CleanerAtTicks) ApplyCleaner();
-                foreach (var p in new[] { a, b, c, d, e, f })
+                // H's blood loss is held at the cap until its finger is back. It stands in for a wound that keeps bleeding.
+                if (h.RegrownAt < 0 && h.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var held)) held.Severity = capBloodLoss;
+                foreach (var p in new[] { a, b, c, d, e, f, h })
                 {
                     if (p.RegrownAt < 0 && !p.Colonist.health.hediffSet.PartIsMissing(p.Finger))
                     {
                         p.RegrownAt = elapsed;
                         p.BleedingAtRegrow = p.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out _);
                     }
+                }
+                // H's blood loss ends once its finger is back, with no regrowth left to run. The cap label must clear then.
+                if (!capRecovered && h.RegrownAt >= 0)
+                {
+                    if (h.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var bloodLeft)) h.Colonist.health.RemoveHediff(bloodLeft);
+                    capRecovered = true;
                 }
                 if (elapsed >= DeadlineTicks()) break;
                 if (budget.ElapsedMilliseconds >= FrameBudgetMs) return;
@@ -165,6 +177,14 @@ namespace ShieldValidation
             bool keptBlood = Math.Abs(usabilityBleeding.Severity - BleedingSeverity) < 0.0001f;
             bool passUsability = usableRegen && !usableCleaner && keptBlood;
             ValidationSupport.Record(ScenarioUsability, (passUsability ? "PASS: " : "FAIL: ") + "regen injector usable " + usableRegen + ", cleaner usable " + usableCleaner + ", blood loss before " + BleedingSeverity.ToString("0.###") + ", after " + usabilityBleeding.Severity.ToString("0.###"));
+
+            // H is at the blood loss cap when its fast regen goes on. It is held there until its finger is back, because natural
+            // recovery would otherwise lower it below the cap before the first quick update. Its blood loss then ends. The cap label must clear.
+            h = NewPatient(map);
+            var capBleeding = h.Colonist.health.AddHediff(HediffDefOf.BloodLoss);
+            capBloodLoss = setting.QuickRegenBloodLossMax;
+            capBleeding.Severity = capBloodLoss;
+            if (!noSerum) Injector(FastLimitedDef).DoEffect(h.Colonist);
 
             // E has blood loss before its injector goes on, so the quick branch has blood loss to spend. F has none.
             var bleeding = e.Colonist.health.AddHediff(HediffDefOf.BloodLoss);
@@ -225,6 +245,15 @@ namespace ShieldValidation
             bool capShown = label.Contains(capText) || tip.Contains(capTip);
             bool passLabel = regenLabel != null && label.Contains(fastText) && !capShown && !bleedingOnHealthy;
             ValidationSupport.Record(ScenarioFastLabel, (passLabel ? "PASS: " : "FAIL: ") + "label [" + label + "], blood loss cap shown " + capShown + ", blood loss on the healthy pawn " + bleedingOnHealthy);
+
+            // H's blood loss has ended. Its label must not show the cap, and its blood loss must stay gone.
+            var regenH = Regen(h.Colonist);
+            string labelH = regenH == null ? string.Empty : regenH.LabelInBrackets;
+            string tipH = regenH == null ? string.Empty : regenH.TipStringExtra;
+            bool capShownH = labelH.Contains(capText) || tipH.Contains(capTip);
+            bool bloodLeftH = h.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out _);
+            bool passCap = capRecovered && regenH != null && labelH.Contains(fastText) && !capShownH && !bloodLeftH;
+            ValidationSupport.Record(ScenarioCapClears, (passCap ? "PASS: " : "FAIL: ") + "label [" + labelH + "], blood loss cap shown " + capShownH + ", blood loss ended " + capRecovered + ", blood loss left " + bloodLeftH);
 
             LogFastRegen("at the end");
         }
