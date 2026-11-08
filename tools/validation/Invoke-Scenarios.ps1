@@ -48,9 +48,9 @@ $required = @(
     'mech serum: regen effect ends when its count runs out',
     'mech serum: cleaner stops a running regen effect',
     'mech serum: fast regen speeds up regrowth while a pawn has blood loss',
-    'mech serum: fast regen does nothing on a pawn with no blood loss',
+    'mech serum: fast regen speeds up regrowth on a pawn with no blood loss',
     'mech serum: injector usability check leaves blood loss alone',
-    'mech serum: fast regen label on a pawn with no blood loss does not read disabled',
+    'mech serum: fast regen label on a healthy pawn does not read disabled',
     'mech serum: fast regen cap label clears after blood loss ends',
     'mech serum: cap label holds at exactly the cap when the fast multiplier is 1'
 )

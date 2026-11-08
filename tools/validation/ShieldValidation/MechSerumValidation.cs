@@ -18,9 +18,9 @@ namespace ShieldValidation
         private const string ScenarioCountEnds = "mech serum: regen effect ends when its count runs out";
         private const string ScenarioCleaner = "mech serum: cleaner stops a running regen effect";
         private const string ScenarioFastBleeding = "mech serum: fast regen speeds up regrowth while a pawn has blood loss";
-        private const string ScenarioFastHealthy = "mech serum: fast regen does nothing on a pawn with no blood loss";
+        private const string ScenarioFastHealthy = "mech serum: fast regen speeds up regrowth on a pawn with no blood loss";
         private const string ScenarioUsability = "mech serum: injector usability check leaves blood loss alone";
-        private const string ScenarioFastLabel = "mech serum: fast regen label on a pawn with no blood loss does not read disabled";
+        private const string ScenarioFastLabel = "mech serum: fast regen label on a healthy pawn does not read disabled";
         private const string ScenarioCapClears = "mech serum: fast regen cap label clears after blood loss ends";
         private const string ScenarioCapEdge = "mech serum: cap label holds at exactly the cap when the fast multiplier is 1";
         private const string GroupComplete = "mech serum group complete";
@@ -246,11 +246,12 @@ namespace ShieldValidation
             bool passFast = fastQuickAtApply && InFastWindow(e.RegrownAt) && bleedingAtRegrow;
             ValidationSupport.Record(ScenarioFastBleeding, (passFast ? "PASS: " : "FAIL: ") + "quick regen on after the injector " + fastQuickAtApply + ", " + FastTiming(e.RegrownAt) + ", blood loss when the finger came back " + bleedingAtRegrow);
 
-            bool bleedingOnHealthy = f.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out _);
-            bool passHealthy = Regen(f.Colonist) != null && InWindow(f.RegrownAt) && !bleedingOnHealthy;
-            ValidationSupport.Record(ScenarioFastHealthy, (passHealthy ? "PASS: " : "FAIL: ") + Timing(f.RegrownAt) + ", blood loss on the healthy pawn " + bleedingOnHealthy);
+            // F starts with no blood loss. A Fast pawn with none must regrow in the fast window, and it must have blood loss when the finger
+            // comes back. That blood loss is the cost of fast regen.
+            bool passHealthy = Regen(f.Colonist) != null && InFastWindow(f.RegrownAt) && f.BleedingAtRegrow;
+            ValidationSupport.Record(ScenarioFastHealthy, (passHealthy ? "PASS: " : "FAIL: ") + FastTiming(f.RegrownAt) + ", blood loss when the finger came back " + f.BleedingAtRegrow);
 
-            // F has no blood loss, so its label must show fast regen on and must not show the blood loss cap.
+            // F's label must show fast regen on, and it must not show the blood loss cap.
             var regenLabel = Regen(f.Colonist);
             string label = regenLabel == null ? string.Empty : regenLabel.LabelInBrackets;
             string tip = regenLabel == null ? string.Empty : regenLabel.TipStringExtra;
@@ -258,8 +259,8 @@ namespace ShieldValidation
             string capText = "CannotRegenQuick".ES_Translate().RawText;
             string capTip = "CannotRegenQuickTip".ES_Translate().RawText;
             bool capShown = label.Contains(capText) || tip.Contains(capTip);
-            bool passLabel = regenLabel != null && label.Contains(fastText) && !capShown && !bleedingOnHealthy;
-            ValidationSupport.Record(ScenarioFastLabel, (passLabel ? "PASS: " : "FAIL: ") + "label [" + label + "], blood loss cap shown " + capShown + ", blood loss on the healthy pawn " + bleedingOnHealthy);
+            bool passLabel = regenLabel != null && label.Contains(fastText) && !capShown;
+            ValidationSupport.Record(ScenarioFastLabel, (passLabel ? "PASS: " : "FAIL: ") + "label [" + label + "], blood loss cap shown " + capShown);
 
             // H's blood loss has ended. Its label must not show the cap, and its blood loss must stay gone.
             var regenH = Regen(h.Colonist);
