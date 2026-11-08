@@ -22,6 +22,7 @@ namespace ShieldValidation
         private const string ScenarioUsability = "mech serum: injector usability check leaves blood loss alone";
         private const string ScenarioFastLabel = "mech serum: fast regen label on a pawn with no blood loss does not read disabled";
         private const string ScenarioCapClears = "mech serum: fast regen cap label clears after blood loss ends";
+        private const string ScenarioCapEdge = "mech serum: cap label holds at exactly the cap when the fast multiplier is 1";
         private const string GroupComplete = "mech serum group complete";
         private const string FingerDefName = "Finger";
         private const string BasicResearch = "ELS_ResearchProject_BasicMechSerumProduction";
@@ -65,6 +66,7 @@ namespace ShieldValidation
         private Patient e;
         private Patient f;
         private Patient h;
+        private Patient j;
         private float expectedTicks;
         private float expectedFastTicks;
         private bool fastQuickAtApply;
@@ -73,6 +75,8 @@ namespace ShieldValidation
         private bool capRecovered;
         private float capBloodLoss;
         private bool capShownAtEnd;
+        private bool capLabelAtEnd;
+        private bool capTipAtEnd;
 
         // RimWorld creates each GameComponent with a Game argument, so this constructor must take one.
         public MechSerumValidation(Game game)
@@ -133,7 +137,9 @@ namespace ShieldValidation
                 if (!capRecovered && h.RegrownAt >= 0 && elapsed > h.RegrownAt)
                 {
                     var regenNow = Regen(h.Colonist);
-                    capShownAtEnd = regenNow != null && (regenNow.LabelInBrackets.Contains(CapLabelText()) || regenNow.TipStringExtra.Contains(CapTipText()));
+                    capLabelAtEnd = regenNow != null && regenNow.LabelInBrackets.Contains(CapLabelText());
+                    capTipAtEnd = regenNow != null && regenNow.TipStringExtra.Contains(CapTipText());
+                    capShownAtEnd = capLabelAtEnd && capTipAtEnd;
                     if (h.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var bloodLeft)) h.Colonist.health.RemoveHediff(bloodLeft);
                     capRecovered = true;
                 }
@@ -189,6 +195,11 @@ namespace ShieldValidation
             capBloodLoss = setting.QuickRegenBloodLossMax + 0.01f;
             capBleeding.Severity = capBloodLoss;
             if (!noSerum) Injector(FastLimitedDef).DoEffect(h.Colonist);
+
+            // J gets a Fast injector and blood loss. Its blood loss is set to exactly the cap in FinishChecks, after the other rows, when the multiplier is 1.
+            j = NewPatient(map);
+            j.Colonist.health.AddHediff(HediffDefOf.BloodLoss).Severity = setting.QuickRegenBloodLossMax;
+            if (!noSerum) Injector(FastLimitedDef).DoEffect(j.Colonist);
 
             // E has blood loss before its injector goes on, so the quick branch has blood loss to spend. F has none.
             var bleeding = e.Colonist.health.AddHediff(HediffDefOf.BloodLoss);
@@ -257,9 +268,26 @@ namespace ShieldValidation
             bool capShownH = labelH.Contains(capText) || tipH.Contains(capTip);
             bool bloodLeftH = h.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out _);
             bool passCap = capShownAtEnd && capRecovered && regenH != null && labelH.Contains(fastText) && !capShownH && !bloodLeftH;
-            ValidationSupport.Record(ScenarioCapClears, (passCap ? "PASS: " : "FAIL: ") + "cap shown while held above the cap " + capShownAtEnd + ", label [" + labelH + "], blood loss cap shown " + capShownH + ", blood loss ended " + capRecovered + ", blood loss left " + bloodLeftH);
+            ValidationSupport.Record(ScenarioCapClears, (passCap ? "PASS: " : "FAIL: ") + "cap shown while held above the cap " + capShownAtEnd + " (label " + capLabelAtEnd + ", tip " + capTipAtEnd + "), label [" + labelH + "], blood loss cap shown " + capShownH + ", blood loss ended " + capRecovered + ", blood loss left " + bloodLeftH);
 
             LogFastRegen("at the end");
+
+            // J is at exactly the cap and the multiplier is 1, so a quick step adds nothing. The cap label must still show. This runs
+            // last, so the multiplier change reaches no other row. The multiplier goes back afterwards.
+            var regenJ = Regen(j.Colonist);
+            var settingJ = RimElShrine.Settings.GetSetting<MechserumSetting>();
+            float savedFactor = settingJ.QuickRegenFactor;
+            bool capAtEdge = false;
+            if (regenJ != null)
+            {
+                settingJ.QuickRegenFactor = 1f;
+                if (j.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var edgeBleeding)) edgeBleeding.Severity = settingJ.QuickRegenBloodLossMax;
+                regenJ.Tick();
+                capAtEdge = regenJ.LabelInBrackets.Contains(CapLabelText()) && regenJ.TipStringExtra.Contains(CapTipText());
+                settingJ.QuickRegenFactor = savedFactor;
+            }
+            bool passEdge = regenJ != null && capAtEdge;
+            ValidationSupport.Record(ScenarioCapEdge, (passEdge ? "PASS: " : "FAIL: ") + "cap label and tip at exactly the cap with multiplier 1 " + capAtEdge + ", label [" + (regenJ == null ? "no regen effect" : regenJ.LabelInBrackets) + "]");
         }
 
         // Diagnostic for the Fast injector. It logs what the game does with the Fast flag, and is not a required row.
