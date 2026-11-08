@@ -51,5 +51,5 @@ Runs the Shield Expanded 1.7 port inside RimWorld and records pass or fail resul
 
 ## Known issues
 
-- The 1.6 assemblies still have the old usability check. Lucas chose on 2026-11-08 to fix the check in both builds, as decision D4 and ADR 0011 record. The source change is in shared code, and the 1.7 build has it. The 1.6 DLL is not rebuilt, because AGENTS.md says to leave `RimElShrine.Shields/1.6/` unchanged. A rebuild needs a separate go from Lucas.
+- The 1.6 build has no runtime runner. Lucas chose on 2026-11-08 to fix the usability check in both builds (decision D4, ADR 0011). He then allowed a 1.6 rebuild in `AGENTS.md` (decision D7). The 1.6 assemblies were rebuilt from the fixed source. A decompile diff against the old assemblies shows the usability fix as the only change that runs in 1.6. The Fast regen code is compiled into 1.6 too, but nothing in 1.6 raises the regen severity above 0.5, so that code does not run there.
 - The Fast rows call the injector's `DoEffect` method directly, so they skip the usability check that D4 describes.
