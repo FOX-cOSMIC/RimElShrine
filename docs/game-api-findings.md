@@ -98,6 +98,24 @@ Checked with `ilspycmd` against the installed `Assembly-CSharp.dll` (1.7.5000 re
 - In run `20261108-114853`, raiders under the lord held about 24 cells east in the `Wait_Combat` job and fired 140 shots. The bare assault duty and the defend duty gave them no target in runs `20261108-110251` and `20261108-110839`. I did not isolate why the lord finds targets and the duties do not.
 - The diagnostic line's target column reads `none` under `Wait_Combat`, because that job keeps no `TargetA`. The raiders still fired.
 
+## Blood loss and the usability check (2026-11-08)
+
+Checked with `ilspycmd` against the installed `Assembly-CSharp.dll`, RimWorld 1.7.5000 rev1275. The decompile is in `.artifacts/decompile/game/`. The reset and the label ran in game: red run `20261108-142312` and green run `20261108-142616`. The other facts below come from the decompile only.
+
+- `HediffGiver_Bleeding.OnIntervalPassed` adds `BleedRateTotal * 0.001` to the blood loss hediff while `BleedRateTotal` is at least 0.1. Below 0.1 it subtracts 0.000333. `Pawn_HealthTracker` calls it every 60 ticks. Over 60,000 ticks, an open wound adds its bleed rate in total.
+- `Hediff.ShouldRemove` is true at severity 0 or below. `Pawn_HealthTracker` removes a hediff that reports it, so a blood loss hediff at zero is removed.
+- `Comp_LimbsRegenInjector.CanBeUsedBy` calls the port's `TryGetHediff` helper, `Source/RimElShrine/CommonUtility.cs` line 90. When the regen hediff is absent, the helper gets or adds the blood loss hediff and sets its severity to 0. That applies to any pawn, including one that is bleeding.
+- The game calls `CompUsable.CanBeUsedBy`, which calls the injector's check, from four places:
+  - `CompFloatMenuOptions` at `CompUsable.cs` line 78, once for each selected pawn when the item's menu is built.
+  - `TryStartUseJob` at `CompUsable.cs` line 105.
+  - `UsedBy` at `CompUsable.cs` line 163, before the effect applies.
+  - `JobDriver_UseItem.MakeNewToils` at line 42, as a `FailOn` condition. `JobDriver.DriverTick` checks it on every tick while the job runs.
+- From the decompile only, not run in game: while a use job runs, its pawn's blood loss stays at 0. After the injector applies, an open wound refills blood loss at its bleed rate.
+- `HediffWithComps_LimbsRegen.Tick` finds no blood loss hediff on a pawn with none, so `reachedMaxBloodLoss` becomes true. The label then reads "Disable Fast" and the tip reads "disabled due to current severe blood loss symptoms", while a body part is regrowing on a pawn that is not bleeding. The timing is correct. On the unfixed build, red run `20261108-142312` shows the label on a healthy Fast pawn reads `Disable Fast`. On the fixed build, green run `20261108-142616` shows `Fast Regen`, because only blood loss at the cap sets the flag now.
+- `Comp_ApparelShield.CompTick` calls the same helper with `BloodLoss` as the definition. That finds the existing hediff and does not set it to 0.
+- Each fast step adds the extra seconds divided by `LimbsRegenSecondsPerHealth`, times `QuickRegenBloodLossPercentPerHealth`. By that formula, one finger adds about 0.027 blood loss, under the `QuickRegenBloodLossMax` cap of 0.35.
+- The checks on patient A in `MechSerumValidation.cs` use a pawn with no blood loss, so they never see the reset. The row `mech serum: injector usability check leaves blood loss alone` checks a bleeding pawn. Red run `20261108-142312` fails it, and green run `20261108-142616` passes it.
+
 ## Not covered
 
 - The ShuttleFuel and MoveMonolith patches. They are out of scope.

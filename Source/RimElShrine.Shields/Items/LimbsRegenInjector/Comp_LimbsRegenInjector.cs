@@ -47,7 +47,8 @@ namespace RimElShrine.Items.LimbsRegenInjector
             var result = true;
             if (p != null)
             {
-                var existed = p.TryGetHediff(ELS_Hediff_LimbsRegen, out _);
+                // Vanilla lookup, which only reads. The port's TryGetHediff sets the pawn's blood loss to 0 when the regen effect is absent.
+                var existed = p.health.hediffSet.TryGetHediff(ELS_Hediff_LimbsRegen, out _);
                 result = !(existed ^ Props.isCleaner);
             }
             if (!result) return disabledReason.ES_Translate();

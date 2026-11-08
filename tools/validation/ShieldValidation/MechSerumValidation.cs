@@ -19,6 +19,8 @@ namespace ShieldValidation
         private const string ScenarioCleaner = "mech serum: cleaner stops a running regen effect";
         private const string ScenarioFastBleeding = "mech serum: fast regen speeds up regrowth while a pawn has blood loss";
         private const string ScenarioFastHealthy = "mech serum: fast regen does nothing on a pawn with no blood loss";
+        private const string ScenarioUsability = "mech serum: injector usability check leaves blood loss alone";
+        private const string ScenarioFastLabel = "mech serum: fast regen label on a pawn with no blood loss does not read disabled";
         private const string GroupComplete = "mech serum group complete";
         private const string FingerDefName = "Finger";
         private const string BasicResearch = "ELS_ResearchProject_BasicMechSerumProduction";
@@ -42,6 +44,7 @@ namespace ShieldValidation
         // Patient A regrows under a Limited injector (count 3). B regrows with its count set to 1. C is cleaned while its effect runs.
         // D gets a Fast injector. D is a diagnostic only, not a required row.
         // E has blood loss and gets a Fast injector. F has none and gets a Fast injector.
+        // G has blood loss and gets no injector. The usability checks of both injectors run on it.
         private sealed class Patient
         {
             public Pawn Colonist;
@@ -152,6 +155,17 @@ namespace ShieldValidation
             bool passApply = usableBefore && !usableAfter && applied;
             ValidationSupport.Record(ScenarioApply, (passApply ? "PASS: " : "FAIL: ") + "usable before " + usableBefore + ", usable after " + usableAfter + ", remaining " + Remaining(regenA));
 
+            // The usability checks run on a bleeding pawn with no regen effect. Neither check may change its blood loss.
+            // The pawn is missing a finger like the others, but no injector goes on it, and the checks do not read its parts.
+            var usabilityPawn = NewPatient(map).Colonist;
+            var usabilityBleeding = usabilityPawn.health.AddHediff(HediffDefOf.BloodLoss);
+            usabilityBleeding.Severity = BleedingSeverity;
+            bool usableRegen = Injector(LimitedDef).CanBeUsedBy(usabilityPawn).Accepted;
+            bool usableCleaner = Injector(CleanerDef).CanBeUsedBy(usabilityPawn).Accepted;
+            bool keptBlood = Math.Abs(usabilityBleeding.Severity - BleedingSeverity) < 0.0001f;
+            bool passUsability = usableRegen && !usableCleaner && keptBlood;
+            ValidationSupport.Record(ScenarioUsability, (passUsability ? "PASS: " : "FAIL: ") + "regen injector usable " + usableRegen + ", cleaner usable " + usableCleaner + ", blood loss before " + BleedingSeverity.ToString("0.###") + ", after " + usabilityBleeding.Severity.ToString("0.###"));
+
             // E has blood loss before its injector goes on, so the quick branch has blood loss to spend. F has none.
             var bleeding = e.Colonist.health.AddHediff(HediffDefOf.BloodLoss);
             bleeding.Severity = BleedingSeverity;
@@ -200,6 +214,17 @@ namespace ShieldValidation
             bool bleedingOnHealthy = f.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out _);
             bool passHealthy = Regen(f.Colonist) != null && InWindow(f.RegrownAt) && !bleedingOnHealthy;
             ValidationSupport.Record(ScenarioFastHealthy, (passHealthy ? "PASS: " : "FAIL: ") + Timing(f.RegrownAt) + ", blood loss on the healthy pawn " + bleedingOnHealthy);
+
+            // F has no blood loss, so its label must show fast regen on and must not show the blood loss cap.
+            var regenLabel = Regen(f.Colonist);
+            string label = regenLabel == null ? string.Empty : regenLabel.LabelInBrackets;
+            string tip = regenLabel == null ? string.Empty : regenLabel.TipStringExtra;
+            string fastText = "RegenQuick".ES_Translate().RawText;
+            string capText = "CannotRegenQuick".ES_Translate().RawText;
+            string capTip = "CannotRegenQuickTip".ES_Translate().RawText;
+            bool capShown = label.Contains(capText) || tip.Contains(capTip);
+            bool passLabel = regenLabel != null && label.Contains(fastText) && !capShown && !bleedingOnHealthy;
+            ValidationSupport.Record(ScenarioFastLabel, (passLabel ? "PASS: " : "FAIL: ") + "label [" + label + "], blood loss cap shown " + capShown + ", blood loss on the healthy pawn " + bleedingOnHealthy);
 
             LogFastRegen("at the end");
         }
