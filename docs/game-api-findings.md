@@ -115,6 +115,7 @@ Checked with `ilspycmd` against the installed `Assembly-CSharp.dll`, RimWorld 1.
 - `Comp_ApparelShield.CompTick` calls the same helper with `BloodLoss` as the definition. That finds the existing hediff and does not set it to 0.
 - Each fast step adds the extra seconds divided by `LimbsRegenSecondsPerHealth`, times `QuickRegenBloodLossPercentPerHealth`. By that formula, one finger adds about 0.027 blood loss, under the `QuickRegenBloodLossMax` cap of 0.35.
 - The checks on patient A in `MechSerumValidation.cs` use a pawn with no blood loss, so they never see the reset. The row `mech serum: injector usability check leaves blood loss alone` checks a bleeding pawn. Red run `20261108-142312` fails it, and green run `20261108-142616` passes it.
+- The cap flag, `reachedMaxBloodLoss`, was set only inside the regrowth block. Once the last finger came back, nothing cleared it, so it could outlive the blood loss. Red run `20261108-143801` shows the label stuck on `Disable Fast` after the blood loss ended. Green run `20261108-144040` shows it cleared, because the flag now follows blood loss on every tick.
 
 ## Not covered
 

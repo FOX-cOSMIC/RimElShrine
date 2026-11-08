@@ -67,6 +67,8 @@ namespace RimElShrine.Hediffs.LimbsRegen
         public override void Tick()
         {
             base.Tick();
+            // Follows blood loss on every tick, also when no part is regrowing. A flag kept only during regrowth would outlive the blood loss.
+            reachedMaxBloodLoss = IsQuickRegen && AtBloodLossCap();
             if (TargetMissingPartHediff == null && ticksToRetry-- < 0)
             {
                 if (TryGetMissingPart(out var missingPart, out TargetPartMaxHealth))
@@ -106,25 +108,24 @@ namespace RimElShrine.Hediffs.LimbsRegen
                         // Vanilla lookup. The port's TryGetHediff would create a zero-severity bleed on a healthy pawn.
                         pawn.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var bloodLossHediff);
                         var additionalIncresement = incresement * (Setting.QuickRegenFactor - 1);
-                        if (bloodLossHediff is not null && (bloodLossHediff.Severity < Setting.QuickRegenBloodLossMax))
+                        if (bloodLossHediff is not null && !reachedMaxBloodLoss)
                         {
                             var loss = additionalIncresement / Setting.LimbsRegenSecondsPerHealth * Setting.QuickRegenBloodLossPercentPerHealth;
-                            reachedMaxBloodLoss = (bloodLossHediff.Severity + loss) > Setting.QuickRegenBloodLossMax;
-                            if (!reachedMaxBloodLoss)
-                            {
-                                bloodLossHediff.Severity += loss;
-                                secondsCount += additionalIncresement;
-                            }
-                        }
-                        else
-                        {
-                            // Only blood loss at the cap sets the flag. A pawn with no blood loss is not at the cap.
-                            reachedMaxBloodLoss = bloodLossHediff is not null;
+                            bloodLossHediff.Severity += loss;
+                            secondsCount += additionalIncresement;
                         }
                     }
                     secondsCount += incresement;
                 }
             }
+        }
+        // True when blood loss is at the cap, or one more quick step would pass it. A pawn with no blood loss is not at the cap.
+        private bool AtBloodLossCap()
+        {
+            if (!pawn.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var bloodLossHediff)) return false;
+            var additionalIncresement = updateIntervalTicks.TicksToSeconds() * (Setting.QuickRegenFactor - 1);
+            var loss = additionalIncresement / Setting.LimbsRegenSecondsPerHealth * Setting.QuickRegenBloodLossPercentPerHealth;
+            return bloodLossHediff.Severity + loss > Setting.QuickRegenBloodLossMax;
         }
         protected bool TryGetMissingPart(out Hediff_MissingPart? missingPartHediff, out float maxHealth)
         {
