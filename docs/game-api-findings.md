@@ -118,11 +118,23 @@ Checked with `ilspycmd` against the installed `Assembly-CSharp.dll`, RimWorld 1.
 - The checks on patient A in `MechSerumValidation.cs` use a pawn with no blood loss, so they never see the reset. The row `mech serum: injector usability check leaves blood loss alone` checks a bleeding pawn. Red run `20261108-142312` fails it, and green run `20261108-142616` passes it.
 - The cap flag, `reachedMaxBloodLoss`, was set only inside the regrowth block. Once the last finger came back, nothing cleared it, so it could outlive the blood loss. Red run `20261108-143801` shows the label stuck on `Disable Fast` after the blood loss ended. Green run `20261108-144040` shows it cleared, because the flag now follows blood loss on every tick.
 
+## Combat Extended counterpart (1.7)
+
+Verified in game on the Combat Extended 1.7-Test build (ADR 0016), in run `20261109-000000` unless a run is named.
+
+- RimWorld 1.7 puts a thing in `ThingRequestGroup.Projectile` when its def has a `projectile` block. The check is in `Verse.ThingListGroupHelper`, decompiled from `Assembly-CSharp.dll` of 1.7.5000 rev1275. A Combat Extended bullet has that block, so the dome's `ThingsInGroup(Projectile)` sees it.
+- The Combat Extended 1.7-Test `ProjectileCE` derives from `ThingWithComps`, not from `Projectile`. The port's counterpart is keyed on the Combat Extended assembly, and `CompatibilityManager` finds it in game. The dome picks `Comp_ShieldNet_ProjInterceptorELS_CompatibleCE` for a `ProjectileCE`.
+- For 1.7, `ModContentPack.InitLoadFolders` takes the newest `LoadFolders.xml` block not above the game version. Combat Extended's 1.7-Test branch has only a `v1.6` block, so it loads on 1.7 through that block.
+- `ProjectileCE.DamageAmount` is the bullet's damage times `RemainingKineticEnergyPct`, which is the square of the speed ratio for a ballistic bullet. The energy a shot costs the dome therefore falls while the shot flies.
+- `ProjectileCE.Launch` takes a `distance` argument and ignores it. The landing point comes from the shot angle, the shot height, and the bullet's speed.
+- A shot the dome does not catch flies on past the dome. In run `20261108-233855` a HEAT shell from the friendly side landed at (22.5, 6.5), in the row where the mech serum group's colonists stood.
+- The Combat Extended 1.7-Test build logs errors on every run: `AsyncGPUReadback failed`, `Texture ... was not cached`, and `bodyGraphicData` failures. An explosive HEAT shell also makes `BoundMap` exceptions while its fragments tick. The rows use `Bullet_22LR_FMJ`, which does not explode.
+
 ## Not covered
 
 - The ShuttleFuel and MoveMonolith patches. They are out of scope.
 - Real wounds. The validation rows set blood loss directly, so they do not model a wound.
-- The Combat Extended counterpart. It has never run in game.
+- Combat Extended beyond the rows. The rows fire one small Combat Extended bullet at one dome. Combat Extended's own weapons, armour, and health system are not covered.
 - The 1.6 build at runtime. No 1.6 install is available on this machine, and no runner exists for it.
 - The game's use job, start to end. The rows call `DoEffect` and `CanBeUsedBy` directly.
 - Patch failures. A patch that fails to apply shows up only when the game starts with the mod enabled. The smoke run checks that the port's patches apply.

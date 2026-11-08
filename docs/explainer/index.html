@@ -254,7 +254,7 @@ nav ol { margin: 0.6em 0 1em; }
 <tbody>
 <tr><td>RimElShrine, the core library</td><td><code>Source\RimElShrine\</code></td><td>Settings, the abstract start-up class <code>RimElShrineMod</code>, the two Harmony patches, the compatibility manager, and the ELSClass filter.</td></tr>
 <tr><td>RimElShrine.Shields, the shield mod</td><td><code>Source\RimElShrine.Shields\</code></td><td>The start-up class <code>RimElShrineShieldMod</code>, the generator, belt, injectors, and regen effect, and the tuning classes <code>ShieldSetting</code> and <code>MechserumSetting</code>.</td></tr>
-<tr><td>RimElShrine.Shields.CE, the Combat Extended project</td><td><code>Source\RimElShrine.Shields.Compatibility\</code></td><td>The Combat Extended version of the generator. No game test has run it.</td></tr>
+<tr><td>RimElShrine.Shields.CE, the Combat Extended project</td><td><code>Source\RimElShrine.Shields.Compatibility\</code></td><td>The Combat Extended version of the generator. Its rows run in the game with a Combat Extended 1.7 test build (ADR 0016).</td></tr>
 <tr><td>Test mod, in the folder ShieldValidation</td><td><code>tools\validation\ShieldValidation\</code></td><td><code>NetworkValidation</code>, <code>EquipmentValidation</code>, and <code>MechSerumValidation</code>, each a GameComponent, plus <code>ValidationSupport</code>.</td></tr>
 </tbody>
 </table>
@@ -432,7 +432,7 @@ nav ol { margin: 0.6em 0 1em; }
 <tr><td>Data files</td><td>Defs, Languages, images</td><td>Defs and Languages match in both version folders. Images sit in the shared Content folder.</td></tr>
 <tr><td>Names kept</td><td>Def names, class names, settings keys</td><td>These match 1.6. Saves and translations depend on them.</td></tr>
 <tr><td>Rebuilt 1.7 assemblies</td><td>Commit 119d21e</td><td>The tracked DLLs did not match a rebuild of the unchanged source. The commit includes a fresh build, and the green run used it.</td></tr>
-<tr><td>Combat Extended</td><td><code>1.7\Compatible\CombatExtended\</code></td><td>Its own assembly, loaded only while Combat Extended is active. It has not run in the game.</td></tr>
+<tr><td>Combat Extended</td><td><code>1.7\Compatible\CombatExtended\</code></td><td>Its own assembly, loaded only while Combat Extended is active. Its rows run in the game with the test build (ADR 0016).</td></tr>
 <tr><td>The 1.6 folder</td><td><code>1.6\</code></td><td>Rebuilt on 2026-11-08, in commit 978ee80. It includes the usability fix. The Fast code is compiled in, but nothing in 1.6 raises severity above 0.5, so that code never runs.</td></tr>
 </tbody>
 </table>
@@ -502,7 +502,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h2 id="status">Where things stand</h2>
 
-<p>The latest full pass is run 20261108-202332, on RimWorld 1.7.5000 rev1275, on the commit 140d470. Its 18 scenario rows read PASS, and its 3 completion rows read finished. The red run before the fix is run 20261108-200958, on the commit 614106d. The runner fails any row that no list names, and the run had no error line that mentions the port. Earlier passes are listed in <code>tools\validation\README.md</code>. Runs on 2026-11-05 passed the network and equipment rows on RimWorld 1.7.4998 rev1299, including run 20261105-152607. The change is merged in PR 1.</p>
+<p>The latest full pass without Combat Extended is run 20261108-234456, on RimWorld 1.7.5000 rev1275. Its 18 scenario rows read PASS, and its 3 completion rows read finished. The latest full pass with Combat Extended is run 20261109-000000, on the same game build, with the Combat Extended 1.7 test build. Its 22 scenario rows and 4 completion rows read PASS. The healthy Fast pawn's blood-loss row failed in two other Combat Extended runs, because a bleed can clear before the finger returns. ADR 0016 records that. The red run before the Fast regen fix is run 20261108-200958, on the commit 614106d. The runner fails any row that no list names, and the run had no error line that mentions the port. Earlier passes are listed in <code>tools\validation\README.md</code>. Runs on 2026-11-05 passed the network and equipment rows on RimWorld 1.7.4998 rev1299, including run 20261105-152607. The change is merged in PR 1.</p>
 
 <p>A scenario row is one check result, not counting completion rows. The test rows call quick regen "fast regen", and the table keeps those names.</p>
 
@@ -539,7 +539,7 @@ nav ol { margin: 0.6em 0 1em; }
 <p>Six areas are not covered yet:</p>
 <ul>
 <li>Combat interception, meaning a shield that stops real projectiles in a fight.</li>
-<li>The Combat Extended path. Nothing has run in the game yet.</li>
+<li>Combat Extended beyond one small bullet and one dome. Combat Extended's own weapons, armour, and health system have not run in the game (ADR 0016).</li>
 <li>The Healer and Resurrector effects. Only their recipes are checked.</li>
 <li>The Steam Workshop upload. Upload as Private first, then switch to Public after the owner tests it. <code>PublishedFileId.txt</code> was removed on 2026-11-08, because it held 3575073524, the original mod's Workshop item number. After the first private upload, record the port's own id in that file.</li>
 <li>The player's path to use an injector. The Fast rows call <code>DoEffect</code> directly, and the usability row calls <code>CanBeUsedBy</code> directly. No row runs the game's use job from start to end.</li>

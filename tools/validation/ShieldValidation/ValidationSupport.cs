@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using RimWorld;
@@ -10,6 +11,11 @@ namespace ShieldValidation
     // and each row is also logged as [ShieldValidation], which the runner counts against the file.
     public static class ValidationSupport
     {
+        private static readonly HashSet<string> completedGroups = new HashSet<string>();
+
+        // True when every named group has written its completion row. A group can wait on the others, so that its own
+        // events (the Combat Extended shots, for one) do not reach the colonists another group is checking.
+        public static bool GroupsCompleted(params string[] names) => names.All(completedGroups.Contains);
         public static bool IsFree(Map map, IntVec3 cell)
             => cell.InBounds(map) && cell.Walkable(map) && !cell.Filled(map) && !map.thingGrid.ThingsAt(cell).Any();
 
@@ -41,6 +47,7 @@ namespace ShieldValidation
 
         public static void Record(string scenario, string result)
         {
+            if (scenario.EndsWith(" group complete", StringComparison.Ordinal)) completedGroups.Add(scenario);
             var line = DateTime.UtcNow.ToString("O") + " | " + scenario + " | " + result;
             File.AppendAllText(Path.Combine(GenFilePaths.SaveDataFolderPath, "validation-results.txt"), line + Environment.NewLine);
             Log.Message("[ShieldValidation] " + line);

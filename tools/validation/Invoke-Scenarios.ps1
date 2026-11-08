@@ -2,9 +2,14 @@
 # then checks the results. Rules: tools/validation/README.md. Output: .artifacts/runs/<timestamp>/.
 param(
     [string]$RimWorldDirectory = 'C:\SteamLibrary\steamapps\common\RimWorld',
-    [int]$TimeoutSeconds = 300,
+    # A standard run takes about two minutes, and a Combat Extended run about three.
+    [int]$TimeoutSeconds = 420,
     # Extra game arguments, used by control runs. Example: -ExtraGameArgs '-shieldvalidation-nopower'
-    [string[]]$ExtraGameArgs = @()
+    [string[]]$ExtraGameArgs = @(),
+    # Adds Combat Extended to the mod list and the Combat Extended checks to the required rows. Needs the CE 1.7 build
+    # in -CombatExtendedDirectory (a clone of CombatExtended-Continued at the 1.7-Test branch; see tools/validation/README.md).
+    [switch]$CombatExtended,
+    [string]$CombatExtendedDirectory = (Join-Path $env:USERPROFILE '.rimworld-refs\CombatExtended-1.7-Test-src')
 )
 $ErrorActionPreference = 'Stop'
 
@@ -56,6 +61,18 @@ $required = @(
 )
 # Each group writes one completion row when it ends. The run is complete when every group has written its row.
 $groups = @('network group complete', 'equipment group complete', 'mech serum group complete')
+# The Combat Extended group runs only when CE is active. Its rows join the lists only for a -CombatExtended run.
+$ceRequired = @(
+    'combat extended: CE shots use the CE counterpart',
+    'combat extended: a hostile CE shot is intercepted by the dome',
+    'combat extended: the dome loses the CE energy cost of a shot',
+    'combat extended: a friendly CE shot is not intercepted'
+)
+$ceGroup = 'combat extended group complete'
+if ($CombatExtended) {
+    $required += $ceRequired
+    $groups += $ceGroup
+}
 $game = (Resolve-Path -LiteralPath $RimWorldDirectory).Path
 $exe = Join-Path $game 'RimWorld.exe'
 
@@ -68,6 +85,21 @@ foreach ($file in @((Join-Path $portFolder '1.7\Assemblies\RimElShrine.Shields.d
     if (-not (Test-Path -LiteralPath $file)) { throw "Missing $file" }
 }
 
+if ($CombatExtended) {
+    $ceBuild = & dotnet build (Join-Path $repo 'tools\validation\ShieldValidationCE\ShieldValidationCE.csproj') -c Release --nologo 2>&1
+    if ($LASTEXITCODE -ne 0) { $ceBuild; throw 'The Combat Extended validation assembly does not build.' }
+    $ceFiles = @(
+        (Join-Path $portFolder '1.7\Compatible\CombatExtended\Assemblies\RimElShrine.Shields.CE.dll'),
+        (Join-Path $validationFolder 'Compatible\CombatExtended\Assemblies\ShieldValidation.CombatExtended.dll'),
+        (Join-Path $validationFolder 'LoadFolders.xml'),
+        (Join-Path $CombatExtendedDirectory 'About\About.xml'),
+        (Join-Path $CombatExtendedDirectory 'Assemblies\CombatExtended.dll')
+    )
+    foreach ($file in $ceFiles) {
+        if (-not (Test-Path -LiteralPath $file)) { throw "Missing $file" }
+    }
+}
+
 $version = (Get-Content -LiteralPath (Join-Path $game 'Version.txt') -TotalCount 1).Trim()
 $run = Join-Path $repo ('.artifacts\runs\' + (Get-Date -Format 'yyyyMMdd-HHmmss'))
 # The game writes its log to this shared path, and the run copies it after the game exits (see the finally block).
@@ -75,6 +107,7 @@ $log = Join-Path $env:USERPROFILE 'AppData\LocalLow\Ludeon Studios\RimWorld by L
 $config = Join-Path $run 'Config'
 New-Item -ItemType Directory -Path $config -Force | Out-Null
 
+$ceModLine = if ($CombatExtended) { '    <li>ceteam.combatextended</li>' } else { '' }
 $modsConfig = @"
 <?xml version="1.0" encoding="utf-8"?>
 <ModsConfigData>
@@ -84,6 +117,7 @@ $modsConfig = @"
     <li>ludeon.rimworld.royalty</li>
     <li>ludeon.rimworld.biotech</li>
     <li>brrainz.harmony</li>
+    $ceModLine
     <li>$portId</li>
     <li>$validationId</li>
   </activeMods>
@@ -105,14 +139,18 @@ $prefs = @'
 '@
 Set-Content -LiteralPath (Join-Path $config 'Prefs.xml') -Value $prefs -Encoding UTF8
 
-# Both mods reach the game through junctions. rmdir removes only each link, never the target's files.
+# The mods reach the game through junctions. rmdir removes only each link, never the target's files.
 $portLink = Join-Path $game 'Mods\ShieldExpanded17-scenarios'
 $validationLink = Join-Path $game 'Mods\ShieldValidation-scenarios'
-foreach ($link in @($portLink, $validationLink)) {
+$ceLink = if ($CombatExtended) { Join-Path $game 'Mods\CombatExtended-scenarios' } else { $null }
+$links = @($portLink, $validationLink)
+if ($ceLink) { $links += $ceLink }
+foreach ($link in $links) {
     if (Test-Path -LiteralPath $link) { throw "Mod link already exists: $link. Remove it first." }
 }
 New-Item -ItemType Junction -Path $portLink -Target $portFolder | Out-Null
 New-Item -ItemType Junction -Path $validationLink -Target $validationFolder | Out-Null
+if ($ceLink) { New-Item -ItemType Junction -Path $ceLink -Target $CombatExtendedDirectory | Out-Null }
 
 $results = Join-Path $run 'validation-results.txt'
 $process = $null
@@ -142,6 +180,7 @@ finally {
     if (Test-Path -LiteralPath $log) { Copy-Item -LiteralPath $log -Destination (Join-Path $run 'Player.log') -Force }
     cmd /c rmdir $portLink | Out-Null
     cmd /c rmdir $validationLink | Out-Null
+    if ($ceLink) { cmd /c rmdir $ceLink | Out-Null }
 }
 
 $copy = Join-Path $run 'Player.log'
@@ -173,7 +212,7 @@ if ($concurrent.Count -gt 0) { $problems += "another RimWorld process ran during
 
 $header = -1
 for ($i = 0; $i -lt $lines.Count; $i++) { if ($lines[$i] -match 'Initializing new game with mods:') { $header = $i; break } }
-$listed = @{ port = $false; validation = $false }
+$listed = @{ port = $false; validation = $false; combat = $false }
 $notes = @()
 if ($header -ge 0) {
     for ($j = $header + 1; $j -lt $lines.Count; $j++) {
@@ -181,9 +220,11 @@ if ($header -ge 0) {
         if (-not $item.Success) { break }
         if ($item.Groups[1].Value -eq $portId) { $listed.port = $true; if ($item.Groups[2].Value.Trim()) { $notes += $item.Groups[2].Value.Trim() } }
         if ($item.Groups[1].Value -eq $validationId) { $listed.validation = $true; if ($item.Groups[2].Value.Trim()) { $notes += $item.Groups[2].Value.Trim() } }
+        if ($CombatExtended -and $item.Groups[1].Value -eq 'ceteam.combatextended') { $listed.combat = $true; if ($item.Groups[2].Value.Trim()) { $notes += $item.Groups[2].Value.Trim() } }
     }
 }
 if (-not $listed.port -or -not $listed.validation) { $problems += 'the port or the validation mod is not in the new-game mod list' }
+if ($CombatExtended -and -not $listed.combat) { $problems += 'Combat Extended is not in the new-game mod list' }
 if ($notes.Count -gt 0) { $problems += 'a mod is listed with a note: ' + ($notes -join '; ') }
 
 $errors = @($lines | Where-Object { $_ -match ' ERROR ' })
@@ -195,6 +236,7 @@ $summary = @(
     "verdict: $verdict",
     "run: $run",
     "game version: $version",
+    "combat extended run: $($CombatExtended.IsPresent)",
     "scenario rows: $($rows.Count)",
     "ERROR lines in the log: $($errors.Count)",
     "ERROR lines that mention the port or validation: $($ours.Count)"
