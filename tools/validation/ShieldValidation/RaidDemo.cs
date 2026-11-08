@@ -7,6 +7,7 @@ using RimElShrine.Buildings.ProjInterceptorNet;
 using RimWorld;
 using Verse;
 using Verse.AI;
+using Verse.AI.Group;
 
 namespace ShieldValidation
 {
@@ -58,6 +59,11 @@ namespace ShieldValidation
         private DemoScene.DomeRow row;
         private Comp_ShieldNet_ProjInterceptorELS dome;
         private JobDef attackJob;
+        // True when the game starts with -shieldvalidation-raid-gameai. The raiders then run the game's raid lord, and the scripted aim is off.
+        private bool gameAI;
+        private readonly Dictionary<Pawn, float> raiderHealth = [];
+        // Raider health losses, counted while the dome is up and the raider is more than two cells beyond its edge.
+        private int raiderLossesOutsideUpDome;
         private readonly List<Pawn> colonists = [];
         private readonly List<Comp_ApparelShield> belts = [];
         private readonly List<float> beltEnergy = [];
@@ -115,6 +121,7 @@ namespace ShieldValidation
         {
             Find.TickManager.CurTimeSpeed = TimeSpeed.Normal;
 
+            gameAI = GenCommandLine.CommandLineArgPassed("shieldvalidation-raid-gameai");
             var found = currentMap.mapPawns.FreeColonistsSpawned.ToList();
             if (found.Count == 0) throw new InvalidOperationException("no colonist is on the map");
             // Up to three colonists stay on the map. Any others are despawned for the run.
@@ -177,6 +184,7 @@ namespace ShieldValidation
             if (dome.isActive)
             {
                 PlaceRaiders();
+                if (gameAI) MakeRaidLord();
                 Log.Message(Prefix + "dome up at tick " + now + ", energy " + dome.energy.ToString("0") + "; raiders placed " + raiders.Count);
                 domeWasUp = true;
                 stageStartTick = now;
@@ -193,6 +201,7 @@ namespace ShieldValidation
             var hostile = DemoScene.FindHostileFaction();
             var kind = DefDatabase<PawnKindDef>.GetNamed(RaiderKindDef, true);
             var defend = DefDatabase<DutyDef>.GetNamed(DefendDuty, true);
+            Log.Message(Prefix + "raider AI: " + (gameAI ? "the game's raid lord, with flee and timeout off" : "scripted aim, with each raider on the defend duty"));
             for (int i = 0; i < RaiderOffsets.Length; i++)
             {
                 var raider = PawnGenerator.GeneratePawn(kind, hostile);
@@ -200,13 +209,25 @@ namespace ShieldValidation
                 raider.equipment.AddEquipment((ThingWithComps)ValidationSupport.Make(RevolverDef));
                 var cell = layoutOrigin + RaiderOffsets[i];
                 GenSpawn.Spawn(raider, cell, map);
-                // The assault duty sent raiders off to the map edge, out of sight of the colonists. Each raider holds its spot instead.
-                raider.mindState.duty = new PawnDuty(defend, cell, DefendRadius);
+                if (!gameAI)
+                {
+                    // The assault duty sent raiders off to the map edge, out of sight of the colonists. Each raider holds its spot instead.
+                    raider.mindState.duty = new PawnDuty(defend, cell, DefendRadius);
+                }
                 raiders.Add(raider);
+                raiderHealth[raider] = raider.health.summaryHealth.SummaryHealthPercent;
                 Log.Message(Prefix + "raider " + raider.LabelShort + " placed at " + raider.Position + " (faction " + hostile.Name
                     + ", hostile to the player " + hostile.HostileTo(Faction.OfPlayer) + "), weapon " + (raider.equipment.PrimaryEq?.parent.def.defName ?? "none")
                     + ", duty " + (raider.mindState.duty?.def.defName ?? "none"));
             }
+        }
+
+        // The game's own raid lord runs the assault. Its kidnap, steal, flee, and timeout transitions are off, so the raiders stay on the map.
+        private void MakeRaidLord()
+        {
+            var faction = raiders[0].Faction;
+            LordMaker.MakeNewLord(faction, new LordJob_AssaultColony(faction, canKidnap: false, canTimeoutOrFlee: false, canSteal: false), map, raiders);
+            Log.Message(Prefix + "raid lord made for " + faction.Name + " with " + raiders.Count + " raiders");
         }
 
         // The raiders' own AI kept them out of the colonists' sight. The assault duty sent them to the map edge, and the defend
@@ -236,7 +257,7 @@ namespace ShieldValidation
         private void Fight()
         {
             int now = Find.TickManager.TicksGame;
-            AimRaiders();
+            if (!gameAI) AimRaiders();
             foreach (var thing in map.listerThings.ThingsInGroup(ThingRequestGroup.Projectile))
             {
                 if (thing is not Projectile shot || shot.Launcher is not Pawn launcher) continue;
@@ -284,6 +305,21 @@ namespace ShieldValidation
                     shotsIntercepted++;
                     Log.Message(Prefix + "intercept " + shotsIntercepted + " at tick " + now + ", energy " + dome.energy.ToString("0"));
                 }
+            }
+
+            // A raider that loses health more than two cells beyond the dome edge, while the dome is up, was hit by a shot that crossed the dome.
+            // Nothing else reaches that far out, so this counts colonist shots that passed through an up dome.
+            foreach (var r in raiders)
+            {
+                float health = r.health.summaryHealth.SummaryHealthPercent;
+                if (raiderHealth.TryGetValue(r, out float before) && health < before - 0.0001f)
+                {
+                    float distance = (r.Position - row.Generator.Position).LengthHorizontal;
+                    if (dome.isActive && distance > dome.Radius + 2f) raiderLossesOutsideUpDome++;
+                    Log.Message(Prefix + "raider " + r.LabelShort + " lost health at tick " + now + ": " + (before * 100f).ToString("0") + " to "
+                        + (health * 100f).ToString("0") + ", " + distance.ToString("0.0") + " cells from the generator, dome up " + dome.isActive);
+                }
+                raiderHealth[r] = health;
             }
 
             // A belt's energy only falls when it absorbs a hit that reached its wearer. Its recharge only raises it.
@@ -355,7 +391,7 @@ namespace ShieldValidation
             Log.Message(Prefix + "summary: " + reason + ", raider shots fired " + raiderShots + ", shots intercepted " + shotsIntercepted
                 + ", shots in flight " + countedShots.Count(shot => shot.Spawned)
                 + ", colonist shots fired " + colonistShots + ", colonist shots ended at the dome edge " + colonistShotsAtEdge
-                + ", raider health " + RaiderHealth()
+                + ", raider losses outside an up dome " + raiderLossesOutsideUpDome + ", raider health " + RaiderHealth()
                 + ", raiders down " + raiders.Count(r => r.Dead || r.Downed) + " of " + raiders.Count
                 + ", colonist new injuries " + colonistInjuries + ", colonists down " + colonists.Count(c => c.Dead || c.Downed)
                 + ", belt absorbs " + beltAbsorbs + ", dome down events " + domeDownEvents + ", dome up at end " + (dome?.isActive ?? false));

@@ -93,6 +93,10 @@ Checked with `ilspycmd` against the installed `Assembly-CSharp.dll` (1.7.5000 re
 - The port has no Harmony patch on `Verb`, `CanHitTarget`, `ShootLine`, or the AI target finder. The raider AI is the game's own.
 - The dome's energy readout is `x/1000`. A dome comes up at energy 100 in these scenes. Each intercepted revolver shot removed about 11 to 12 energy in the logs. The dome went down at energy 0 and came back at 100 about 20 seconds later.
 
+- `LordJob_AssaultColony` starts in `LordToil_AssaultColony` unless sappers or breachers are on. Exit to the map edge depends on `canTimeoutOrFlee`, or on the faction turning non-hostile. `canKidnap` and `canSteal` start other toils. With `canTimeoutOrFlee`, `canKidnap`, and `canSteal` all off, the raiders stay on the map.
+- In run `20261108-114853`, raiders under the lord held about 24 cells east in the `Wait_Combat` job and fired 140 shots. The bare assault duty and the defend duty gave them no target in runs `20261108-110251` and `20261108-110839`. I did not isolate why the lord finds targets and the duties do not.
+- The diagnostic line's target column reads `none` under `Wait_Combat`, because that job keeps no `TargetA`. The raiders still fired.
+
 ## Not covered
 
 - The ShuttleFuel and MoveMonolith patches. They are out of scope.

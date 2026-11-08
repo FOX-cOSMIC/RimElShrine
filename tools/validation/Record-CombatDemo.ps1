@@ -3,6 +3,7 @@
 # combat.mp4. Each frame lasts the game time it covers, so the video runs at game speed. Output: .artifacts\combat\<timestamp>\.
 # -Scene turret (the default) runs CombatDemo.cs: a turret outside the dome fires at one colonist inside it.
 # -Scene raid runs RaidDemo.cs: three raiders outside the dome attack three armed colonists with ES0 belts inside it.
+# -RaidAI game (raid scene only) gives the raiders the game's own raid lord instead of the scripted aim.
 # The wiring follows Invoke-Scenarios.ps1.
 param(
     [string]$RimWorldDirectory = 'C:\SteamLibrary\steamapps\common\RimWorld',
@@ -10,7 +11,8 @@ param(
     [int]$WindowWidth = 1280,
     [int]$WindowHeight = 720,
     [int]$OutputFps = 30,
-    [ValidateSet('turret', 'raid')][string]$Scene = 'turret'
+    [ValidateSet('turret', 'raid')][string]$Scene = 'turret',
+    [ValidateSet('scripted', 'game')][string]$RaidAI = 'game'
 )
 $ErrorActionPreference = 'Stop'
 
@@ -113,6 +115,7 @@ function Test-DemoMarker([string]$pattern) {
 try {
     $sceneSwitch = if ($Scene -eq 'raid') { '-shieldvalidation-raid' } else { '-shieldvalidation-combat' }
     $gameArgs = @('-NoCrashDialog', '-quicktest', ('"-savedatafolder={0}"' -f $run), $sceneSwitch)
+    if ($Scene -eq 'raid' -and $RaidAI -eq 'game') { $gameArgs += '-shieldvalidation-raid-gameai' }
     $process = Start-Process -FilePath $exe -WorkingDirectory $game -ArgumentList $gameArgs -PassThru
 
     # Wait for the game window and its title.
@@ -180,6 +183,7 @@ $videoWritten = (Test-Path -LiteralPath $video) -and ((Get-Item -LiteralPath $vi
 $summary = @(
     "run: $run",
     "scene: $Scene",
+    "raider AI: $(if ($Scene -eq 'raid') { $RaidAI } else { 'not used' })",
     "video: $video",
     "video written: $videoWritten",
     "frames: $($frames.Count), game seconds covered: $((($lastTick - $firstTick) / 60.0).ToString('0.0', $invariant))",
