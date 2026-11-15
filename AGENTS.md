@@ -10,7 +10,7 @@ The repo's other mods, `RimElShrine.ShuttleFuel` and `RimElShrine.MoveMonolith`,
 
 ## Constraints
 
-- Target the installed RimWorld build, 1.7.5000 rev1275, Steam unstable branch (ADR 0002, updated 2026-11-07).
+- Target the installed RimWorld build, 1.7.5005 rev1082 since 2026-11-10, Steam unstable branch (ADR 0002).
 - Build 1.7 into `RimElShrine.Shields/1.7/`, and add a `<v1.7>` block to `RimElShrine.Shields/LoadFolders.xml`. Rebuilding `RimElShrine.Shields/1.6/` and its assemblies is allowed. The commit that rebuilds them says which files changed.
 - Give the port a new `packageId` in `About.xml`. Lucas has the original (`FoxMo.RimElShrine.Shields`) subscribed, and a shared id collides with it.
 - Keep Def names, XML class names, and settings keys from 1.6. Saves and translations key on them. Record each change 1.7 forces.
@@ -25,6 +25,7 @@ The repo's other mods, `RimElShrine.ShuttleFuel` and `RimElShrine.MoveMonolith`,
 ## Build
 
 - 1.7 build (works, 0 errors): `dotnet build Source/RimElShrine.Shields/RimElShrine.Shields.csproj -c Release -p:RimWorldVersion=1.7`. It targets net10.0 with Krafs.Rimworld.Ref 1.7.4995-unstable and Lib.Harmony.Ref 2.4.2 (ADRs 0006, 0007). Output goes to `RimElShrine.Shields/1.7/Assemblies/`.
+- The 1.7 build is reproducible: the same source and SDK give the same DLL bytes (ADR 0017). Build the committed 1.7 DLLs with .NET SDK 10.0.301. CI (`.github/workflows/build.yml`) builds 1.7 on each push and pull request and fails when the committed 1.7 DLLs differ from its build.
 - 1.6 build: the same projects with the default `RimWorldVersion` (1.6). It targets net472 and writes to `RimElShrine.Shields/1.6/`, which overwrites the 1.6 assemblies. To check that the 1.6 source compiles without writing those assemblies, add `-p:OutputPath=<a scratch folder>`.
 - The 1.7 build defines `RIMWORLD_17`. Code inside `#if RIMWORLD_17` runs only in the 1.7 build (ADR 0011).
 - Combat Extended counterpart (1.7): `dotnet build Source/RimElShrine.Shields.Compatibility/RimElShrine.Shields.CE.csproj -c Release -p:RimWorldVersion=1.7` (0 errors). It compiles against `%USERPROFILE%\.rimworld-refs\CombatExtended-1.7-Test-src\Assemblies\CombatExtended.dll`, built from the clone of the CE 1.7-Test branch at commit `bcdd75dc` with `dotnet build Source/CombatExtended/CombatExtended.csproj -c Release` (ADRs 0008 and 0016). The committed 1.6 `CombatExtended.dll` cannot be used, because it needs `UnityEngine.CoreModule`, which 1.7 does not provide. The CE rows run in game with `Invoke-Scenarios.ps1 -CombatExtended` (ADR 0016).

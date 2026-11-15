@@ -13,3 +13,23 @@ Lucas decided these on 2026-11-15, when he asked to run the tests and finish the
 ## Out of scope
 
 Runtime tests for the 1.6 build, Combat Extended weapons, armour and health, and the Workshop upload.
+
+## Choices I made
+
+- Test colonists that are generated with a missing part are discarded. Run `20261115-214152` gave one colonist the test finger already missing, and the use-job row failed on it.
+- The 1.7 DLLs are now reproducible. The SDK wrote the git commit into the informational version and the SourceLink map, and the embedded PDB held this machine's folder path, so every commit changed the DLL bytes. The three projects set `IncludeSourceRevisionInInformationalVersion` to false. The Shields project maps its source folder with `PathMap` and sets `EnableSourceLink` to false. A decompile diff shows the version string as the only code-level change. To reverse, remove those properties.
+- CI pins .NET SDK 10.0.301, the SDK on the build machine, because another compiler can give other bytes.
+- The installed game moved to 1.7.5005 rev1082 on 2026-11-10. ADR 0002 targets the installed build, so the proof below is on 1.7.5005.
+
+## Proof
+
+All on RimWorld 1.7.5005 rev1082.
+
+| Run | Setting | Verdict | What it shows |
+|---|---|---|---|
+| `20261115-214411` | build with no fast regen blood loss | FAIL | Only the healthy Fast row fails: `blood loss during regrowth False`. |
+| `20261115-214507` | `-shieldvalidation-noserum` | FAIL | The use-job row fails, with no job ordered. |
+| `20261115-214604`, `20261115-214655` | standard | PASS | 22 rows. |
+| `20261115-214753`, `20261115-214923`, `20261115-215021` | `-CombatExtended` | PASS | 27 rows. |
+| `20261115-215331` | standard, final DLLs | PASS | 22 rows. |
+| `20261115-215426` | `-CombatExtended`, final DLLs | PASS | 27 rows. |

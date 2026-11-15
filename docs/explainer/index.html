@@ -422,7 +422,7 @@ nav ol { margin: 0.6em 0 1em; }
 <tr><th scope="col">Change</th><th scope="col">Where it lives</th><th scope="col">Effect</th></tr>
 </thead>
 <tbody>
-<tr><td>Target build</td><td>ADR 0002</td><td>RimWorld 1.7.5000 rev1275, the installed build from the unstable branch.</td></tr>
+<tr><td>Target build</td><td>ADR 0002</td><td>RimWorld 1.7.5005 rev1082, the installed build from the unstable branch.</td></tr>
 <tr><td>New packageId</td><td><code>About\About.xml</code>, ADR 0003</td><td><code>foxcosmic.rimelshrine.shields17</code> lets the port load beside <code>FoxMo.RimElShrine.Shields</code>. One About.xml serves both version folders, so the 1.6 folder reports the new ID too.</td></tr>
 <tr><td>1.7-only guard</td><td><code>#if RIMWORLD_17</code>, ADR 0011</td><td>A compiler switch. Code inside it compiles only in the 1.7 build.</td></tr>
 <tr><td>Fast injectors</td><td>Same guard, ADR 0011</td><td>The 1.7 build sets severity to 1 for a Fast injector. The 1.6 build does not. Before 2026-11-07, no build read the Fast flag, and the 1.6 mod never read it.</td></tr>
@@ -502,7 +502,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h2 id="status">Where things stand</h2>
 
-<p>The latest full pass without Combat Extended is run 20261108-234456, on RimWorld 1.7.5000 rev1275. Its 18 scenario rows read PASS, and its 3 completion rows read finished. The latest full pass with Combat Extended is run 20261109-000000, on the same game build, with the Combat Extended 1.7 test build. Its 22 scenario rows and 4 completion rows read PASS. The healthy Fast pawn's blood-loss row failed in two other Combat Extended runs, because a bleed can clear before the finger returns. ADR 0016 records that. The red run before the Fast regen fix is run 20261108-200958, on the commit 614106d. The runner fails any row that no list names, and the run had no error line that mentions the port. Earlier passes are listed in <code>tools\validation\README.md</code>. Runs on 2026-11-05 passed the network and equipment rows on RimWorld 1.7.4998 rev1299, including run 20261105-152607. The change is merged in PR 1.</p>
+<p>The latest full pass without Combat Extended is run 20261115-215331, on RimWorld 1.7.5005 rev1082. Its 19 scenario rows read PASS, and its 3 completion rows read finished. The latest full pass with Combat Extended is run 20261115-215426, on the same game build, with the Combat Extended 1.7 test build. Its 23 scenario rows and 4 completion rows read PASS. The healthy Fast pawn's row now checks for blood loss during the whole regrowth, and a new row uses an injector through the game's use job. ADR 0017 records both. The red run before the Fast regen fix is run 20261108-200958, on the commit 614106d. The runner fails any row that no list names, and the run had no error line that mentions the port. Earlier passes are listed in <code>tools\validation\README.md</code>. Runs on 2026-11-05 passed the network and equipment rows on RimWorld 1.7.4998 rev1299, including run 20261105-152607. The change is merged in PR 1.</p>
 
 <p>A scenario row is one check result, not counting completion rows. The test rows call quick regen "fast regen", and the table keeps those names.</p>
 
@@ -556,7 +556,7 @@ nav ol { margin: 0.6em 0 1em; }
 
 <h3>D2. Which RimWorld build the port targets</h3>
 
-<p>The port targets the installed build, RimWorld 1.7.5000 rev1275. Lucas chose this on 2026-11-07, and ADR 0002 records it.</p>
+<p>The port targets the installed build, now RimWorld 1.7.5005 rev1082. Lucas chose the installed build on 2026-11-07, and ADR 0002 records it.</p>
 
 <h3>D3. How the test clock runs</h3>
 
