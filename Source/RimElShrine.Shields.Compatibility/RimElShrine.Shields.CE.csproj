@@ -13,6 +13,8 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>13</LangVersion>
+    <Deterministic>true</Deterministic>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Nullable>enable</Nullable>
     <RootNamespace>RimElShrine.Compatibility</RootNamespace>
     <OutputPath>..\..\RimElShrine.Shields\$(RimWorldVersion)\Compatible\CombatExtended\Assemblies\</OutputPath>

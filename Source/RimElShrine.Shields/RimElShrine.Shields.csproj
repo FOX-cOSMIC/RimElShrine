@@ -14,6 +14,9 @@
     <RootNamespace>RimElShrine</RootNamespace>
     <AssemblyName>RimElShrine.Shields</AssemblyName>
     <Deterministic>true</Deterministic>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <PathMap>$(MSBuildProjectDirectory)=/_/$(MSBuildProjectName)/</PathMap>
+    <EnableSourceLink>false</EnableSourceLink>
     <LangVersion>13</LangVersion>
     <Nullable>enable</Nullable>
     <OutputPath>..\..\RimElShrine.Shields\$(RimWorldVersion)\Assemblies\</OutputPath>
