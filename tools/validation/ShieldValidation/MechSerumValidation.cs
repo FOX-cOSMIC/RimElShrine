@@ -23,6 +23,7 @@ namespace ShieldValidation
         private const string ScenarioFastLabel = "mech serum: fast regen label on a healthy pawn does not read disabled";
         private const string ScenarioCapClears = "mech serum: fast regen cap label clears after blood loss ends";
         private const string ScenarioCapEdge = "mech serum: cap label holds at exactly the cap when the fast multiplier is 1";
+        private const string ScenarioUseJob = "mech serum: a colonist uses a Fast injector through the use job";
         private const string GroupComplete = "mech serum group complete";
         private const string FingerDefName = "Finger";
         private const string BasicResearch = "ELS_ResearchProject_BasicMechSerumProduction";
@@ -47,12 +48,15 @@ namespace ShieldValidation
         // D gets a Fast injector. D is a diagnostic only, not a required row.
         // E has blood loss and gets a Fast injector. F has none and gets a Fast injector.
         // G has blood loss and gets no injector. The usability checks of both injectors run on it.
+        // K is ordered to use a Fast injector through the game's use job.
         private sealed class Patient
         {
             public Pawn Colonist;
             public BodyPartRecord Finger;
             public int RegrownAt = -1;
             public bool BleedingAtRegrow;
+            // True when the pawn had blood loss on any tick while its finger was still missing.
+            public bool BleedingDuringRegrow;
         }
 
         private static DateTime lastClock = DateTime.MinValue;
@@ -67,6 +71,12 @@ namespace ShieldValidation
         private Patient f;
         private Patient h;
         private Patient j;
+        private Patient k;
+        private Thing kInjector;
+        private bool kOrdered;
+        private int kUsedAt = -1;
+        private bool kQuickAtUse;
+        private bool kInjectorGone;
         private float expectedTicks;
         private float expectedFastTicks;
         private bool fastQuickAtApply;
@@ -125,13 +135,23 @@ namespace ShieldValidation
                 if (!cleanerDone && elapsed >= CleanerAtTicks) ApplyCleaner();
                 // H's blood loss is held above the cap until it is removed below. It stands in for a wound that keeps bleeding.
                 if (!capRecovered && h.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out var held)) held.Severity = capBloodLoss;
-                foreach (var p in new[] { a, b, c, d, e, f, h })
+                foreach (var p in new[] { a, b, c, d, e, f, h, k })
                 {
-                    if (p.RegrownAt < 0 && !p.Colonist.health.hediffSet.PartIsMissing(p.Finger))
+                    if (p.RegrownAt >= 0) continue;
+                    bool bleedingNow = p.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out _);
+                    if (!p.Colonist.health.hediffSet.PartIsMissing(p.Finger))
                     {
                         p.RegrownAt = elapsed;
-                        p.BleedingAtRegrow = p.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out _);
+                        p.BleedingAtRegrow = bleedingNow;
                     }
+                    if (bleedingNow) p.BleedingDuringRegrow = true;
+                }
+                // K's injector is used by the game's use job. The tick its regen effect appears is the start of K's regrowth.
+                if (kUsedAt < 0 && Regen(k.Colonist) is HediffWithComps_LimbsRegen regenK)
+                {
+                    kUsedAt = elapsed;
+                    kQuickAtUse = regenK.IsQuickRegen;
+                    kInjectorGone = kInjector.Destroyed;
                 }
                 // One tick after H's finger is back, with H's blood loss still held above the cap, the cap label must show. Then H's blood loss ends.
                 if (!capRecovered && h.RegrownAt >= 0 && elapsed > h.RegrownAt)
@@ -217,6 +237,18 @@ namespace ShieldValidation
             var regenE = Regen(e.Colonist);
             fastQuickAtApply = regenE != null && regenE.IsQuickRegen;
             LogFastRegen("applied");
+
+            // K uses a Fast injector the way a player orders it from the right-click menu: CompUsable starts the use job, and the pawn
+            // walks to the injector and uses it. The injector lies on K's own cell.
+            k = NewPatient(map);
+            kInjector = GenSpawn.Spawn(ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(FastLimitedDef, true)), k.Colonist.Position, map);
+            var usable = kInjector.TryGetComp<CompUsable>();
+            if (usable == null) throw new InvalidOperationException(FastLimitedDef + " has no CompUsable");
+            if (!noSerum)
+            {
+                usable.TryStartUseJob(k.Colonist, LocalTargetInfo.Invalid, true);
+                kOrdered = k.Colonist.CurJob != null && k.Colonist.CurJob.targetA.Thing == kInjector;
+            }
         }
 
         private void ApplyCleaner()
@@ -246,10 +278,16 @@ namespace ShieldValidation
             bool passFast = fastQuickAtApply && InFastWindow(e.RegrownAt) && bleedingAtRegrow;
             ValidationSupport.Record(ScenarioFastBleeding, (passFast ? "PASS: " : "FAIL: ") + "quick regen on after the injector " + fastQuickAtApply + ", " + FastTiming(e.RegrownAt) + ", blood loss when the finger came back " + bleedingAtRegrow);
 
-            // F starts with no blood loss. A Fast pawn with none must regrow in the fast window, and it must have blood loss when the finger
-            // comes back. That blood loss is the cost of fast regen.
-            bool passHealthy = Regen(f.Colonist) != null && InFastWindow(f.RegrownAt) && f.BleedingAtRegrow;
-            ValidationSupport.Record(ScenarioFastHealthy, (passHealthy ? "PASS: " : "FAIL: ") + FastTiming(f.RegrownAt) + ", blood loss when the finger came back " + f.BleedingAtRegrow);
+            // F starts with no blood loss. A Fast pawn with none must regrow in the fast window, and it must have blood loss on some tick
+            // while the finger regrows. That blood loss is the cost of fast regen. The tick the finger returns is not used, because the
+            // game lets blood loss recover on its own, so it can clear before then.
+            bool passHealthy = Regen(f.Colonist) != null && InFastWindow(f.RegrownAt) && f.BleedingDuringRegrow;
+            ValidationSupport.Record(ScenarioFastHealthy, (passHealthy ? "PASS: " : "FAIL: ") + FastTiming(f.RegrownAt) + ", blood loss during regrowth " + f.BleedingDuringRegrow + ", blood loss when the finger came back " + f.BleedingAtRegrow);
+
+            // K's regrowth is timed from the tick its use job applied the injector.
+            int kRegrowTicks = kUsedAt >= 0 && k.RegrownAt >= 0 ? k.RegrownAt - kUsedAt : -1;
+            bool passUseJob = kOrdered && kUsedAt >= 0 && kQuickAtUse && kInjectorGone && InFastWindow(kRegrowTicks);
+            ValidationSupport.Record(ScenarioUseJob, (passUseJob ? "PASS: " : "FAIL: ") + "use job ordered " + kOrdered + ", effect at " + kUsedAt + " ticks, quick " + kQuickAtUse + ", injector used up " + kInjectorGone + ", " + FastTiming(kRegrowTicks) + " after use");
 
             // F's label must show fast regen on, and it must not show the blood loss cap.
             var regenLabel = Regen(f.Colonist);
@@ -314,6 +352,13 @@ namespace ShieldValidation
             bool quick = regen != null && regen.IsQuickRegen;
             bool bloodLoss = d.Colonist.health.hediffSet.TryGetHediff(HediffDefOf.BloodLoss, out _);
             Log.Message("[ShieldValidation-diag] fast regen " + when + ": severity " + severity.ToString("0.###") + ", quick " + quick + ", blood loss hediff " + bloodLoss + ", finger back at " + d.RegrownAt + " ticks");
+            // Patient state, so a run where regrowth stalls shows whether a patient was dead, downed, unspawned or suspended.
+            foreach (var p in new[] { a, b, c, d, e, f, h, k })
+            {
+                if (p == null) continue;
+                var pawn = p.Colonist;
+                Log.Message("[ShieldValidation-diag] patient " + pawn.LabelShort + " " + when + ": dead " + pawn.Dead + ", downed " + pawn.Downed + ", spawned " + pawn.Spawned + ", suspended " + pawn.Suspended + ", job " + (pawn.CurJobDef == null ? "none" : pawn.CurJobDef.defName) + ", finger back at " + p.RegrownAt);
+            }
         }
 
         private int DeadlineTicks()
@@ -355,7 +400,16 @@ namespace ShieldValidation
         {
             var cell = ValidationSupport.FindFreeBlock(map, 1, 1);
             if (cell == null) throw new InvalidOperationException("no free cell for a test colonist");
-            var pawn = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("Colonist", true), Faction.OfPlayer);
+            // A generated colonist can start with a missing part from an old injury. The regen effect would then target that part, or the
+            // finger would already be missing, so such a colonist is discarded.
+            Pawn pawn = null;
+            for (int tries = 0; tries < 50 && pawn == null; tries++)
+            {
+                var candidate = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("Colonist", true), Faction.OfPlayer);
+                if (candidate.health.hediffSet.GetMissingPartsCommonAncestors().Count == 0) pawn = candidate;
+                else candidate.Discard();
+            }
+            if (pawn == null) throw new InvalidOperationException("no generated colonist without a missing part in 50 tries");
             GenSpawn.Spawn(pawn, cell.Value, map);
             var finger = pawn.RaceProps.body.AllParts.First(part => part.def.defName == FingerDefName);
             pawn.health.AddHediff(HediffDefOf.MissingBodyPart, finger);

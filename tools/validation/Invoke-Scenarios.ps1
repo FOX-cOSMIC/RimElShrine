@@ -57,7 +57,8 @@ $required = @(
     'mech serum: injector usability check leaves blood loss alone',
     'mech serum: fast regen label on a healthy pawn does not read disabled',
     'mech serum: fast regen cap label clears after blood loss ends',
-    'mech serum: cap label holds at exactly the cap when the fast multiplier is 1'
+    'mech serum: cap label holds at exactly the cap when the fast multiplier is 1',
+    'mech serum: a colonist uses a Fast injector through the use job'
 )
 # Each group writes one completion row when it ends. The run is complete when every group has written its row.
 $groups = @('network group complete', 'equipment group complete', 'mech serum group complete')
