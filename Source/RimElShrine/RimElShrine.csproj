@@ -13,6 +13,7 @@
     <RootNamespace>RimElShrine</RootNamespace>
     <AssemblyName>RimElShrine</AssemblyName>
     <Deterministic>true</Deterministic>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <LangVersion>13</LangVersion>
     <Nullable>enable</Nullable>
     <OutputPath>bin\</OutputPath>
