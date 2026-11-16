@@ -35,3 +35,4 @@ All on RimWorld 1.7.5005 rev1082.
 | `20261115-215426` | `-CombatExtended`, final DLLs | PASS | 27 rows. |
 | `20261116-100133` | standard, after round 1 (use job with the menu's arguments) | PASS | 22 rows. |
 | `20261116-100243` | `-CombatExtended`, after round 1 | PASS | 27 rows. |
+| `20261116-100712` | standard, after round 2 (extra target from the comp, no added part over the finger) | PASS | 22 rows. |
