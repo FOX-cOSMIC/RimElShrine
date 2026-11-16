@@ -238,7 +238,7 @@ namespace ShieldValidation
             fastQuickAtApply = regenE != null && regenE.IsQuickRegen;
             LogFastRegen("applied");
 
-            // K uses a Fast injector the way a player orders it from the right-click menu: CompUsable starts the use job, and the pawn
+            // K uses a Fast injector the way a player orders it from the right-click menu, with the same arguments: CompUsable starts the use job, and the pawn
             // walks to the injector and uses it. The injector lies on K's own cell.
             k = NewPatient(map);
             kInjector = GenSpawn.Spawn(ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed(FastLimitedDef, true)), k.Colonist.Position, map);
@@ -246,7 +246,7 @@ namespace ShieldValidation
             if (usable == null) throw new InvalidOperationException(FastLimitedDef + " has no CompUsable");
             if (!noSerum)
             {
-                usable.TryStartUseJob(k.Colonist, LocalTargetInfo.Invalid, true);
+                usable.TryStartUseJob(k.Colonist, LocalTargetInfo.Invalid, usable.Props.ignoreOtherReservations);
                 kOrdered = k.Colonist.CurJob != null && k.Colonist.CurJob.targetA.Thing == kInjector;
             }
         }
