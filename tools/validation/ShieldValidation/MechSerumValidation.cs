@@ -246,7 +246,7 @@ namespace ShieldValidation
             if (usable == null) throw new InvalidOperationException(FastLimitedDef + " has no CompUsable");
             if (!noSerum)
             {
-                usable.TryStartUseJob(k.Colonist, LocalTargetInfo.Invalid, usable.Props.ignoreOtherReservations);
+                usable.TryStartUseJob(k.Colonist, usable.GetExtraTarget(k.Colonist), usable.Props.ignoreOtherReservations);
                 kOrdered = k.Colonist.CurJob != null && k.Colonist.CurJob.targetA.Thing == kInjector;
             }
         }
@@ -400,13 +400,14 @@ namespace ShieldValidation
         {
             var cell = ValidationSupport.FindFreeBlock(map, 1, 1);
             if (cell == null) throw new InvalidOperationException("no free cell for a test colonist");
-            // A generated colonist can start with a missing part from an old injury. The regen effect would then target that part, or the
+            // A generated colonist can start with a missing part from an old injury, or an added part over the finger. The regen effect would then target that part, or the
             // finger would already be missing, so such a colonist is discarded.
             Pawn pawn = null;
             for (int tries = 0; tries < 50 && pawn == null; tries++)
             {
                 var candidate = PawnGenerator.GeneratePawn(DefDatabase<PawnKindDef>.GetNamed("Colonist", true), Faction.OfPlayer);
-                if (candidate.health.hediffSet.GetMissingPartsCommonAncestors().Count == 0) pawn = candidate;
+                var candidateFinger = candidate.RaceProps.body.AllParts.First(part => part.def.defName == FingerDefName);
+                if (candidate.health.hediffSet.GetMissingPartsCommonAncestors().Count == 0 && !candidate.health.hediffSet.PartOrAnyAncestorHasDirectlyAddedParts(candidateFinger)) pawn = candidate;
                 else candidate.Discard();
             }
             if (pawn == null) throw new InvalidOperationException("no generated colonist without a missing part in 50 tries");
