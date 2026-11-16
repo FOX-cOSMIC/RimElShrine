@@ -1,8 +1,8 @@
-# Stable suite, use-job row, and CI build
+# Stable suite, use-job row, and reproducible build
 
 ## Goal
 
-The validation suite passes every run, it covers the path a player takes to use a regen injector, and every push gets a build check. Decisions: ADR 0017.
+The validation suite passes every run, it covers the path a player takes to use a regen injector, and a rebuild of the 1.7 DLLs gives the same bytes. Decisions: ADR 0017.
 
 ## Acceptance checks
 
@@ -11,7 +11,7 @@ The validation suite passes every run, it covers the path a player takes to use 
 3. Red for D13: the control `-shieldvalidation-noserum` fails the new row `mech serum: a colonist uses a Fast injector through the use job`.
 4. Green: `Invoke-Scenarios.ps1` on the final build passes, with the new row present.
 5. Green with Combat Extended: `Invoke-Scenarios.ps1 -CombatExtended` on the final build passes.
-6. CI: the workflow `.github/workflows/build.yml` runs on the pull request and passes.
+6. CI: dropped. Lucas chose on 2026-11-15 to skip CI (ADR 0017, D15).
 7. The committed 1.7 DLLs equal the build output of check 1 (no source change to the port, so `git status` shows no DLL change after the build).
 
 ## Out of scope
